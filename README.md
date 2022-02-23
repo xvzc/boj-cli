@@ -31,6 +31,7 @@ function bojlogin() {
 
 # CLI로 제출하기
 `$ python3 boj-submit.py ${소스 파일 절대경로}`를 실행합니다.
+>> 소스 파일명은 `문제번호.언어` 형식으로 해주세요.
 
 # 채점 결과 확인하기
  - Firefox 브라우저의 경우 url에 `about:config`를 쳐서 접근하면 고급 옵션을 설정할 수 있습니다.
