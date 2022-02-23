@@ -90,4 +90,4 @@ payload = {
 
 response = requests.post(url, headers=headers_dict, data=payload, cookies=cookies_dict)
 
-os.system(f'open -a Firefox "https://www.acmicpc.net/status?user_id={boj_handle}"')
+os.system(f'open -a \'Firefox\' "https://www.acmicpc.net/status?user_id={boj_handle}"')
