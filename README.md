@@ -21,6 +21,10 @@ function bojlogin() {
 - 추가된 스크립트를 적용.
 `$ source ~/.zshrc`
 
+# 자동 제출 스크립트 설치
+`$ curl -fsSL https://raw.githubusercontent.com/xvzc/boj-cli/main/install.sh | bash`
+스크립트는 ~/.boj-cli에 설치됨
+
 # BOJ 로그인
  - BOJ 홈페이지에서 자동로그인을 활성화 한후 로그인.
  - EditThisCookie 확장 프로그램을 열어 bojautologin 값의 value를 복사.
