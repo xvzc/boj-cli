@@ -5,4 +5,3 @@ setup(
     },
     name='boj-cli',
 )
-
