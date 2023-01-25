@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from boj.core.exception import LoginRequiredException
 import boj.core.util as util
 
 
@@ -31,20 +32,14 @@ def query_csrf_key(url, cookies):
 
 
 def send_source_code(url, cookies, payload):
-    util.print_white("\rSubmitting source code. ")
-
     response = requests.post(url, headers=util.headers(), cookies=cookies, data=payload)
 
     html = response.text
     soup = BeautifulSoup(html, "html.parser")
 
-    util.print_white("\rSubmitting source code.. ")
-
     soup.select("table", {"id": "status-table"})
     if soup is None:
         raise Exception("Failed to query solution id.")
-
-    util.print_white("\rSubmitting source code... ")
 
     soup = soup.select("tr")
 
@@ -55,4 +50,4 @@ def send_source_code(url, cookies, payload):
 def check_login_status(input_tags):
     for i in input_tags:
         if i["name"] == "login_user_id":
-            raise Exception("Login Required.")
+            raise LoginRequiredException()
