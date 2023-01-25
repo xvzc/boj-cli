@@ -3,8 +3,12 @@ import boj.core.util as util
 
 
 def run(args):
-    if not args.file:
-        raise Exception("No soruce file path provided.")
+    # if not args.path:
+    #     raise Exception("No soruce file path provided.")
+
+    print(args.path)
+
+    return
 
     util.print_white("\rAuthenticating.    ")
 

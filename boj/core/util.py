@@ -15,6 +15,7 @@ def home_url():
 def submit_url(problem_id):
     return constant.BOJ_URL + "/submit" + "/" + problem_id
 
+
 def websocket_url():
     return constant.WEBSOCKET_URL
 
