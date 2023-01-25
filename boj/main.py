@@ -1,12 +1,14 @@
 from boj.commands.login import command as login_command
 from boj.commands.submit import command as submit_command
-import argparse, os
+from boj.commands.problem import command as problem_command
+import argparse, os, traceback
 
 from boj.core.exception import WrongAnswerException
 
 command_dict = {
     "login": login_command.run,
     "submit": submit_command.run,
+    "problem": problem_command.run,
 }
 
 
@@ -18,6 +20,7 @@ def entry():
         exit(1)
     except Exception as e:
         print(e)
+        traceback.print_exc()
         exit(1)
 
 
@@ -43,14 +46,26 @@ def init_parser():
 
     # Submit command parser
     submit_parser = subparsers.add_parser("submit", help="submits your code")
-    submit_parser.add_argument("path", metavar='PATH', type=validate_file, help="the file path of the sorce code")
+    submit_parser.add_argument(
+        "path",
+        metavar="PATH",
+        type=validate_file,
+        help="the file path of the sorce code",
+    )
+
+    problem_parser = subparsers.add_parser("problem", help="shows the problem in terminal")
+    problem_parser.add_argument(
+        "id",
+        metavar="PROBLEM_ID",
+        type=int,
+        help="the problem id",
+    )
 
     return parser
+
 
 def validate_file(file):
     if os.path.isfile(file):
         return file
     else:
         raise argparse.ArgumentTypeError(f"'{file}' No such file.")
-
-
