@@ -75,27 +75,3 @@ def parse_path(file_path: str):
     id = tokens[0]
     ft = tokens[1]
     return id, ft
-
-
-def clear_line():
-    print("\r" + " " * 50, end="")
-
-
-def print_white(s: str):
-    print("\033[1m" + s + "\033[0m", end="")
-
-
-def print_green(s: str):
-    print("\033[92m" + "\033[1m" + s + "\033[0m", end="")
-
-
-def print_red(s: str):
-    print("\033[91m" + "\033[1m" + s + "\033[0m", end="")
-
-
-def print_yellow(s: str):
-    print("\033[33m" + "\033[1m" + s + "\033[0m", end="")
-
-
-def print_magenta(s: str):
-    print("\033[35m" + "\033[1m" + s + "\033[0m", end="")
