@@ -47,7 +47,7 @@ def convert_language_code(language_name):
 
 
 def headers():
-    return {"User-Agent": constant.CUSTOM_HEADER}
+    return {"User-Agent": constant.USER_AGENT}
 
 
 # File io
