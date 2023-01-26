@@ -1,12 +1,14 @@
 from boj.commands.login import command as login_command
 from boj.commands.submit import command as submit_command
 from boj.commands.problem import command as problem_command
+from boj.commands.test import command as test_command
 import argparse, os, traceback
 
 command_dict = {
     "login": login_command.run,
     "submit": submit_command.run,
     "problem": problem_command.run,
+    "test": test_command.run,
 }
 
 
@@ -36,9 +38,20 @@ def init_parser():
     subparsers = parser.add_subparsers(dest="command")  # this line changed
 
     # Login command parser
-    login_parser = subparsers.add_parser("login", help="logs in to BOJ")
-    login_parser.add_argument("-u", "--user", help="username")
-    login_parser.add_argument("-t", "--token", help="login token from the cookies")
+    login_parser = subparsers.add_parser(
+        "login",
+        help="logs in to BOJ",
+    )
+    login_parser.add_argument(
+        "-u",
+        "--user",
+        help="username",
+    )
+    login_parser.add_argument(
+        "-t",
+        "--token",
+        help="login token from the cookies",
+    )
 
     # Submit command parser
     submit_parser = subparsers.add_parser("submit", help="submits your code")
@@ -49,7 +62,9 @@ def init_parser():
         help="the file path of the sorce code",
     )
     submit_parser.add_argument(
-        "-l", "--lang", help="the language to submit your source code as"
+        "-l",
+        "--lang",
+        help="the language to submit your source code as",
     )
 
     problem_parser = subparsers.add_parser(
@@ -60,6 +75,21 @@ def init_parser():
         metavar="PROBLEM_ID",
         type=int,
         help="the problem id",
+    )
+
+    test_parser = subparsers.add_parser("test", help="run testcases")
+    test_parser.add_argument(
+        "file",
+        metavar="FILE",
+        type=validate_file,
+        help="the file path of the sorce code",
+    )
+    submit_parser.add_argument(
+        "-c",
+        "--create",
+        type=bool,
+        default=False,
+        help=" if true, query and creates testcase file",
     )
 
     return parser

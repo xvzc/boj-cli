@@ -7,18 +7,20 @@ import markdownify
 # Returns markdown
 def query_problem(problem_id):
     res = requests.get(util.problem_url(problem_id), headers=util.headers())
+    return res.text
 
-    soup = BeautifulSoup(res.text, "html.parser")
+def markdownify_problem(html, problem_id):
+    soup = BeautifulSoup(html, "html.parser")
 
     problem_sections = soup.select("#problem-body > div")[:-1]
 
-    html = ""
+    problem_html = ""
     for div in problem_sections:
-        html += str(div) + "\n"
+        problem_html += str(div) + "\n"
 
     ## Prettify
-    html = re.sub(r"<button.+\n", "", html)
-    html = re.sub(r"h2", "h1", html)
-    html += "LINK: " + util.problem_url(problem_id) + "\n"
+    problem_html = re.sub(r"<button.+\n", "", problem_html)
+    problem_html = re.sub(r"h2", "h1", problem_html)
+    problem_html += "LINK: " + util.problem_url(problem_id) + "\n"
 
-    return markdownify.markdownify(html)
+    return markdownify.markdownify(problem_html)
