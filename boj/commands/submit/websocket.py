@@ -1,4 +1,5 @@
 import json, asyncio
+import time, copy
 from rich.console import Console
 from websockets import client
 from boj.core import util
@@ -55,20 +56,19 @@ def trace(solution_id):
 # Track submit status
 async def connect(solution_id):
     progress = Progress(
-        SpinnerColumn(style="white"),
-        TextColumn("[progress.description]{task.description}"),
+        SpinnerColumn(style="white", finished_text="•"),
         BarColumn(complete_style="white"),
         TaskProgressColumn(),
         TimeElapsedColumn(),
     )
 
-    global message
-    console = Console()
     with progress:
-        task = progress.add_task("[white]Wating", total=100)
+        task = progress.add_task("", total=100)
 
         async with client.connect(util.websocket_url()) as websocket:
             await websocket.send(json.dumps(make_subscribe_request(solution_id)))
+
+            global message
 
             keep_alive = True
             while keep_alive:
@@ -79,7 +79,6 @@ async def connect(solution_id):
                 if not keep_alive:
                     progress.update(
                         task,
-                        description="[" + message.color + "]" + "Done",
                         completed=message.progress,
                     )
 
@@ -88,19 +87,22 @@ async def connect(solution_id):
 
                 progress.update(
                     task,
-                    description="[white]" + message.status,
                     completed=message.progress,
                 )
 
-        if message == None:
-            raise Exception("Websocket error")
+            if message == None:
+                raise Exception("Websocket error")
 
-        console.print("  " + message.status, style="bold " + message.color)
-
-        for detail in message.details:
+            console = Console()
             console.print(
-                "    - " + detail.name + ": " + detail.description, style="bold white"
+                "[white]• [bold " + message.color + "]" + message.status,
             )
+
+            for detail in message.details:
+                console.print(
+                    "  - " + detail.name + ": " + detail.description,
+                    style="white",
+                )
 
         if message.error:
             raise WrongAnswerException()
@@ -169,11 +171,9 @@ async def parse_message(message: dict):
 
     # Accepted.
     if data["result"] == 4:
-        util.clear_line()
-
         details = [
             Detail(name="Memory", description=str(data["memory"]) + " kb"),
-            Detail(name="Time", description=str(data["memory"]) + " kb"),
+            Detail(name="Time  ", description=str(data["time"]) + " ms"),
         ]
 
         return Message(
@@ -281,7 +281,7 @@ async def parse_message(message: dict):
             error=False,
             progress=cur_progress,
             color="white",
-            status="Wating",
+            status="Looking for the cause of Runtime Error",
             details=[],
         )
 

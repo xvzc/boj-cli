@@ -7,11 +7,11 @@ from rich.console import Console
 def run(args):
     console = Console()
 
-    with console.status("[bold green]Loading source code...") as status:
+    with console.status("[bold yellow]Loading source code...", spinner_style="white") as status:
         problem = util.read_problem(args.file)
-        sleep(0.6)
+        sleep(0.4)
 
-    with console.status("[bold green]Authenticating...") as status:
+    with console.status("[bold yellow]Authenticating...", spinner_style="white") as status:
         credential = util.read_credential()
         online_judge = crawler.query_online_judge_token(util.home_url())
         cookies = {
@@ -32,8 +32,9 @@ def run(args):
         "source": problem.source,
     }
 
-    with console.status("[bold green]Submitting source code...") as status:
+    with console.status(
+        "[bold yellow]Submitting source code...", spinner_style="white"
+    ) as status:
         solution_id = crawler.send_source_code(submit_url, cookies, payload)
-
 
     websocket.trace(solution_id)
