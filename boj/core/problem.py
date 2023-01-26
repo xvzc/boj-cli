@@ -3,9 +3,9 @@ class Problem:
     filetype: str
     source: str
 
-    def __init__(self, id, language, source):
+    def __init__(self, id, filetype, source):
         self.id = id
-        self.filetype = language
+        self.filetype = filetype 
         self.source = source
 
     def __repr__(self):

@@ -1,5 +1,8 @@
 import os, ntpath, json
+
+from rich.console import Console
 import boj.core.constant as constant
+import boj.core.language as language
 import boj.core.auth as auth
 from boj.core.problem import Problem
 
@@ -7,6 +10,15 @@ from boj.core.problem import Problem
 def temp_dir():
     return str(os.getenv("HOME")) + constant.DIR
 
+def config_file_path():
+    return str(os.getenv("HOME")) + constant.DIR + "/" + constant.CONFIG_FILE_NAME
+
+def key_file_path():
+    return temp_dir() + "/" + constant.KEY_FILE_NAME
+
+
+def credential_file_path():
+    return temp_dir() + "/" + constant.CREDENTIAL_FILE_NAME
 
 def home_url():
     return constant.BOJ_URL
@@ -24,22 +36,18 @@ def websocket_url():
     return constant.WEBSOCKET_URL
 
 
-def key_file_path():
-    return temp_dir() + "/" + constant.KEY_NAME
+
+def convert_language_code(language_name):
+    if language_name not in language.LANGUAGE_DICT:
+        console = Console()
+        console.print(language_name + " is not a supported language")
 
 
-def credential_file_path():
-    return temp_dir() + "/" + constant.CREDENTIAL_NAME
-
-
-def convert_language_code(filetype):
-    return constant.LANG_DICT[filetype]
+    return language.LANGUAGE_DICT[language_name]
 
 
 def headers():
-    return {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
-    }
+    return {"User-Agent": constant.CUSTOM_HEADER}
 
 
 # File io

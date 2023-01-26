@@ -1,4 +1,6 @@
 import os
+
+from rich.console import Console
 import boj.core.auth as auth
 import boj.core.util as util
 import json
@@ -21,6 +23,7 @@ def run(args):
     util.write_file(util.key_file_path(), key, "wb")
     util.write_file(util.credential_file_path(), encrypted, "wb")
 
-    print("Login Success!")
+    console = Console()
+    console.print("[bold green]Login Success!")
 
     return

@@ -3,8 +3,6 @@ from boj.commands.submit import command as submit_command
 from boj.commands.problem import command as problem_command
 import argparse, os, traceback
 
-from boj.core.exception import LoginRequiredException, WrongAnswerException
-
 command_dict = {
     "login": login_command.run,
     "submit": submit_command.run,
@@ -16,11 +14,6 @@ def entry():
     parser = init_parser()
     try:
         gogosing(parser)
-    except WrongAnswerException as e:
-        exit(1)
-    except LoginRequiredException as e:
-        print(e)
-        exit(1)
     except Exception as e:
         print(e)
         traceback.print_exc()
@@ -55,8 +48,13 @@ def init_parser():
         type=validate_file,
         help="the file path of the sorce code",
     )
+    submit_parser.add_argument(
+        "-l", "--lang", help="the language to submit your source code as"
+    )
 
-    problem_parser = subparsers.add_parser("problem", help="shows the problem in terminal")
+    problem_parser = subparsers.add_parser(
+        "problem", help="shows the problem in terminal"
+    )
     problem_parser.add_argument(
         "id",
         metavar="PROBLEM_ID",

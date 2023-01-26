@@ -8,12 +8,8 @@ from rich.progress import (
     Progress,
     SpinnerColumn,
     TaskProgressColumn,
-    TextColumn,
     TimeElapsedColumn,
 )
-from rich.style import StyleType
-
-from boj.core.exception import WrongAnswerException
 
 
 class Detail:
@@ -72,7 +68,21 @@ async def connect(solution_id):
 
             keep_alive = True
             while keep_alive:
-                data = await websocket.recv()
+                try:
+                    global data
+                    data = await asyncio.wait_for(websocket.recv(), timeout=7)
+                except:
+                    message = Message(
+                        keep_alive=False,
+                        error=True,
+                        progress=cur_progress,
+                        color="blue",
+                        status="Unknow Error",
+                        details=[],
+                    )
+                    progress.stop()
+                    break
+
                 data_dict = json.loads(data)
                 message = await parse_message(data_dict)
                 keep_alive = message.keep_alive
@@ -105,7 +115,7 @@ async def connect(solution_id):
                 )
 
         if message.error:
-            raise WrongAnswerException()
+            exit(1)
 
 
 def make_subscribe_request(solution_id):

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from boj.core.exception import LoginRequiredException
+from rich.console import Console
 import boj.core.util as util
 
 
@@ -26,7 +26,7 @@ def query_csrf_key(url, cookies):
             csrf_key = i["value"]
 
     if not csrf_key:
-        raise Exception("Could not query csrf_key")
+        raise Exception("Could not query csrf_key.")
 
     return csrf_key
 
@@ -50,4 +50,4 @@ def send_source_code(url, cookies, payload):
 def check_login_status(input_tags):
     for i in input_tags:
         if i["name"] == "login_user_id":
-            raise LoginRequiredException()
+            raise Exception("Login Required.")
