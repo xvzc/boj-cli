@@ -90,6 +90,7 @@ def init_parser():
     run_args_parser.add_argument(
         "-v",
         "--verbose",
+        action='store_true',
         help="show detailed output",
     )
 

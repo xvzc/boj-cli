@@ -17,16 +17,16 @@ def run_compile(command, args):
                 stderr=PIPE,
             )
 
-            output, err = process.communicate()
+            out, err = process.communicate()
             console.log()
 
-            if output and args.verbose:
+            if out and args.verbose:
                 console.log("[bold yellow]Compile output:")
                 console.log(err.decode("utf-8"))
 
-            if output and args.verbose:
+            if err and args.verbose:
                 console.log("[bold yellow]Compile output:")
-                console.log(output.decode("utf-8"))
+                console.log(out.decode("utf-8"))
 
             if process.returncode != 0:
                 status.stop()
@@ -76,22 +76,23 @@ async def run_command_async(command, testcases: list, args):
             task_id = tasks[i]
 
             if out:
+                decoded_out = out.decode('utf-8')
+                if args.verbose:
+                    progress.console.log("[yellow]Run output:")
+                    progress.console.log(decoded_out)
+
+            if err:
                 decoded_err = out.decode('utf-8')
                 if args.verbose:
                     progress.console.log("[magenta]Runtime error:")
                     progress.console.log(decoded_err)
                     progress.update(task_id, description="Error  ")
 
-            if out:
-                decoded_out = out.decode('utf-8')
-                if args.verbose:
-                    progress.console.log("[yellow]Run output:")
-                    progress.console.log(decoded_out)
-
-                if answer.rstrip() == decoded_out.rstrip():
-                    progress.update(task_id, description="[white]TEST" + str(i) + "[green] Passed", completed=1)
-                else:
-                    progress.update(task_id, description="[white]TEST" + str(i) + "[red] Failed", completed=1)
-
             if process.returncode != 0:
                 progress.update(task_id, description="[white]TEST" + str(i) + "[magenta] Error", completed=1)
+
+            if answer.rstrip() == decoded_out.rstrip():
+                progress.update(task_id, description="[white]TEST" + str(i) + "[green] Passed", completed=1)
+            else:
+                progress.update(task_id, description="[white]TEST" + str(i) + "[red] Failed", completed=1)
+
