@@ -1,68 +1,97 @@
+import asyncio
 from subprocess import Popen, PIPE
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
+from boj.core.console import BojConsole
 
-def run_test(command, testcase_dict):
+
+def run_compile(command, args):
+    file = args.file
+    console = BojConsole()
+    with console.status("Compiling..") as status:
+        try:
+            command = command.replace("$file", file)
+            process = Popen(
+                str.split(command, " "),
+                stdout=PIPE,
+                stderr=PIPE,
+            )
+
+            output, err = process.communicate()
+            console.log()
+
+            if output and args.verbose:
+                console.log("[bold yellow]Compile output:")
+                console.log(err.decode("utf-8"))
+
+            if output and args.verbose:
+                console.log("[bold yellow]Compile output:")
+                console.log(output.decode("utf-8"))
+
+            if process.returncode != 0:
+                status.stop()
+                console.print_err("Compile error.")
+                exit(1)
+
+        except Exception as e:
+            console.log(e)
+            console.print_err("Compile error.")
+
+
+def run_test(command, testcase_dict, args):
     testcases = []
 
     for k in testcase_dict:
         testcases.append(testcase_dict[k])
 
-    run_command(command, testcases)
-
-    #
-    # asyncio.run(
-    #     run_command_async(
-    #         command,
-    #         testcases,
-    #     )
-    # )
+    asyncio.run(run_command_async(command, testcases, args))
 
 
-def run_command(command, testcases: list):
+async def run_command_async(command, testcases: list, args):
     progress = Progress(
         SpinnerColumn(style="white", finished_text="•"),
         TextColumn("[progress.description]{task.description}"),
         TimeElapsedColumn(),
+        console=BojConsole()
     )
 
     tasks = []
-    for t in testcases:
-        tasks.append(progress.add_task("Running", total=1))
+    for i in range(len(testcases)):
+        tasks.append(progress.add_task("[white]TEST" + str(i) + " Running", total=1))
 
     with progress:
-        for t in testcases:
-            process = Popen(
+        for i in range(len(testcases)):
+            process = await asyncio.create_subprocess_shell(
                 command,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
                 shell=True,
-                text=True,
-                stdin=PIPE,
-                stdout=PIPE,
-                stderr=PIPE,
             )
 
-            test_input = t["input"] if "input" in t else ""
-            answer = t["output"] if "output" in t else ""
+            test_input = testcases[i]["input"] if "input" in testcases[i] else ""
+            answer = testcases[i]["output"] if "output" in testcases[i] else ""
 
-            out, err = process.communicate(input=test_input)
-            task_id = tasks[testcases.index(t)]
-
-            if err:
-                progress.console.log("[magenta]Error:")
-                progress.console.log(err)
-                progress.update(task_id, description="Error  ")
+            out, err = await process.communicate(input=test_input.encode('utf-8'))
+            task_id = tasks[i]
 
             if out:
-                progress.console.log("[magenta]Output:")
-                progress.console.log(out)
-                if answer.rstrip() == out.rstrip():
-                    progress.update(task_id, description="Passed ", completed=1)
+                decoded_err = out.decode('utf-8')
+                if args.verbose:
+                    progress.console.log("[magenta]Runtime error:")
+                    progress.console.log(decoded_err)
+                    progress.update(task_id, description="Error  ")
+
+            if out:
+                decoded_out = out.decode('utf-8')
+                if args.verbose:
+                    progress.console.log("[yellow]Run output:")
+                    progress.console.log(decoded_out)
+
+                if answer.rstrip() == decoded_out.rstrip():
+                    progress.update(task_id, description="[white]TEST" + str(i) + "[green] Passed", completed=1)
+                else:
+                    progress.update(task_id, description="[white]TEST" + str(i) + "[red] Failed", completed=1)
 
             if process.returncode != 0:
-                print("hi3")
-                progress.update(task_id, description="Error  ", completed=1)
-
-    # if stdout:
-    #     print(f"[stdout]\n{stdout.decode()}")
-    # if stderr:
-    #     print(f"[stderr]\n{stderr.decode()}")
+                progress.update(task_id, description="[white]TEST" + str(i) + "[magenta] Error", completed=1)

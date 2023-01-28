@@ -1,4 +1,4 @@
-import os, ntpath, json, time
+import os, ntpath, json, time, yaml
 
 from rich.console import Console
 import boj.core.constant as constant
@@ -73,6 +73,28 @@ def read_credential():
     decrypted = auth.decrypt(key, credential)
 
     return json.loads(decrypted)
+
+
+def read_config():
+    config = None
+    try:
+        f = read_file(config_file_path(), "r")
+        config = json.loads(f)
+    except FileNotFoundError:
+        pass
+
+    return config
+
+
+def read_testcase():
+    testcases = None
+    try:
+        stream = read_file("./testcase.yaml", "r")
+        testcases = yaml.safe_load(stream)
+    except Exception as e:
+        pass
+
+    return testcases
 
 
 def read_solution(path):

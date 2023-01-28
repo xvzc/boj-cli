@@ -41,55 +41,60 @@ def init_parser():
     subparsers = parser.add_subparsers(dest="command")  # this line changed
 
     # Login command parser
-    login_parser = subparsers.add_parser(
+    login_args_parser = subparsers.add_parser(
         "login",
         help="logs in to BOJ",
     )
-    login_parser.add_argument(
+    login_args_parser.add_argument(
         "-u",
         "--user",
         help="username",
     )
-    login_parser.add_argument(
+    login_args_parser.add_argument(
         "-t",
         "--token",
         help="login token from the cookies",
     )
 
     # Submit command parser
-    submit_parser = subparsers.add_parser("submit", help="submits your code")
-    submit_parser.add_argument(
+    submit_args_parser = subparsers.add_parser("submit", help="submits your code")
+    submit_args_parser.add_argument(
         "file",
         metavar="FILE",
         type=validate_file,
         help="the file path of the sorce code",
     )
-    submit_parser.add_argument(
+    submit_args_parser.add_argument(
         "-l",
         "--lang",
         help="the language to submit your source code as",
     )
 
-    problem_parser = subparsers.add_parser(
+    problem_args_parser = subparsers.add_parser(
         "problem", help="shows the problem in terminal"
     )
-    problem_parser.add_argument(
+    problem_args_parser.add_argument(
         "id",
         metavar="PROBLEM_ID",
         type=int,
         help="the problem id",
     )
 
-    test_parser = subparsers.add_parser("run", help="run testcases")
-    test_parser.add_argument(
+    run_args_parser = subparsers.add_parser("run", help="run testcases")
+    run_args_parser.add_argument(
         "file",
         metavar="FILE",
         type=validate_file,
-        help="the file path of the sorce code",
+        help="the file path of the source code",
+    )
+    run_args_parser.add_argument(
+        "-v",
+        "--verbose",
+        help="show detailed output",
     )
 
-    create_parser = subparsers.add_parser("init", help="init testcases")
-    create_parser.add_argument(
+    init_args_parser = subparsers.add_parser("init", help="init testcases")
+    init_args_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         type=int,

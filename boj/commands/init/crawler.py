@@ -23,7 +23,7 @@ def extract_testcases(html):
 
     testcases = {}
     for i in range(len(inputs)):
-        test_name = "run" + str(i + 1)
+        test_name = "test" + str(i + 1)
         testcases[test_name] = {}
 
         # Prepend some complicated string just in case that testcases contain
