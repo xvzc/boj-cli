@@ -1,22 +1,16 @@
-import json
+import json, time
 from boj.commands.submit import crawler as crawler, websocket
 import boj.core.util as util
-from time import sleep
-from rich.console import Console
+from boj.core.console import BojConsole
 
 
 def run(args):
-    console = Console()
+    console = BojConsole()
 
-    with console.status(
-        "[bold yellow]Loading source code...",
-        spinner_style="white",
-    ) as status:
-        problem = util.read_problem(args.file)
-        sleep(0.4)
+    with console.status("Loading source file...") as status:
+        problem = util.read_solution(args.file)
 
-        status.update("[bold yellow]Authenticating...")
-
+        status.update("Authenticating...")
         credential = util.read_credential()
         online_judge = crawler.query_online_judge_token(util.home_url())
         cookies = {
@@ -25,12 +19,10 @@ def run(args):
         }
 
         submit_url = util.submit_url(problem.id)
-        try:
-            global csrf_key
-            csrf_key = crawler.query_csrf_key(submit_url, cookies)
-        except Exception as e:
+        csrf_key = crawler.query_csrf_key(submit_url, cookies)
+        if not csrf_key:
             status.stop()
-            console.print("[bold red]" + str(e))
+            console.print_err("Authentication failed.")
             exit(1)
 
         # Set payload for the submit request
@@ -47,25 +39,26 @@ def run(args):
         else:
             try:
                 f = util.read_file(util.config_file_path(), "r")
+
                 config = json.loads(f)
-                default_language = config["default_language"][problem.filetype]
+                filetype_config = config["filetype"][problem.filetype]
+                default_language = filetype_config["default_language"]
+
                 payload["language"] = util.convert_language_code(default_language)
-                console.log("[blue]lang [white]option is not provided.")
-            except Exception:
+
+                console.log("Default language option is not provided, continuing with your local config.")
+                time.sleep(0.7)
+            except:
                 status.stop()
-                console.print(
-                    "[white]Default language for the given filetype "
-                    + "[bold blue]"
-                    + problem.filetype
-                    + " [white]is not set"
-                )
-                console.print(
-                    "[white]Please set your default languages for certain filetypes in the config file"
-                )
-                console.print("[white] - Config path: " + util.config_file_path())
+
+                console.print_err("Default language for the filetype " + problem.filetype + " is not set.")
+                console.print_err("Please set your config for this filetype.")
+                console.print_err(" - Config file path: " + util.config_file_path())
                 exit(1)
 
-        status.update("[bold yellow]Submitting source code...")
+        status.update("Submitting source code...")
         solution_id = crawler.send_source_code(submit_url, cookies, payload)
+
+        console.log("Submission succeeded.")
 
     websocket.trace(solution_id)

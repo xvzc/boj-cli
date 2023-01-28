@@ -1,10 +1,6 @@
-class Problem:
-    id: str
-    filetype: str
-    source: str
-
-    def __init__(self, id, filetype, source):
-        self.id = id
+class Solution:
+    def __init__(self, problem_id, filetype, source):
+        self.id = problem_id
         self.filetype = filetype 
         self.source = source
 

@@ -1,3 +1,6 @@
+testcase.yaml
+*.out
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -37,7 +40,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit run / coverage reports
 htmlcov/
 .tox/
 .nox/

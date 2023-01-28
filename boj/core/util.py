@@ -1,17 +1,19 @@
-import os, ntpath, json
+import os, ntpath, json, time
 
 from rich.console import Console
 import boj.core.constant as constant
 import boj.core.language as language
 import boj.core.auth as auth
-from boj.core.problem import Problem
+from boj.core.solution import Solution
 
 
 def temp_dir():
     return str(os.getenv("HOME")) + constant.DIR
 
+
 def config_file_path():
     return str(os.getenv("HOME")) + constant.DIR + "/" + constant.CONFIG_FILE_NAME
+
 
 def key_file_path():
     return temp_dir() + "/" + constant.KEY_FILE_NAME
@@ -19,6 +21,7 @@ def key_file_path():
 
 def credential_file_path():
     return temp_dir() + "/" + constant.CREDENTIAL_FILE_NAME
+
 
 def home_url():
     return constant.BOJ_URL
@@ -36,12 +39,10 @@ def websocket_url():
     return constant.WEBSOCKET_URL
 
 
-
 def convert_language_code(language_name):
     if language_name not in language.LANGUAGE_DICT:
         console = Console()
         console.print(language_name + " is not a supported language")
-
 
     return language.LANGUAGE_DICT[language_name]
 
@@ -52,6 +53,9 @@ def headers():
 
 # File io
 def read_file(path, opt):
+    if not os.path.isfile(path):
+        raise FileNotFoundError()
+
     with open(path, opt) as file:
         data = file.read()
 
@@ -71,10 +75,11 @@ def read_credential():
     return json.loads(decrypted)
 
 
-def read_problem(path):
+def read_solution(path):
     source = read_file(path, "r")
-    id, filetype = parse_path(path)
-    return Problem(id, filetype, source)
+    problem_id, filetype = parse_path(path)
+    time.sleep(0.3)
+    return Solution(problem_id, filetype, source)
 
 
 # Print

@@ -1,4 +1,4 @@
-import requests
+import requests, time
 from bs4 import BeautifulSoup
 from rich.console import Console
 import boj.core.util as util
@@ -25,8 +25,7 @@ def query_csrf_key(url, cookies):
         if i["name"] == "csrf_key":
             csrf_key = i["value"]
 
-    if not csrf_key:
-        raise Exception("Could not query csrf_key.")
+    time.sleep(0.5)
 
     return csrf_key
 

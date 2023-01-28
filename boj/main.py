@@ -1,14 +1,16 @@
 from boj.commands.login import command as login_command
 from boj.commands.submit import command as submit_command
 from boj.commands.problem import command as problem_command
-from boj.commands.test import command as test_command
+from boj.commands.init import command as init_command
+from boj.commands.run import command as run_command
 import argparse, os, traceback
 
 command_dict = {
     "login": login_command.run,
     "submit": submit_command.run,
     "problem": problem_command.run,
-    "test": test_command.run,
+    "init": init_command.run,
+    "run": run_command.run,
 }
 
 
@@ -18,6 +20,7 @@ def entry():
         gogosing(parser)
     except Exception as e:
         print(e)
+        # Persona
         traceback.print_exc()
         exit(1)
 
@@ -77,19 +80,20 @@ def init_parser():
         help="the problem id",
     )
 
-    test_parser = subparsers.add_parser("test", help="run testcases")
+    test_parser = subparsers.add_parser("run", help="run testcases")
     test_parser.add_argument(
         "file",
         metavar="FILE",
         type=validate_file,
         help="the file path of the sorce code",
     )
-    submit_parser.add_argument(
-        "-c",
-        "--create",
-        type=bool,
-        default=False,
-        help=" if true, query and creates testcase file",
+
+    create_parser = subparsers.add_parser("init", help="init testcases")
+    create_parser.add_argument(
+        "problem_id",
+        metavar="PROBLEM_ID",
+        type=int,
+        help="problem id",
     )
 
     return parser
