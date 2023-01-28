@@ -21,6 +21,6 @@ def markdownify_problem(html, problem_id):
     ## Prettify
     problem_html = re.sub(r"<button.+\n", "", problem_html)
     problem_html = re.sub(r"h2", "h1", problem_html)
-    problem_html += "LINK: " + util.problem_url(problem_id) + "\n"
+    problem_html += "View in browser: " + util.problem_url(problem_id) + "\n"
 
     return markdownify.markdownify(problem_html)

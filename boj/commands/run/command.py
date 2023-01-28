@@ -51,4 +51,4 @@ def run(args):
         console.print_err("Run command not found.")
         exit(1)
 
-    runner.run_test(command, testcases, args)
+    runner.run_testcases(command, testcases, args)
