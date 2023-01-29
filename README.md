@@ -51,6 +51,10 @@ ex) boj submit ~/1000.cpp --lang c++17
 ! lang 옵션이 주어지지 않았다면 local configuration 값으로 실행됩니다.
 ```
 > lang 옵션으로 설정할 수 있는 값은 [여기](https://github.com/xvzc/boj-cli/blob/main/boj/core/__init__.py#L12)에서 **LANGUAGE_DICT** 변수의 키값들을 확인해주세요.  
+ 
+> 매번 인자를 넣지 않아도 파일타입에 따른 기본 언어 설정을 할 수 있습니다.
+> [예제](https://github.com/xvzc/boj-cli/blob/main/config_example.json)를 참고해주세요.  
+> 설정 파일의 위치는 `~/.boj-cli/config.json` 입니다. 파일을 생성해주세요.
 
 
 ## boj problem
