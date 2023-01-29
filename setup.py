@@ -4,12 +4,12 @@ setup(
     entry_points={
         "console_scripts": ["boj=boj.main:entry"],
     },
+    version='0.0.1',
     name="boj-cli",
     author="xvzc",
     url="https://github.com/xvzc/boj-cli",
     install_requires=[
         "beautifulsoup4==4.11.1",
-        "boj-cli==0.0.0",
         "certifi==2022.12.7",
         "cffi==1.15.1",
         "charset-normalizer==3.0.1",
