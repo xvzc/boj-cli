@@ -16,7 +16,6 @@ setup(
         "cryptography==39.0.0",
         "greenlet==2.0.1",
         "idna==3.4",
-        "markdown-it-py==2.1.0",
         "markdownify==0.11.6",
         "mdurl==0.1.2",
         "msgpack==1.0.4",

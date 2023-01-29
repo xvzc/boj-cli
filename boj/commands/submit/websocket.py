@@ -70,7 +70,7 @@ async def connect(solution_id):
             while keep_alive:
                 try:
                     global data
-                    data = await asyncio.wait_for(websocket.recv(), timeout=7)
+                    data = await asyncio.wait_for(websocket.recv(), timeout=15)
                 except:
                     message = Message(
                         keep_alive=False,
