@@ -1,10 +1,11 @@
-from rich.console import Console
-from rich.markdown import Markdown
-from boj.commands.problem import crawler as crawler
+from boj.core import util
+import webbrowser
+
+from boj.core.console import BojConsole
 
 
 def execute(args):
-    html = crawler.query_problem(args.id)
-    md = crawler.markdownify_problem(html, args.id)
-    console = Console(width=85)
-    console.print(Markdown(md))
+    console = BojConsole()
+    with console.status("Opening in browser..."):
+        webbrowser.open(util.problem_url(args.id))
+

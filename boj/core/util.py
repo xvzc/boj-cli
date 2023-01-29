@@ -39,6 +39,18 @@ def websocket_url():
     return boj.core.WEBSOCKET_URL
 
 
+def solvedac_home_url():
+    return boj.core.SOVEDAC_URL
+
+
+def solvedac_search_url():
+    return solvedac_home_url() + "/search"
+
+
+def solvedac_search_problem_url():
+    return solvedac_search_url() + "/problem"
+
+
 def convert_language_code(language_name):
     if language_name not in boj.core.LANGUAGE_DICT:
         console = Console()

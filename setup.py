@@ -23,11 +23,12 @@ setup(
         "pycparser==2.21",
         "Pygments==2.14.0",
         "requests==2.28.2",
-        "rich==13.2.0",
+        "rich<13.0.0",
         "six==1.16.0",
         "soupsieve==2.3.2.post1",
         "urllib3==1.26.14",
         "websockets==10.4",
         "PyYAML==6.0",
+        "connect-markdown-renderer== 2.0.1",
     ],
 )

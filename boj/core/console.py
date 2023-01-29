@@ -1,8 +1,8 @@
-from typing import Optional, Any, Union
+from typing import Optional
 
-from rich.console import Console, JustifyMethod
+from rich.console import Console
 from rich.status import Status, RenderableType
-from rich.style import StyleType, Style
+from rich.style import StyleType
 
 
 class BojConsole(Console):
@@ -24,7 +24,7 @@ class BojConsole(Console):
             refresh_per_second: float = 12.5,
     ) -> "Status":
         status_renderable = BojStatus(
-            "[bold yellow]"+status,
+            "[bold yellow]" + status,
             console=self,
             spinner=spinner,
             spinner_style="white",

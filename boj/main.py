@@ -1,5 +1,5 @@
 from boj import args_resolver
-from boj.commands import login, submit, problem, init, run
+from boj.commands import login, submit, problem, init, run, random
 import traceback
 
 command_dict = {
@@ -8,6 +8,7 @@ command_dict = {
     "problem": problem.execute,
     "init": init.execute,
     "run": run.execute,
+    "random": random.execute,
 }
 
 

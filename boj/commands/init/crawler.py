@@ -1,12 +1,21 @@
 from bs4 import BeautifulSoup
 import yaml
+import requests
+
+from boj.core import util
 
 from boj.core import SALT
 
 
+# Returns markdown
+def query_problem(problem_id):
+    res = requests.get(util.problem_url(problem_id), headers=util.headers())
+    return res.text
+
+
 def extract_testcases(html):
     soup = BeautifulSoup(html, "html.parser")
-    sample_data = soup.select("pre")
+    sample_data = soup.select("pre.sampledata")
 
     inputs = []
     outputs = []

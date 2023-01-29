@@ -40,7 +40,7 @@ def create_parser():
     )
 
     problem_parser = subparsers.add_parser(
-        "problem", help="show markdown-like problem in terminal"
+        "problem", help="view problem in browser"
     )
     problem_parser.add_argument(
         "id",
@@ -77,6 +77,29 @@ def create_parser():
         help="problem id",
     )
 
+    random_parser = subparsers.add_parser("random", help="view random problem in browser")
+    random_parser.add_argument(
+        "tier",
+        metavar="TIER",
+        type=validate_tier,
+        help="tier",
+    )
+    random_parser.add_argument(
+        "--easy",
+        action='store_true',
+        help="5",
+    )
+    random_parser.add_argument(
+        "--normal",
+        action='store_true',
+        help="3 ~ 4",
+    )
+    random_parser.add_argument(
+        "--hard",
+        action='store_true',
+        help="1 ~ 2",
+    )
+
     return parser
 
 
@@ -85,3 +108,11 @@ def validate_file(file):
         return file
     else:
         raise argparse.ArgumentTypeError(f"'{file}' No such file.")
+
+
+def validate_tier(tier):
+    allowed_tier = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
+    if tier not in allowed_tier:
+        raise argparse.ArgumentTypeError(f"available values for tier parameter: {allowed_tier}")
+
+    return tier
