@@ -1,6 +1,9 @@
 # boj-cli
 
-백준 온라인 저지 커맨드라인 인터페이스 
+백준 온라인 저지 커맨드라인 인터페이스  
+![Jan-29-2023 21-44-09](https://user-images.githubusercontent.com/45588457/215326994-7df5f0bd-1330-423a-981a-0d3e7e57da03.gif)
+
+
 
 # 설치
 `$ pip3 install boj-cli`
