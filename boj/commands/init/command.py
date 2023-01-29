@@ -4,12 +4,12 @@ from boj.commands.init import crawler
 from boj.core import util
 import time
 
-def run(args):
-    console = Console()
-    with console.status(
-        "[bold yellow]Creating testcases...",
-        spinner_style="white",
-    ) as status:
+from boj.core.console import BojConsole
+
+
+def execute(args):
+    console = BojConsole()
+    with console.status("Creating testcases...") as status:
         time.sleep(0.5)
         html = query_problem(args.problem_id)
         testcases = crawler.extract_testcases(html)

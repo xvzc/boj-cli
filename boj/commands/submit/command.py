@@ -4,7 +4,7 @@ import boj.core.util as util
 from boj.core.console import BojConsole
 
 
-def run(args):
+def execute(args):
     console = BojConsole()
 
     with console.status("Loading source file...") as status:
@@ -12,6 +12,10 @@ def run(args):
 
         status.update("Authenticating...")
         credential = util.read_credential()
+        if not credential:
+            status.stop()
+            console.print_err("Login required.")
+
         online_judge = crawler.query_online_judge_token(util.home_url())
         cookies = {
             "bojautologin": credential["token"],

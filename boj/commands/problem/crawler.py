@@ -9,6 +9,7 @@ def query_problem(problem_id):
     res = requests.get(util.problem_url(problem_id), headers=util.headers())
     return res.text
 
+
 def markdownify_problem(html, problem_id):
     soup = BeautifulSoup(html, "html.parser")
 
@@ -18,7 +19,7 @@ def markdownify_problem(html, problem_id):
     for div in problem_sections:
         problem_html += str(div) + "\n"
 
-    ## Prettify
+    # Prettify
     problem_html = re.sub(r"<button.+\n", "", problem_html)
     problem_html = re.sub(r"h2", "h1", problem_html)
     problem_html += "View in browser: " + util.problem_url(problem_id) + "\n"

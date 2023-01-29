@@ -24,7 +24,7 @@ class BojConsole(Console):
             refresh_per_second: float = 12.5,
     ) -> "Status":
         status_renderable = BojStatus(
-            status,
+            "[bold yellow]"+status,
             console=self,
             spinner=spinner,
             spinner_style="white",

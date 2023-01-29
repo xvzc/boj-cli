@@ -1,30 +1,30 @@
 import os, ntpath, json, time, yaml
 
 from rich.console import Console
-import boj.core.constant as constant
-import boj.core.language as language
+
+import boj.core
 import boj.core.auth as auth
 from boj.core.solution import Solution
 
 
 def temp_dir():
-    return str(os.getenv("HOME")) + constant.DIR
+    return str(os.getenv("HOME")) + boj.core.DIR
 
 
 def config_file_path():
-    return str(os.getenv("HOME")) + constant.DIR + "/" + constant.CONFIG_FILE_NAME
+    return str(os.getenv("HOME")) + boj.core.DIR + "/" + boj.core.CONFIG_FILE_NAME
 
 
 def key_file_path():
-    return temp_dir() + "/" + constant.KEY_FILE_NAME
+    return temp_dir() + "/" + boj.core.KEY_FILE_NAME
 
 
 def credential_file_path():
-    return temp_dir() + "/" + constant.CREDENTIAL_FILE_NAME
+    return temp_dir() + "/" + boj.core.CREDENTIAL_FILE_NAME
 
 
 def home_url():
-    return constant.BOJ_URL
+    return boj.core.BOJ_URL
 
 
 def submit_url(problem_id):
@@ -36,25 +36,25 @@ def problem_url(problem_id):
 
 
 def websocket_url():
-    return constant.WEBSOCKET_URL
+    return boj.core.WEBSOCKET_URL
 
 
 def convert_language_code(language_name):
-    if language_name not in language.LANGUAGE_DICT:
+    if language_name not in boj.core.LANGUAGE_DICT:
         console = Console()
         console.print(language_name + " is not a supported language")
 
-    return language.LANGUAGE_DICT[language_name]
+    return boj.core.LANGUAGE_DICT[language_name]
 
 
 def headers():
-    return {"User-Agent": constant.USER_AGENT}
+    return {"User-Agent": boj.core.USER_AGENT}
 
 
 # File io
 def read_file(path, opt):
     if not os.path.isfile(path):
-        raise FileNotFoundError()
+        return None
 
     with open(path, opt) as file:
         data = file.read()
@@ -69,7 +69,13 @@ def write_file(path, data, opt):
 
 def read_credential():
     key = read_file(key_file_path(), "rb")
+    if not key:
+        return None
+
     credential = read_file(credential_file_path(), "rb")
+    if not credential:
+        return None
+
     decrypted = auth.decrypt(key, credential)
 
     return json.loads(decrypted)
@@ -80,8 +86,8 @@ def read_config():
     try:
         f = read_file(config_file_path(), "r")
         config = json.loads(f)
-    except FileNotFoundError:
-        pass
+    except:
+        return None
 
     return config
 
@@ -91,10 +97,9 @@ def read_testcase():
     try:
         stream = read_file("./testcase.yaml", "r")
         testcases = yaml.safe_load(stream)
-    except Exception as e:
-        pass
-
-    return testcases
+        return testcases
+    except:
+        return None
 
 
 def read_solution(path):

@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import yaml
 
-salt = "!@r1Of0J$e1!_^3+#bI&9a@9&ef^*=2A@5dae6*ea$Uf"
+from boj.core import SALT
 
 
 def extract_testcases(html):
@@ -30,16 +30,16 @@ def extract_testcases(html):
         # such strings like input.*, output.*, or run[0-9]
 
         if inputs[i]:
-            testcases[test_name]["input"] = salt + inputs[i] + "\n"
+            testcases[test_name]["input"] = SALT + inputs[i] + "\n"
         if outputs[i]:
-            testcases[test_name]["output"] = salt + outputs[i] + "\n"
+            testcases[test_name]["output"] = SALT + outputs[i] + "\n"
 
     return testcases
 
 
 def str_presenter(dumper, data):
-    if isinstance(data, str) and data.startswith(salt):
-        data = data.replace(salt, "")
+    if isinstance(data, str) and data.startswith(SALT):
+        data = data.replace(SALT, "")
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
 
     return dumper.represent_scalar("tag:yaml.org,2002:str", data)

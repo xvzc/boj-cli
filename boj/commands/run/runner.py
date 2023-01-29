@@ -1,10 +1,8 @@
 import asyncio
 from subprocess import Popen, PIPE
-from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from boj.core.console import BojConsole
-
-LABEL_LENGTH = 9
 
 
 def run_compile(command, args):
@@ -59,7 +57,7 @@ def run_testcases(command, testcase_dict, args):
         task_ids = []
         for i in range(num_of_testcases):
             task_ids.append(progress.add_task(
-                "[white]TEST #" + str(i) + create_label("Running"), total=1)
+                create_testcase_label(i) + create_status_label("yellow", "Running"), total=1)
             )
 
         futures = []
@@ -103,42 +101,42 @@ async def run_testcase_async(command, testcase, test_index, args, progress, task
 
         if out and args.verbose:
             progress.console.log(
-                "[white]TEST #" + str(test_index)
-                + "[bold blue]" + create_label("Run output") + ": "
+                create_testcase_label(test_index)
+                + create_status_label("bold blue", "Run output") + ": "
             )
             progress.console.log(out)
 
         if err and args.verbose:
             progress.console.log(
-                "[white]TEST #" + str(test_index)
-                + "[magenta]" + create_label("Runtime error") + ":"
+                create_testcase_label(test_index)
+                + create_status_label("magenta", "Runtime error") + ":"
             )
             progress.console.log(err)
 
         if process.returncode != 0:
             progress.update(task_id,
-                            description="[white]TEST #" + str(test_index)
-                                        + "[magenta]" + create_label("Error"),
+                            description=create_testcase_label(test_index) + create_status_label("magenta", "Error"),
                             completed=1)
             return
 
         if answer.rstrip() == out:
             progress.update(task_id,
-                            description="[white]TEST #" + str(test_index)
-                                        + "[green]" + create_label("Passed"),
+                            description=create_testcase_label(test_index) + create_status_label("green", "Passed"),
                             completed=1)
         else:
             progress.update(task_id,
-                            description="[white]TEST #" + str(test_index)
-                                        + "[red]" + create_label("Failed"),
+                            description=create_testcase_label(test_index) + create_status_label("red", "Failed"),
                             completed=1)
     except asyncio.exceptions.TimeoutError:
         progress.update(task_id,
-                        description="[white]TEST #" + str(test_index)
-                                    + "[magenta]" + create_label("Timed out"),
+                        description=create_testcase_label(test_index) + create_status_label("magenta", "Timed out"),
                         completed=1)
         return
 
 
-def create_label(label):
-    return " " + label.ljust(9, " ")
+def create_status_label(color, label):
+    return "[" + color + "]" + label.ljust(9, " ")
+
+
+def create_testcase_label(index):
+    return ("[white]TEST [cyan]#" + str(index)).ljust(22, " ")

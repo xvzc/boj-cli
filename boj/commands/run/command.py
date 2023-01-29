@@ -1,13 +1,11 @@
 import time
-import yaml
 from boj.commands.run import runner
 import boj.core.util as util
-import json
 
 from boj.core.console import BojConsole
 
 
-def run(args):
+def execute(args):
     console = BojConsole()
 
     with console.status("Loading source file...") as status:
