@@ -33,7 +33,7 @@
 $ boj run ~/{FILE_PATH}
 ex) $ boj run ~/1000.cpp
 ```
-### Options
+### options
 ```
 -v || --verbose : 자세한 아웃풋을 출력합니다. (예: 컴파일 에러)  
 -t || --timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (Default: 5초)
@@ -45,7 +45,7 @@ ex) $ boj run ~/1000.cpp
 $ boj submit ~/{FILE_PATH}
 ex) boj submit ~/1000.cpp --lang c++17
 ```
-### Options
+### options
 ```
 -l || --lang: 제출할 언어를 선택합니다.
 ! lang 옵션이 주어지지 않았다면 local configuration 값으로 실행됩니다.
@@ -66,7 +66,7 @@ ex) boj problem 1234
 $ boj random {tier} --{level}
 ex) boj random bronze --easy
 ```
-### Options
+### options
 ```
 --easy: 5티어 문제만
 --normal: 3 ~ 4티어 문제
