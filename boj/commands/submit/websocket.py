@@ -64,13 +64,12 @@ async def connect(solution_id):
         async with client.connect(util.websocket_url()) as websocket:
             await websocket.send(json.dumps(make_subscribe_request(solution_id)))
 
-            global message
-
             keep_alive = True
             while keep_alive:
                 try:
-                    global data
-                    data = await asyncio.wait_for(websocket.recv(), timeout=15)
+                    data = await asyncio.wait_for(websocket.recv(), timeout=20)
+                    data_dict = json.loads(data)
+                    message = await parse_message(data_dict)
                 except:
                     message = Message(
                         keep_alive=False,
@@ -83,8 +82,6 @@ async def connect(solution_id):
                     progress.stop()
                     break
 
-                data_dict = json.loads(data)
-                message = await parse_message(data_dict)
                 keep_alive = message.keep_alive
                 if not keep_alive:
                     progress.update(
@@ -99,9 +96,6 @@ async def connect(solution_id):
                     task,
                     completed=message.progress,
                 )
-
-            if message == None:
-                raise Exception("Websocket error")
 
             console = Console()
             console.print(
@@ -158,7 +152,7 @@ async def parse_message(message: dict):
 
     if data["result"] <= 2:
         return Message(
-            keep_alive=False,
+            keep_alive=True,
             error=False,
             progress=0,
             color="green",
