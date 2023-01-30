@@ -156,7 +156,7 @@ async def parse_message(message: dict):
             error=False,
             progress=0,
             color="green",
-            status="Accepted",
+            status="Waiting",
             details=[],
         )
 
@@ -179,6 +179,9 @@ async def parse_message(message: dict):
             Detail(name="Memory", description=str(data["memory"]) + " kb"),
             Detail(name="Time  ", description=str(data["time"]) + " ms"),
         ]
+
+        if "subtask_score" in data:
+            details.append(Detail(name="Score ", description=str(data["subtask_score"])))
 
         return Message(
             keep_alive=False,
