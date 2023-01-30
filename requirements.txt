@@ -4,5 +4,4 @@ rich~=13.2.0
 beautifulsoup4~=4.11.1
 requests~=2.28.2
 websockets~=10.4
-markdownify~=0.11.6
 setuptools~=65.4.1

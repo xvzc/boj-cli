@@ -1,9 +1,18 @@
 import argparse
 import os
+import pkg_resources  # part of setuptools
 
 
 def create_parser():
     parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=print_version(),
+        help="show version",
+    )
 
     subparsers = parser.add_subparsers(dest="command")  # this line changed
 
@@ -101,6 +110,11 @@ def create_parser():
     )
 
     return parser
+
+
+def print_version():
+    version_info = str(pkg_resources.require("boj-cli")[0]).strip()
+    return version_info
 
 
 def validate_file(file):

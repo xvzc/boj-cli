@@ -16,7 +16,12 @@ def entry():
     parser = args_resolver.create_parser()
     try:
         args = parser.parse_args()
+        if args.command is None:
+            raise NotImplementedError()
+
         command_dict[args.command](args)
+    except NotImplementedError:
+        parser.print_help()
     except Exception as e:
         print(e)
         traceback.print_exc()

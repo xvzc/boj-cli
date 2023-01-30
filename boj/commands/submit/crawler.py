@@ -16,7 +16,10 @@ def query_csrf_key(url, cookies):
     soup = BeautifulSoup(html, "html.parser")
 
     input_tags = soup.select("input")
-    check_login_status(input_tags)
+    try:
+        check_login_status(input_tags)
+    except PermissionError:
+        return ""
 
     # Get the csrf_key
     csrf_key = ""
@@ -48,4 +51,4 @@ def send_source_code(url, cookies, payload):
 def check_login_status(input_tags):
     for i in input_tags:
         if i["name"] == "login_user_id":
-            raise Exception("Login Required.")
+            raise PermissionError()
