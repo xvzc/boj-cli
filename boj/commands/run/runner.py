@@ -20,15 +20,17 @@ def run_compile(command, args):
             )
 
             out, err = process.communicate()
-            console.log("-------------------------------")
+            console.log("-----------------------------------")
 
             if out and args.verbose:
                 console.log("[bold white]Compile output:")
                 console.log(out)
+                console.log("-----------------------------------")
 
             if err and args.verbose:
                 console.log("[bold white]Compile output:")
                 console.log(err)
+                console.log("-----------------------------------")
 
             if process.returncode != 0:
                 status.stop()
@@ -105,6 +107,7 @@ async def run_testcase_async(command, testcase, test_index, args, progress, task
                 + create_status_label("bold blue", "Run output") + ": "
             )
             progress.console.log(out)
+            progress.console.log("-----------------------------------")
 
         if err and args.verbose:
             progress.console.log(
@@ -112,6 +115,7 @@ async def run_testcase_async(command, testcase, test_index, args, progress, task
                 + create_status_label("magenta", "Runtime error") + ":"
             )
             progress.console.log(err)
+            progress.console.log("-----------------------------------")
 
         if process.returncode != 0:
             progress.update(task_id,
