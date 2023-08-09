@@ -1,7 +1,7 @@
 # boj-cli
 
 백준 온라인 저지 커맨드라인 인터페이스  
-<img src="https://github.com/xvzc/boj-cli/assets/45588457/f6fcf5b8-b5bd-4674-b018-c6574e98b1c4" width="50%" height="50%">
+<img src="https://github.com/xvzc/boj-cli/assets/45588457/f6fcf5b8-b5bd-4674-b018-c6574e98b1c4" width="65%" height="65%">
 
 # 설치
 `$ pip3 install boj-cli`
