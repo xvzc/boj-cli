@@ -1,11 +1,18 @@
 from setuptools import setup
-import re
+import os
+import version
+
+latest_version = version.get_latest_version('boj-cli')
+if "BOJ_CLI_NEXT_VERSION" in os.environ:
+    cur_version: str = os.environ['BOJ_CLI_NEXT_VERSION']
+else:
+    cur_version= str(latest_version)
 
 setup(
     entry_points={
         "console_scripts": ["boj=boj.main:entry"],
     },
-    version="0.1.0",
+    version=cur_version,
     name="boj-cli",
     author="xvzc",
     url="https://github.com/xvzc/boj-cli",
