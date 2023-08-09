@@ -1,5 +1,6 @@
 import os
 import time
+from getpass import getpass
 
 import boj.core.auth as auth
 import boj.core.util as util
@@ -11,9 +12,12 @@ from boj.commands.submit import crawler as submit_crawler
 
 
 def execute(args):
+    user = input("Username: ")
+    token = getpass(prompt="Session-key: ")
+
     credential = {
-        "user": args.user,
-        "token": args.token,
+        "user": user,
+        "token": token,
     }
     console = BojConsole()
 
@@ -30,21 +34,22 @@ def execute(args):
         except OSError as e:
             raise e
 
-        status.update("Writing to file...")
+        status.update("Checking session...")
+        online_judge = submit_crawler.query_online_judge_token(util.home_url())
+        login_status = login_crawler.check_login_status(
+            url=util.home_url(),
+            username=credential['user'],
+            bojautologin=credential['token'],
+            online_judge=online_judge,
+        )
+
+    if login_status:
+        status.update("Writing encrypted credentials to file...")
         time.sleep(0.3)
         util.write_file(util.key_file_path(), key, "wb")
         util.write_file(util.credential_file_path(), encrypted, "wb")
 
-        status.update("Checking session...")
-        online_judge = submit_crawler.query_online_judge_token(util.home_url())
-        token = login_crawler.query_autologin_token(
-            url=util.home_url(),
-            bojautologin=credential['token'],
-            online_judge=online_judge
-        )
-
-    if token == credential['token']:
-        console.print("[green]Login success")
+        console.print("[green]Login succeeded")
         return
 
     console.print("[red]Login failed")

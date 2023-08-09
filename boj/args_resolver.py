@@ -21,18 +21,6 @@ def create_parser():
         "login",
         help="log in to BOJ",
     )
-    login_parser.add_argument(
-        "-u",
-        "--user",
-        required=True,
-        help="username",
-    )
-    login_parser.add_argument(
-        "-t",
-        "--token",
-        required=True,
-        help="auto login token",
-    )
 
     # Submit command parser
     submit_parser = subparsers.add_parser("submit", help="submit your solution")

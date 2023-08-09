@@ -38,11 +38,19 @@ class Message:
             + "}"
         )
 
+    @staticmethod
+    def unknown_error():
+        return Message(
+            keep_alive=False,
+            error=True,
+            progress=cur_progress,
+            color="blue",
+            status="Unknow Error",
+            details=[],
+        )
+
 
 def trace(solution_id):
-    global cur_progress
-    cur_progress = 0
-
     try:
         asyncio.run(connect(solution_id))
     except KeyboardInterrupt:
@@ -64,38 +72,29 @@ async def connect(solution_id):
         async with client.connect(util.websocket_url()) as websocket:
             await websocket.send(json.dumps(make_subscribe_request(solution_id)))
 
+            cur_progress = 0
+
             keep_alive = True
             while keep_alive:
                 try:
                     data = await asyncio.wait_for(websocket.recv(), timeout=20)
                     data_dict = json.loads(data)
                     message = await parse_message(data_dict)
+                    cur_progress = max(message.progress, cur_progress)
                 except:
-                    message = Message(
-                        keep_alive=False,
-                        error=True,
-                        progress=cur_progress,
-                        color="blue",
-                        status="Unknow Error",
-                        details=[],
-                    )
-                    progress.stop()
+                    message = Message.unknown_error()
                     break
 
                 keep_alive = message.keep_alive
-                if not keep_alive:
-                    progress.update(
-                        task,
-                        completed=message.progress,
-                    )
-
-                    progress.stop()
-                    break
-
                 progress.update(
                     task,
-                    completed=message.progress,
+                    completed=cur_progress,
                 )
+
+                if not keep_alive:
+                    break
+
+            progress.stop()
 
             console = Console()
             console.print(
@@ -108,9 +107,6 @@ async def connect(solution_id):
                     style="white",
                 )
 
-        if message.error:
-            exit(1)
-
 
 def make_subscribe_request(solution_id):
     return {
@@ -120,8 +116,6 @@ def make_subscribe_request(solution_id):
 
 
 async def parse_message(message: dict):
-    global cur_progress
-
     if message["event"] == "pusher:connection_established":
         return Message(
             keep_alive=True,
@@ -149,25 +143,26 @@ async def parse_message(message: dict):
         raise Exception("Unhandled response")
 
     data = json.loads(message["data"])
+    if "progress" in data:
+        progress = int(data["progress"])
+    else:
+        progress = 0
 
     if data["result"] <= 2:
         return Message(
             keep_alive=True,
             error=False,
-            progress=0,
+            progress=progress,
             color="green",
             status="Waiting",
             details=[],
         )
 
     if data["result"] == 3:
-        if "progress" in data:
-            cur_progress = max(cur_progress, int(data["progress"]))
-
         return Message(
             keep_alive=True,
             error=False,
-            progress=cur_progress,
+            progress=progress,
             color="white",
             status="Running",
             details=None,
@@ -196,7 +191,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="red",
             status="Wrong Format",
             details=[],
@@ -206,7 +201,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="red",
             status="Wrong Answer",
             details=[],
@@ -216,7 +211,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="red",
             status="Time Limit Exceeded",
             details=[],
@@ -226,7 +221,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="red",
             status="Memory Limit Exceeded",
             details=[],
@@ -236,7 +231,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="red",
             status="Output Limit Exceeded",
             details=[],
@@ -250,7 +245,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="magenta",
             status="Runtime Error",
             details=details,
@@ -260,7 +255,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="blue",
             status="Compile Error",
             details=[],
@@ -275,7 +270,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="yellow",
             status="Partial points",
             details=details,
@@ -286,7 +281,7 @@ async def parse_message(message: dict):
         return Message(
             keep_alive=True,
             error=False,
-            progress=cur_progress,
+            progress=progress,
             color="white",
             status="Looking for the cause of Runtime Error",
             details=[],
