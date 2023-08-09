@@ -7,7 +7,7 @@
 `$ pip3 install boj-cli`
 
 # 로컬 설정
-`default_language`에 들어갈 수 있는 값들은 [지원 언어](https://github.com/xvzc/boj-cli#%EC%A7%80%EC%9B%90-%EC%96%B8%EC%96%B4)를 참고해주세요.
+`default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
 > ~/.boj-cli/config.json
 ```
 {
