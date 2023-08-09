@@ -11,6 +11,10 @@ def temp_dir():
     return str(os.getenv("HOME")) + boj.core.DIR
 
 
+def drivers_dir():
+    return str(os.getenv("HOME")) + boj.core.DIR + "/drivers"
+
+
 def config_file_path():
     return str(os.getenv("HOME")) + boj.core.DIR + "/" + boj.core.CONFIG_FILE_NAME
 
