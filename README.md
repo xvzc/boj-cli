@@ -4,7 +4,7 @@
 <img src="https://github.com/xvzc/boj-cli/assets/45588457/f6fcf5b8-b5bd-4674-b018-c6574e98b1c4" width="65%" height="65%">
 
 # 설치
-`$ pip3 install boj-cli`
+`$ pip install boj-cli`
 
 # 로컬 설정
 `default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
