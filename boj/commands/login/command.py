@@ -3,6 +3,7 @@ import time
 
 from selenium.common import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 import boj.core.auth as auth
 import boj.core.util as util
@@ -24,11 +25,11 @@ def execute(args):
     except OSError as e:
         raise e
 
-    chromedriver_autoinstaller.install(path=util.drivers_dir())
+    driver_path = chromedriver_autoinstaller.install(path=util.drivers_dir())
 
     options = Options()
     options.add_argument('start-maximized')
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options, service=Service(executable_path=driver_path))
     driver.get(url='https://www.acmicpc.net/login?next=%2F')
 
     while True:
