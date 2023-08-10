@@ -4,7 +4,7 @@ import version
 
 latest_version = version.get_latest_version('boj-cli')
 if "BOJ_CLI_NEXT_VERSION" in os.environ:
-    cur_version: str = os.environ['BOJ_CLI_NEXT_VERSION']
+    cur_version: str = os.environ['BOJ_CLI_NEXT_VERSION'][1:]
 else:
     cur_version= str(latest_version)
 
