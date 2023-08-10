@@ -9,6 +9,7 @@ else:
     cur_version= str(latest_version)
 
 setup(
+    long_description='Command line interface for BOJ',
     entry_points={
         "console_scripts": ["boj=boj.main:entry"],
     },
