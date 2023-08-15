@@ -2,20 +2,18 @@ import requests
 from boj.core import util
 
 
-def create_problem_query(user, tier, level):
-    # default == 'all'
-    query = "lang:ko tier:" + tier[:1] + "1" + ".." + tier[:1] + "5"
+def create_problem_query(user, tier, tags):
+    tier_query = f'tier:{tier}'
+    solved_by_query = f'-solved_by:{user}'
+    language_query = "lang:ko"
+    tags_query = f'({" | ".join(["tag:" + tag for tag in tags ])})'
 
-    if level == "easy":
-        query = "lang:ko tier:" + tier[:1] + "5"
-
-    if level == "normal":
-        query = "lang:ko tier:" + tier[:1] + "3" + ".." + tier[:1] + "4"
-
-    if level == "hard":
-        query = "lang:ko tier:" + tier[:1] + "1" + ".." + tier[:1] + "2"
-
-    query += " -solved_by:" + user
+    query = " ".join([
+        tier_query, 
+        solved_by_query, 
+        language_query,
+        tags_query, 
+    ])
 
     params = {
         'query': query,

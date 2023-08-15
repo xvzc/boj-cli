@@ -10,20 +10,32 @@ def create_parser():
         "-v",
         "--version",
         action="version",
-        version=print_version(),
+        version=get_version(),
         help="show version",
     )
 
     subparsers = parser.add_subparsers(dest="command")  # this line changed
+    add_login_parser(subparsers)
+    add_submit_parser(subparsers)
+    add_problem_parser(subparsers)
+    add_run_parser(subparsers)
+    add_init_parser(subparsers)
+    add_random_parser(subparsers)
 
-    # Login command parser
-    login_parser = subparsers.add_parser(
+    return parser
+
+def add_login_parser(subparsers):
+    subparsers.add_parser(
         "login",
         help="log in to BOJ",
     )
 
+def add_submit_parser(subparsers):
     # Submit command parser
-    submit_parser = subparsers.add_parser("submit", help="submit your solution")
+    submit_parser = subparsers.add_parser(
+        "submit", 
+        help="submit your solution",
+    )
     submit_parser.add_argument(
         "file",
         metavar="FILE",
@@ -36,6 +48,7 @@ def create_parser():
         help="language to submit your source code as",
     )
 
+def add_problem_parser(subparsers):
     problem_parser = subparsers.add_parser(
         "problem", help="view problem in browser"
     )
@@ -46,6 +59,7 @@ def create_parser():
         help="problem id",
     )
 
+def add_run_parser(subparsers):
     run_parser = subparsers.add_parser("run", help="run all testcases")
     run_parser.add_argument(
         "file",
@@ -62,10 +76,12 @@ def create_parser():
     run_parser.add_argument(
         "-t",
         "--timeout",
-        default=5,
+        default=10,
         help="timeout for each test",
     )
 
+
+def add_init_parser(subparsers):
     init_parser = subparsers.add_parser("init", help="create testcases in current directory")
     init_parser.add_argument(
         "problem_id",
@@ -74,35 +90,26 @@ def create_parser():
         help="problem id",
     )
 
+
+def add_random_parser(subparsers):
     random_parser = subparsers.add_parser("random", help="view random problem in browser")
     random_parser.add_argument(
-        "tier",
-        metavar="TIER",
-        type=validate_tier,
+        "--tier",
         help="tier",
     )
     random_parser.add_argument(
-        "--easy",
-        action='store_true',
-        help="5",
-    )
-    random_parser.add_argument(
-        "--normal",
-        action='store_true',
-        help="3 ~ 4",
-    )
-    random_parser.add_argument(
-        "--hard",
-        action='store_true',
-        help="1 ~ 2",
+        "--tags",
+        nargs="*",
+        default=[],
+        help="tags",
     )
 
-    return parser
 
-
-def print_version():
-    version_info = str(pkg_resources.require("boj-cli")[0]).strip()
-    return version_info
+def get_version():
+    try:
+        return str(pkg_resources.require("boj-cli")[0]).strip()
+    except:
+        return "0.0.0"
 
 
 def validate_file(file):
