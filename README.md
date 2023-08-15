@@ -92,9 +92,10 @@ ex) boj problem 1234
 ## 랜덤 문제 브라우저에서 열기
 랜덤 문제 링크를 기본 브라우저에서 엽니다.
 ```
-$ boj random {tier} --{level}
+$ boj random --tier g1..g5 --tags dp math
 ex) boj random bronze --easy
 ```
+> 여러개의 tags 옵션은 OR 조건으로 동작합니다.
 
 ### Options
 ```
