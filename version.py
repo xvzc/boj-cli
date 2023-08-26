@@ -14,7 +14,7 @@ def get_latest_version(package, url_pattern=URL_PATTERN):
     req = requests.get(url_pattern.format(package=package))
     version = parse('0')
     if req.status_code == requests.codes.ok:
-        j = json.loads(req.text)
+        j = json
         releases = j.get('releases', [])
         for release in releases:
             ver = parse(release)

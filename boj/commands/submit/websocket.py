@@ -2,6 +2,8 @@ import json
 import asyncio
 from rich.console import Console
 from websockets import client
+
+import boj.core.property
 from boj.core import util
 from rich.progress import (
     BarColumn,
@@ -19,7 +21,7 @@ class Detail:
 
 
 class Message:
-    def __init__(self, keep_alive, status, progress, color, error, details):
+    def __init__(self, keep_alive: bool, status: str, progress: int, color: str, error: bool, details: list[Detail]):
         self.keep_alive = keep_alive
         self.status = status
         self.progress = progress
@@ -29,23 +31,23 @@ class Message:
 
     def __repr__(self):
         return (
-            "Problem {"
-            + str(self.keep_alive)
-            + ", "
-            + self.color
-            + ", "
-            + self.status
-            + "}"
+                "Problem {"
+                + str(self.keep_alive)
+                + ", "
+                + self.color
+                + ", "
+                + self.status
+                + "}"
         )
 
     @staticmethod
-    def unknown_error():
+    def unknown_error(progress):
         return Message(
             keep_alive=False,
             error=True,
-            progress=cur_progress,
+            progress=progress,
             color="blue",
-            status="Unknow Error",
+            status="Unknown Error",
             details=[],
         )
 
@@ -69,7 +71,7 @@ async def connect(solution_id):
     with progress:
         task = progress.add_task("", total=100)
 
-        async with client.connect(util.websocket_url()) as websocket:
+        async with client.connect(boj.core.property.boj_websocket_url()) as websocket:
             await websocket.send(json.dumps(make_subscribe_request(solution_id)))
 
             cur_progress = 0
@@ -81,8 +83,8 @@ async def connect(solution_id):
                     data_dict = json.loads(data)
                     message = await parse_message(data_dict)
                     cur_progress = max(message.progress, cur_progress)
-                except:
-                    message = Message.unknown_error()
+                except (Exception,) as e:
+                    message = Message.unknown_error(cur_progress)
                     break
 
                 keep_alive = message.keep_alive

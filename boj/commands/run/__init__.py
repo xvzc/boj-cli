@@ -1,6 +1,3 @@
-from boj.commands.run.command import execute
+from boj.commands.run.run_command import RunCommand
 
-__all__ = ['execute']
-
-
-LABEL_LENGTH = 9
+__all__ = ['RunCommand']

@@ -24,17 +24,19 @@ def create_parser():
 
     return parser
 
+
 def add_login_parser(subparsers):
     subparsers.add_parser(
         "login",
-        help="log in to BOJ",
+        help="logs in to BOJ",
     )
+
 
 def add_submit_parser(subparsers):
     # Submit command parser
     submit_parser = subparsers.add_parser(
         "submit", 
-        help="submit your solution",
+        help="submits your solution",
     )
     submit_parser.add_argument(
         "file",
@@ -48,24 +50,26 @@ def add_submit_parser(subparsers):
         help="language to submit your source code as",
     )
 
+
 def add_problem_parser(subparsers):
     problem_parser = subparsers.add_parser(
-        "problem", help="view problem in browser"
+        "open", help="opens the given id of open in browser"
     )
     problem_parser.add_argument(
         "id",
         metavar="PROBLEM_ID",
         type=int,
-        help="problem id",
+        help="open id",
     )
 
+
 def add_run_parser(subparsers):
-    run_parser = subparsers.add_parser("run", help="run all testcases")
+    run_parser = subparsers.add_parser("run", help="runs generated testcases")
     run_parser.add_argument(
         "file",
         metavar="FILE",
         type=validate_file,
-        help="the file path of the source code",
+        help="file path of the source code",
     )
     run_parser.add_argument(
         "-v",
@@ -82,17 +86,17 @@ def add_run_parser(subparsers):
 
 
 def add_init_parser(subparsers):
-    init_parser = subparsers.add_parser("init", help="create testcases in current directory")
+    init_parser = subparsers.add_parser("init", help="creates testcases in current directory")
     init_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         type=int,
-        help="problem id",
+        help="open id",
     )
 
 
 def add_random_parser(subparsers):
-    random_parser = subparsers.add_parser("random", help="view random problem in browser")
+    random_parser = subparsers.add_parser("random", help="queries and shows random open in browser")
     random_parser.add_argument(
         "--tier",
         help="tier",
@@ -108,7 +112,7 @@ def add_random_parser(subparsers):
 def get_version():
     try:
         return str(pkg_resources.require("boj-cli")[0]).strip()
-    except:
+    except (Exception,) as e:
         return "0.0.0"
 
 
@@ -118,10 +122,3 @@ def validate_file(file):
     else:
         raise argparse.ArgumentTypeError(f"'{file}' No such file.")
 
-
-def validate_tier(tier):
-    allowed_tier = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
-    if tier not in allowed_tier:
-        raise argparse.ArgumentTypeError(f"available values for tier parameter: {allowed_tier}")
-
-    return tier

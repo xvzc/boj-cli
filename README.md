@@ -7,9 +7,9 @@
 `$ pip install boj-cli`
 
 # 로컬 설정
-`default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
+`filetype.default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
 > ~/.boj-cli/config.json
-```
+```json
 {
     "filetype": {
         "py": {
@@ -26,12 +26,29 @@
 ```
 
 # 사용법
+```
+usage: boj [-h] [-v] {login,submit,open,run,init,random} ...
+
+positional arguments:
+  {login,submit,open,run,init,random}
+    login               logs in to BOJ
+    submit              submits your solution
+    open                opens the given id of open in browser
+    run                 runs generated testcases
+    init                creates testcases in current directory
+    random              queries and shows random open in browser
+
+options:
+  -h, --help            show this help message and exit
+  -v, --version         show version
+```
 
 ## 로그인
 백준 온라인 저지에서는 로그인 시 `reCAPTCHA`를 사용하고있기 때문에 로그인 과정은 조금 번거로울 수 있습니다. 
 ```
 $ boj login
 ```
+
 위 명령어를 실행하면 `selenium` 브라우저가 실행됩니다. 로그인 정보를 입력하고 `reCAPTCHA`를 수행하면 로그인 세션 정보는 암호화되어 저장됩니다.
 > 로그인 시 "로그인 상태 유지" 체크 박스를 반드시 선택해주세요.
 
@@ -41,7 +58,8 @@ $ boj login
 백준 온라인저지에 올라와있는 문제에서 테스트케이스를 추려내어 현재 경로에 `testcase.yaml` 파일을 생성합니다.
 생성된 `testcase.yaml`의 포멧에 맞게 커스텀 테스트케이스 또한 추가할 수 있습니다.
 ```
-$ boj init 1000
+$ boj init {PROBLEM_ID}
+ex) boj init 1234
 ```
 
 ---
@@ -49,14 +67,13 @@ $ boj init 1000
 ## 테스트케이스 실행하기
 `init` 명령어로 생성한 테스트케이스를 활용해 `testcase.yaml` 파일에 있는 모든 테스트케이스를 비동기적으로 실행하고
 정답을 비교합니다.
-
 ```
 $ boj run {FILE_PATH}
 ```
 
 ### Options
 ```
---verbose : 자세한 아웃풋을 출력합니다. (예: 컴파일 에러)  
+--verbose bool: 자세한 아웃풋을 출력합니다. (예: 컴파일 에러)  
 --timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (Default: 5초)
 ```
 
@@ -66,25 +83,22 @@ $ boj run {FILE_PATH}
 로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 출력합니다.
 ```
 $ boj submit {FILE_PATH}
+ex) boj submit ./1234.cpp
 ```
 
 ### Options
 ```
---lang: 제출할 언어를 선택합니다. 옵션이 주어지지 않은경우 local configuration 값으로 실행됩니다.
+--lang str: 제출할 언어를 선택합니다. 
+옵션이 주어지지 않은경우 local config 값으로 실행됩니다.
 ```
-> lang 옵션으로 설정할 수 있는 값은 [여기](https://github.com/xvzc/boj-cli/blob/main/boj/core/__init__.py#L12)에서 **LANGUAGE_DICT** 변수의 키값들을 확인해주세요.  
- 
-> 매번 인자를 넣지 않아도 파일타입에 따른 기본 언어 설정을 할 수 있습니다.
-> [예제](https://github.com/xvzc/boj-cli/blob/main/config_example.json)를 참고해주세요.  
-> 설정 파일의 위치는 `~/.boj-cli/config.json` 입니다. 파일을 생성해주세요.
 
 ---
 
 ## 브라우저에서 문제 링크 열기
 문제 링크를 기본 브라우저에서 엽니다.
 ```
-$ boj problem {problem_id}
-ex) boj problem 1234
+$ boj open {PROBLEM_ID}
+ex) boj open 1234
 ```
 
 ---
@@ -93,18 +107,16 @@ ex) boj problem 1234
 랜덤 문제 링크를 기본 브라우저에서 엽니다.
 ```
 $ boj random --tier g1..g5 --tags dp math
-ex) boj random bronze --easy
 ```
+
 > 여러개의 tags 옵션은 OR 조건으로 동작합니다.
+> '내가 풀지 않은 문제' 만 쿼리됩니다.
 
 ### Options
 ```
---easy: 5티어 문제만
---normal: 3 ~ 4티어 문제
---hard: 1 ~ 2티어 문제
+--tier: 문제 티어 쿼리
+--tags: 문제 태그 쿼리
 ```
-> level 옵션을 주지 않으면 해당 티어의 1~5 단계 문제중 랜덤으로 선택됩니다.  
-> '내가 풀지 않은 문제' 만 쿼리됩니다.
 
 # 지원 언어
 - `c++17`

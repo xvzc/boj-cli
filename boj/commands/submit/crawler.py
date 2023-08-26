@@ -1,15 +1,18 @@
-import requests, time
+import requests
+import time
 from bs4 import BeautifulSoup
+
+import boj.core.property
 import boj.core.util as util
 
 
 def query_online_judge_token(url):
-    response = requests.get(url, headers=util.headers())
+    response = requests.get(url, headers=boj.core.property.headers())
     return response.cookies.get_dict()["OnlineJudge"]
 
 
 def query_csrf_key(url, cookies):
-    response = requests.get(url, headers=util.headers(), cookies=cookies)
+    response = requests.get(url, headers=boj.core.property.headers(), cookies=cookies)
 
     # Parse the submit page
     html = response.text
@@ -33,7 +36,7 @@ def query_csrf_key(url, cookies):
 
 
 def send_source_code(url, cookies, payload):
-    response = requests.post(url, headers=util.headers(), cookies=cookies, data=payload)
+    response = requests.post(url, headers=boj.core.property.headers(), cookies=cookies, data=payload)
 
     html = response.text
     soup = BeautifulSoup(html, "html.parser")
