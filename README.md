@@ -27,6 +27,7 @@
 
 # 사용법
 ```
+$ boj --help
 usage: boj [-h] [-v] {login,submit,open,run,init,random} ...
 
 positional arguments:

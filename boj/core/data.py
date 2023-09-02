@@ -9,7 +9,7 @@ class Solution:
 
     def __repr__(self):
         return (
-                "Problem {" + str(self.id) + ", " + self.filetype + ", " + self.source + "}"
+            "Problem {" + str(self.id) + ", " + self.filetype + ", " + self.source + "}"
         )
 
 
@@ -22,15 +22,10 @@ class Testcase:
         self.data_out = data_out
 
     def __repr__(self):
-        return (
-                "Testcase {" + str(self.data_in) + ", " + self.data_out + "}"
-        )
+        return "Testcase {" + str(self.data_in) + ", " + self.data_out + "}"
 
     def to_dict(self):
-        return {
-            'input': self.data_in,
-            'output': self.data_out
-        }
+        return {"input": self.data_in, "output": self.data_out}
 
 
 class Credential:
@@ -42,16 +37,6 @@ class Credential:
         self.token = token
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 
-class RunnerConfig:
-    default_language: str
-    compile: str
-    run: str
-
-    def __init__(self, default_language, compile_command, run_command):
-        self.default_language = default_language
-        self.compile = compile_command
-        self.run = run_command

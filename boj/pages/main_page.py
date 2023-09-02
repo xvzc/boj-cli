@@ -6,4 +6,3 @@ class BojMainPage(Page):
 
     def request(self, args):
         pass
-

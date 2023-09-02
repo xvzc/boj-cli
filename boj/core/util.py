@@ -3,7 +3,8 @@ import os, ntpath, json, time, yaml
 from rich.console import Console
 
 from boj.core import property
-from boj.core.data import Solution, Testcase, RunnerConfig
+from boj.core.data import Solution, Testcase
+from boj.core.config import FiletypeConfig
 from boj.core.error import ParsingConfigError, FileIOError
 
 
@@ -27,14 +28,14 @@ def create_dir():
 def read_file(path, opt):
     try:
         if not os.path.isfile(path):
-            raise FileIOError(f'{path} is not a file')
+            raise FileIOError(f"{path} is not a file")
 
         with open(path, opt) as file:
             data = file.read()
 
         return data
     except Exception:
-        raise FileIOError(f'Error while reading file. {path}')
+        raise FileIOError(f"Error while reading file. {path}")
 
 
 def write_file(path, data, opt):
@@ -60,26 +61,32 @@ def read_solution(path):
 
 def read_runner_config(filetype):
     try:
-        runner_config = read_json(property.runner_config_file_path()).get('filetype', None)
+        runner_config = read_json(property.runner_config_file_path()).get(
+            "filetype", None
+        )
         if not runner_config:
-            raise ParsingConfigError('"filetype" property is not found in the runner config')
+            raise ParsingConfigError(
+                '"filetype" property is not found in the runner config'
+            )
 
         file_config = runner_config[filetype]
 
-        if 'default_language' not in file_config:
-            raise ParsingConfigError('"default_language" property is not found in the runner config')
+        if "default_language" not in file_config:
+            raise ParsingConfigError(
+                '"default_language" property is not found in the runner config'
+            )
 
-        if 'run' not in file_config:
+        if "run" not in file_config:
             raise ParsingConfigError('"run" property is not found in the runner config')
 
-        return RunnerConfig(
-            default_language=file_config['default_language'],
-            compile_command=file_config.get('compile', None),
-            run_command=file_config['run'],
+        return FiletypeConfig(
+            default_language=file_config["default_language"],
+            compile_command=file_config.get("compile", None),
+            run_command=file_config["run"],
         )
     except Exception as e:
         print(e)
-        raise ParsingConfigError('Error while parsing runner config.')
+        raise ParsingConfigError("Error while parsing runner config.")
 
 
 def parse_path(file_path: str):
@@ -92,10 +99,8 @@ def parse_path(file_path: str):
 def read_testcases() -> list[Testcase]:
     testcases = read_yaml(property.testcase_file_path())
     return [
-        Testcase(
-            data_in=testcase.get('input', ''),
-            data_out=testcase.get('output', '')
-        ) for testcase in testcases
+        Testcase(data_in=testcase.get("input", ""), data_out=testcase.get("output", ""))
+        for testcase in testcases
     ]
 
 

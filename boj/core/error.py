@@ -8,7 +8,7 @@ class AuthenticationError(BojError):
 
 class HttpError(BojError):
     def __init__(self, url):
-        super().__init__(f'Error while calling remote service: {url}')
+        super().__init__(f"Error while calling remote service: {url}")
 
 
 class IllegalStatementError(BojError):

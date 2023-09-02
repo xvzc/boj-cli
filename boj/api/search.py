@@ -1,7 +1,7 @@
 import requests
 
-from boj.core.base import Api
 from boj.core import property
+from boj.core.base import Api
 
 
 class SolvedAcSearchApiParam:
@@ -17,17 +17,19 @@ class SolvedAcSearchApiParam:
         self.user = user
 
     def to_query_string(self):
-        tier_query = f'tier:{self.tier}'
-        solved_by_query = f'-solved_by:{self.user}'
-        language_query = f'lang:{self.lang}'
+        tier_query = f"tier:{self.tier}"
+        solved_by_query = f"-solved_by:{self.user}"
+        language_query = f"lang:{self.lang}"
         tags_query = f'({" | ".join(["tag:" + tag for tag in self.tags ])})'
 
-        return " ".join([
-            tier_query,
-            solved_by_query,
-            language_query,
-            tags_query,
-        ])
+        return " ".join(
+            [
+                tier_query,
+                solved_by_query,
+                language_query,
+                tags_query,
+            ]
+        )
 
 
 class SolvedAcSearchApi(Api):
@@ -40,10 +42,10 @@ class SolvedAcSearchApi(Api):
 
     def request(self):
         params = {
-            'query': self.param.to_query_string(),
-            'page': 1,
-            'sort': 'random',
-            'direction': 'asc'
+            "query": self.param.to_query_string(),
+            "page": 1,
+            "sort": "random",
+            "direction": "asc",
         }
 
         response = requests.get(headers=property.headers(), url=self.url, params=params)

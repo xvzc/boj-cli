@@ -1,9 +1,8 @@
 import time
 
-from boj.commands.run.runner import CodeRunner
 import boj.core.util as util
+from boj.commands.run.runner import CodeRunner
 from boj.core.base import Command
-
 from boj.core.out import BojConsole
 
 
@@ -27,7 +26,7 @@ class RunCommand(Command):
             file_path=args.file,
             runner_config=runner_config,
             verbose=args.verbose,
-            testcases=testcases
+            testcases=testcases,
         )
 
         code_runner.run_compile()  # Run if code_runner.compile != None

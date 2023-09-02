@@ -39,6 +39,5 @@ setup(
         "websockets==10.4",
         "PyYAML==6.0",
         "dependency-injector==4.41.0",
-        "webdriver-manager==4.0.0",
     ],
 )

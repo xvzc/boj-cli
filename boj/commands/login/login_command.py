@@ -1,19 +1,11 @@
-import os
 import time
-
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 
 from boj.browsers.login_browser import LoginBrowser
 from boj.core import auth
 from boj.core import property
 from boj.core import util
-import json
-
 from boj.core.base import Command
 from boj.core.out import BojConsole
-import chromedriver_autoinstaller
-from selenium import webdriver
 
 
 class LoginCommand(Command):

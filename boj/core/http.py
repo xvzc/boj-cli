@@ -12,7 +12,7 @@ def get(url, headers=None):
         return res
     except requests.exceptions.RequestException as e:
         print(e)
-        raise HttpError(f'GET {url}')
+        raise HttpError(f"GET {url}")
 
 
 def post(url, headers, data):
@@ -21,4 +21,4 @@ def post(url, headers, data):
         res.raise_for_status()
         return res
     except requests.exceptions.RequestException as e:
-        raise HttpError(f'POST {url}')
+        raise HttpError(f"POST {url}")

@@ -6,65 +6,65 @@ def boj_path():
 
 
 def drivers_dir():
-    return f'{boj_path()}/drivers'
+    return f"{boj_path()}/drivers"
 
 
 def runner_config_file_path():
-    return f'{boj_path()}/config.json'
+    return f"{boj_path()}/config.json"
 
 
 def key_file_path():
-    return f'{boj_path()}/key'
+    return f"{boj_path()}/key"
 
 
 def credential_file_path():
-    return f'{boj_path()}/credential'
+    return f"{boj_path()}/credential"
 
 
 def testcase_file_path():
-    return f'./testcase.yaml'
+    return f"./testcase.yaml"
 
 
 def boj_home_url():
-    return 'https://www.acmicpc.net'
+    return "https://www.acmicpc.net"
 
 
 def boj_login_url():
-    return f'{boj_home_url()}/login?next=%2F'
+    return f"{boj_home_url()}/login?next=%2F"
 
 
 def boj_submit_url(problem_id):
-    return f'{boj_home_url()}/submit/{str(problem_id)}'
+    return f"{boj_home_url()}/submit/{str(problem_id)}"
 
 
 def boj_problem_url(problem_id):
-    return f'{boj_home_url()}/problem/{str(problem_id)}'
+    return f"{boj_home_url()}/problem/{str(problem_id)}"
 
 
 def boj_websocket_url():
-    return 'wss://ws-ap1.pusher.com/app/a2cb611847131e062b32?protocol=7&client=js&version=4.2.2&flash=false'
+    return "wss://ws-ap1.pusher.com/app/a2cb611847131e062b32?protocol=7&client=js&version=4.2.2&flash=false"
 
 
 def solved_ac_home_url():
-    return 'https://solved.ac/api/v3'
+    return "https://solved.ac/api/v3"
 
 
 def solved_ac_search_url():
-    return f'{solved_ac_home_url()}/search'
+    return f"{solved_ac_home_url()}/search"
 
 
 def solved_ac_search_problem_url():
-    return f'{solved_ac_search_url()}/problem'
+    return f"{solved_ac_search_url()}/problem"
 
 
 def salt():
-    return '6843f2dc-24fa-11e9-b84a-f8633f2431a4'
+    return "6843f2dc-24fa-11e9-b84a-f8633f2431a4"
 
 
 def headers():
     return {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/98.0.4758.102 Safari/537.36 "
+        "Chrome/98.0.4758.102 Safari/537.36 "
     }
 
 

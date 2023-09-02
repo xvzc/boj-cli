@@ -20,19 +20,21 @@ class RandomCommand(Command):
                 tags=args.tags,
                 lang="ko",
                 tier=args.tier,
-                user=credential.username
+                user=credential.username,
             )
 
             status.update("Calling solved.ac API...")
 
             json = api.request().json()
-            if not json or ('items' not in json):
+            if not json or ("items" not in json):
                 raise IllegalStatementError("Error while calling solve.ac API.")
 
-            if len(json['items']) == 0:
+            if len(json["items"]) == 0:
                 raise IllegalStatementError("No matching open found.")
 
-            random_problem = random.choice(json['items'])
+            random_problem = random.choice(json["items"])
 
             status.update("Opening in browser...")
-            webbrowser.open(boj.core.property.boj_problem_url(random_problem['problemId']))
+            webbrowser.open(
+                boj.core.property.boj_problem_url(random_problem["problemId"])
+            )

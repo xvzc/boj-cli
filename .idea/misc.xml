@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (boj-cli)" project-jdk-type="Python SDK" />
+  <component name="Black">
+    <option name="enabledOnReformat" value="true" />
+    <option name="executionMode" value="BINARY" />
+    <option name="pathToExecutable" value="$PROJECT_DIR$/.venv/bin/black" />
+    <option name="sdkUUID" value="ea1488e7-f049-4085-a917-cb8c0eaf36f4" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (boj-cli)" project-jdk-type="Python SDK" />
 </project>

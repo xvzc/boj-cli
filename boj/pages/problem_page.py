@@ -6,7 +6,6 @@ from boj.core import property
 
 
 class BojProblemPage(Page):
-
     def __init__(self, html):
         self.html = html
 
@@ -32,8 +31,8 @@ class BojProblemPage(Page):
         for data_in, data_out in zip(inputs, outputs):
             testcases.append(
                 Testcase(
-                    data_in=property.salt() + data_in + '\n',
-                    data_out=property.salt() + data_out + '\n'
+                    data_in=property.salt() + data_in + "\n",
+                    data_out=property.salt() + data_out + "\n",
                 )
             )
 

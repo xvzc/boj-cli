@@ -1,15 +1,10 @@
 from abc import *
 
+from selenium import webdriver
 from selenium.webdriver.chrome import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
-from boj.core import property
-
 from selenium.webdriver.chrome.webdriver import WebDriver
-import chromedriver_autoinstaller
 
 
 class Command(metaclass=ABCMeta):
@@ -42,7 +37,7 @@ class Browser:
     def __init__(self, url):
         self.url = url
         options = Options()
-        options.add_argument('start-maximized')
+        options.add_argument("start-maximized")
         self.driver = webdriver.Chrome(options=options, service=Service())
 
     def open(self):

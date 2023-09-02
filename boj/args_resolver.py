@@ -17,7 +17,7 @@ def create_parser():
     subparsers = parser.add_subparsers(dest="command")  # this line changed
     add_login_parser(subparsers)
     add_submit_parser(subparsers)
-    add_problem_parser(subparsers)
+    add_open_parser(subparsers)
     add_run_parser(subparsers)
     add_init_parser(subparsers)
     add_random_parser(subparsers)
@@ -35,7 +35,7 @@ def add_login_parser(subparsers):
 def add_submit_parser(subparsers):
     # Submit command parser
     submit_parser = subparsers.add_parser(
-        "submit", 
+        "submit",
         help="submits your solution",
     )
     submit_parser.add_argument(
@@ -51,15 +51,15 @@ def add_submit_parser(subparsers):
     )
 
 
-def add_problem_parser(subparsers):
+def add_open_parser(subparsers):
     problem_parser = subparsers.add_parser(
         "open", help="opens the given id of open in browser"
     )
     problem_parser.add_argument(
-        "id",
+        "problem_id",
         metavar="PROBLEM_ID",
         type=int,
-        help="open id",
+        help="problem id",
     )
 
 
@@ -74,7 +74,7 @@ def add_run_parser(subparsers):
     run_parser.add_argument(
         "-v",
         "--verbose",
-        action='store_true',
+        action="store_true",
         help="show detailed output",
     )
     run_parser.add_argument(
@@ -86,17 +86,21 @@ def add_run_parser(subparsers):
 
 
 def add_init_parser(subparsers):
-    init_parser = subparsers.add_parser("init", help="creates testcases in current directory")
+    init_parser = subparsers.add_parser(
+        "init", help="creates testcases in current directory"
+    )
     init_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         type=int,
-        help="open id",
+        help="problem id",
     )
 
 
 def add_random_parser(subparsers):
-    random_parser = subparsers.add_parser("random", help="queries and shows random open in browser")
+    random_parser = subparsers.add_parser(
+        "random", help="queries and shows random open in browser"
+    )
     random_parser.add_argument(
         "--tier",
         help="tier",
@@ -121,4 +125,3 @@ def validate_file(file):
         return file
     else:
         raise argparse.ArgumentTypeError(f"'{file}' No such file.")
-

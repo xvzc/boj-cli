@@ -15,16 +15,16 @@ class BojConsole(Console):
         super().print("Error: " + message)
 
     def status(
-            self,
-            status: RenderableType,
-            *,
-            spinner: str = "dots",
-            spinner_style: str = "status.spinner",
-            speed: float = 1.0,
-            refresh_per_second: float = 12.5,
+        self,
+        status: RenderableType,
+        *,
+        spinner: str = "dots",
+        spinner_style: str = "status.spinner",
+        speed: float = 1.0,
+        refresh_per_second: float = 12.5,
     ) -> "Status":
         status_renderable = BojStatus(
-            f'[bold yellow]{status}',
+            f"[bold yellow]{status}",
             console=self,
             spinner=spinner,
             spinner_style="white",
@@ -40,14 +40,14 @@ class BojStatus(Status):
     status_color: str = "[bold yellow]"
 
     def __init__(
-            self,
-            status: RenderableType,
-            *,
-            console: Optional[Console] = None,
-            spinner: str = "dots",
-            spinner_style: StyleType = "status.spinner",
-            speed: float = 1.0,
-            refresh_per_second: float = 12.5,
+        self,
+        status: RenderableType,
+        *,
+        console: Optional[Console] = None,
+        spinner: str = "dots",
+        spinner_style: StyleType = "status.spinner",
+        speed: float = 1.0,
+        refresh_per_second: float = 12.5,
     ):
         super().__init__(
             status=status,
@@ -59,12 +59,11 @@ class BojStatus(Status):
         )
 
     def update(
-            self,
-            status: Optional[RenderableType] = None,
-            *,
-            spinner: Optional[str] = None,
-            spinner_style: Optional[StyleType] = None,
-            speed: Optional[float] = None,
-
+        self,
+        status: Optional[RenderableType] = None,
+        *,
+        spinner: Optional[str] = None,
+        spinner_style: Optional[StyleType] = None,
+        speed: Optional[float] = None,
     ) -> None:
-        super().update(status=f'{self.status_color}{status}')
+        super().update(status=f"{self.status_color}{status}")

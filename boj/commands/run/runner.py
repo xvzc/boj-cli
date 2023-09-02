@@ -1,10 +1,11 @@
 import asyncio
-import time
 from random import uniform
 from subprocess import Popen, PIPE
+
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from boj.core.data import RunnerConfig, Testcase
+from boj.core.data import Testcase
+from boj.core.config import FiletypeConfig
 from boj.core.error import RunCodeError
 from boj.core.out import BojConsole
 
@@ -13,30 +14,28 @@ def _create_status_label(color, label):
     return "[" + color + "]" + label.ljust(9, " ")
 
 
-def _create_testcase_label(index):
-    return ("[cyan]#" + str(index)).ljust(10, " ")
+def _create_testcase_label(task_id):
+    return ("[cyan]#" + str(task_id + 1)).ljust(10, " ")
 
 
-def _create_output_label(index, color):
-    return ("[" + color + "]" + "OUTPUT [cyan]#" + str(index)).ljust(26, " ")
+def _create_output_label(task_id, color):
+    return ("[" + color + "]" + "OUTPUT [cyan]#" + str(task_id + 1)).ljust(26, " ")
 
 
 class Output:
     testcase_id: int
     text: str
     color: str
-    ok: bool
 
-    def __init__(self, testcase_id, text, color, ok):
-        self.testcase_id = testcase_id
+    def __init__(self, task_id, text, color):
+        self.testcase_id = task_id
         self.text = text
         self.color = color
-        self.ok = ok
 
 
 class CodeRunner:
     file_path: str
-    runner_config: RunnerConfig
+    runner_config: FiletypeConfig
     testcases: list[Testcase]
     verbose: bool
 
@@ -72,63 +71,60 @@ class CodeRunner:
                     console.log(error)
 
                 if process.returncode != 0:
-                    raise RunCodeError('Compile error')
+                    raise RunCodeError("Compile error")
 
             except Exception as e:
                 status.stop()
-                raise RunCodeError('Compile error')
+                raise RunCodeError("Compile error")
 
     def run_testcases(self):
         progress = Progress(
             SpinnerColumn(style="white", finished_text="•"),
             TextColumn("[progress.description]{task.description}"),
-            console=BojConsole()
+            console=BojConsole(),
         )
 
         with progress:
-            testcase_ids = range(1, 1 + len(self.testcases))
-            task_ids = []
-            for testcase_id in testcase_ids:
-                task_ids.append(progress.add_task(
-                    _create_testcase_label(testcase_id) + _create_status_label("yellow", "Running"), total=1)
+            task_ids = [
+                progress.add_task(
+                    _create_testcase_label(testcase_id)
+                    + _create_status_label("yellow", "Running"),
+                    total=1,
                 )
+                for testcase_id in range(len(self.testcases))
+            ]
 
-            futures = []
-            outputs: list[Output] = []
-            for testcase_id, testcase, task_id in zip(testcase_ids, self.testcases, task_ids):
-                futures.append(
-                    asyncio.ensure_future(
-                        self.run_testcase_async(
-                            testcase=testcase,
-                            testcase_id=testcase_id,
-                            progress=progress,
-                            task_id=task_id,
-                            outputs=outputs,
-                        )
+            futures = [
+                asyncio.ensure_future(
+                    self._fork_async_testcase(
+                        task_id=task_id,
+                        testcase=testcase,
+                        progress=progress,
                     )
                 )
+                for task_id, testcase in zip(task_ids, self.testcases)
+            ]
 
             # Run all testcases parallel
             loop = asyncio.get_event_loop()
             loop.run_until_complete(asyncio.gather(*futures))
             loop.close()
 
-            outputs.sort(key=lambda x: x.testcase_id)
+            outputs = sorted(
+                [future.result() for future in futures], key=lambda x: x.testcase_id
+            )
+
             for output in outputs:
-                if output.ok:
-                    label = _create_output_label(output.testcase_id, output.color)
-                else:
-                    label = _create_output_label(output.testcase_id, output.color)
+                progress.console.log(
+                    _create_output_label(output.testcase_id, output.color)
+                )
+                progress.console.log(output.text, end="\n\n")
 
-                progress.console.log(label)
-                progress.console.log(output.text, "\n")
-
-    async def run_testcase_async(
-            self, testcase_id: int,
-            testcase: Testcase,
-            progress,
-            task_id,
-            outputs: list[Output],
+    async def _fork_async_testcase(
+        self,
+        task_id,
+        testcase: Testcase,
+        progress,
     ):
         process = await asyncio.create_subprocess_shell(
             self.runner_config.run,
@@ -142,44 +138,49 @@ class CodeRunner:
         answer = testcase.data_out.rstrip()
 
         try:
-            output, error = await asyncio.wait_for(process.communicate(input=test_input.encode('utf-8')), timeout=10)
+            output, error = await asyncio.wait_for(
+                process.communicate(input=test_input.encode("utf-8")), timeout=10
+            )
 
-            output = output.decode('utf-8').rstrip()
-            error = error.decode('utf-8').rstrip()
+            output = output.decode("utf-8").rstrip()
+            error = error.decode("utf-8").rstrip()
 
             await asyncio.sleep(uniform(0.2, 1.5))
 
             if process.returncode != 0:
                 color = "bold magenta"
-                outputs.append(Output(testcase_id=testcase_id, text=error, color=color, ok=False))
                 progress.update(
                     task_id=task_id,
-                    description=_create_testcase_label(testcase_id) + _create_status_label(color, "ERROR"),
-                    completed=1
+                    description=_create_testcase_label(task_id)
+                    + _create_status_label(color, "ERROR"),
+                    completed=1,
                 )
-                return
+                return Output(task_id=task_id, text=error, color=color)
 
             if answer.rstrip() == output:
                 color = "bold green"
-                outputs.append(Output(testcase_id=testcase_id, text=output, color=color, ok=True))
                 progress.update(
                     task_id=task_id,
-                    description=_create_testcase_label(testcase_id) + _create_status_label(color, "PASSED"),
-                    completed=1
+                    description=_create_testcase_label(task_id)
+                    + _create_status_label(color, "PASSED"),
+                    completed=1,
                 )
+                return Output(task_id=task_id, text=output, color=color)
             else:
                 color = "bold red"
-                outputs.append(Output(testcase_id=testcase_id, text=output, color=color, ok=False))
                 progress.update(
                     task_id=task_id,
-                    description=_create_testcase_label(testcase_id) + _create_status_label(color, "FAILED"),
-                    completed=1
+                    description=_create_testcase_label(task_id)
+                    + _create_status_label(color, "FAILED"),
+                    completed=1,
                 )
+                return Output(task_id=task_id, text=output, color=color)
 
         except asyncio.exceptions.TimeoutError:
             progress.update(
                 task_id=task_id,
-                description=_create_testcase_label(testcase_id) + _create_status_label("magenta", "Timed out"),
-                completed=1
+                description=_create_testcase_label(task_id)
+                + _create_status_label("magenta", "Timed out"),
+                completed=1,
             )
             return

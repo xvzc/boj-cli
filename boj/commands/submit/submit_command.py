@@ -1,9 +1,10 @@
-import json, time
+import json
+import time
 
 import boj.core.auth
 import boj.core.property
-from boj.commands.submit import crawler as crawler, websocket
 import boj.core.util as util
+from boj.commands.submit import crawler as crawler, websocket
 from boj.core.base import Command
 from boj.core.out import BojConsole
 
@@ -21,7 +22,9 @@ class SubmitCommand(Command):
                 status.stop()
                 console.print_err("Login required.")
 
-            online_judge = crawler.query_online_judge_token(boj.core.property.boj_home_url())
+            online_judge = crawler.query_online_judge_token(
+                boj.core.property.boj_home_url()
+            )
             cookies = {
                 "bojautologin": credential["token"],
                 "OnlineJudge": online_judge,
@@ -55,14 +58,23 @@ class SubmitCommand(Command):
 
                     payload["language"] = util.convert_language_code(default_language)
 
-                    console.log("Default language option is not provided, continuing with your local config.")
+                    console.log(
+                        "Default language option is not provided, continuing with your local config."
+                    )
                     time.sleep(0.7)
                 except (Exception,) as e:
                     status.stop()
 
-                    console.print_err("Default language for the filetype " + problem.filetype + " is not set.")
+                    console.print_err(
+                        "Default language for the filetype "
+                        + problem.filetype
+                        + " is not set."
+                    )
                     console.print_err("Please set your config for this filetype.")
-                    console.print_err(" - Config file path: " + boj.core.property.runner_config_file_path())
+                    console.print_err(
+                        " - Config file path: "
+                        + boj.core.property.runner_config_file_path()
+                    )
                     exit(1)
 
             status.update("Submitting source code...")

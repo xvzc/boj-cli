@@ -1,10 +1,9 @@
-from boj.core.base import Browser
 from selenium.common import NoSuchElementException, StaleElementReferenceException
-
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
+from boj.core.base import Browser
 from boj.core.data import Credential
 from boj.core.error import AuthenticationError
 
@@ -12,7 +11,7 @@ from boj.core.error import AuthenticationError
 class LoginBrowser(Browser):
     def wait_for_login(self):
         while True:
-            if 'login' not in self.driver.current_url:
+            if "login" not in self.driver.current_url:
                 break
 
             try:
@@ -27,12 +26,9 @@ class LoginBrowser(Browser):
                 break
 
         wait = WebDriverWait(self.driver, 10)
-        element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'username')))
+        element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "username")))
         cookie = self.driver.get_cookie("bojautologin")
-        if 'value' not in cookie:
+        if "value" not in cookie:
             raise AuthenticationError()
 
-        return Credential(
-            username=element.text,
-            token=cookie['value']
-        )
+        return Credential(username=element.text, token=cookie["value"])

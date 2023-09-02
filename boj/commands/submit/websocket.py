@@ -1,10 +1,7 @@
-import json
 import asyncio
-from rich.console import Console
-from websockets import client
+import json
 
-import boj.core.property
-from boj.core import util
+from rich.console import Console
 from rich.progress import (
     BarColumn,
     Progress,
@@ -12,6 +9,9 @@ from rich.progress import (
     TaskProgressColumn,
     TimeElapsedColumn,
 )
+from websockets import client
+
+import boj.core.property
 
 
 class Detail:
@@ -21,7 +21,15 @@ class Detail:
 
 
 class Message:
-    def __init__(self, keep_alive: bool, status: str, progress: int, color: str, error: bool, details: list[Detail]):
+    def __init__(
+        self,
+        keep_alive: bool,
+        status: str,
+        progress: int,
+        color: str,
+        error: bool,
+        details: list[Detail],
+    ):
         self.keep_alive = keep_alive
         self.status = status
         self.progress = progress
@@ -31,13 +39,13 @@ class Message:
 
     def __repr__(self):
         return (
-                "Problem {"
-                + str(self.keep_alive)
-                + ", "
-                + self.color
-                + ", "
-                + self.status
-                + "}"
+            "Problem {"
+            + str(self.keep_alive)
+            + ", "
+            + self.color
+            + ", "
+            + self.status
+            + "}"
         )
 
     @staticmethod
@@ -178,7 +186,9 @@ async def parse_message(message: dict):
         ]
 
         if "subtask_score" in data:
-            details.append(Detail(name="Score ", description=str(data["subtask_score"])))
+            details.append(
+                Detail(name="Score ", description=str(data["subtask_score"]))
+            )
 
         return Message(
             keep_alive=False,

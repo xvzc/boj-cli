@@ -6,4 +6,3 @@ class BojSubmitPage(Page):
 
     def request(self, args):
         pass
-
