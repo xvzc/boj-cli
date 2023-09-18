@@ -1,6 +1,6 @@
 import requests
 
-from boj.core import property
+from boj.core import constant
 from boj.core.base import Api
 
 
@@ -48,5 +48,5 @@ class SolvedAcSearchApi(Api):
             "direction": "asc",
         }
 
-        response = requests.get(headers=property.headers(), url=self.url, params=params)
+        response = requests.get(headers=constant.default_headers(), url=self.url, params=params)
         return response

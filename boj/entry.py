@@ -13,7 +13,9 @@ from boj.commands.random.random_command import RandomCommand
 from boj.commands.run.run_command import RunCommand
 from boj.commands.submit.submit_command import SubmitCommand
 from boj.core import util
-from boj.core.base import Command, BojError
+from boj.core.base import Command
+from boj.core import config
+from boj.core.error import BojError
 
 
 @dataclasses.dataclass
@@ -22,7 +24,7 @@ class Dispatcher:
 
 
 class Container(containers.DeclarativeContainer):
-    dispatcher_factory = providers.Factory(
+    dispatcher_factory: dict[str, Command] = providers.Factory(
         Dispatcher,
         commands=providers.Dict(
             {
@@ -48,9 +50,10 @@ def cli():
 
     try:
         container = Container()
-        container.dispatcher_factory().commands[args.command].execute(args)
+        container.dispatcher_factory().commands[args.command].execute(args, config.load())
     except BojError as e:
-        print(e)
+        SystemExit(e)
+        print(str(e))
         exit(1)
     except BaseException as e:
         print(e.args)

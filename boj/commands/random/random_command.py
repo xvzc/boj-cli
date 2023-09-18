@@ -2,24 +2,25 @@ import random
 import webbrowser
 
 import boj.core.auth
-import boj.core.property
+import boj.core.constant
 from boj.api.search import SolvedAcSearchApi
-from boj.core import property
+from boj.core import constant
 from boj.core.base import Command
+from boj.core.config import Config, RandomOption
 from boj.core.error import IllegalStatementError
 from boj.core.out import BojConsole
 
 
 class RandomCommand(Command):
-    def execute(self, args):
+    def execute(self, args, config: Config):
         console = BojConsole()
         with console.status("Reading credential...") as status:
             credential = boj.core.auth.read_credential()
             api = SolvedAcSearchApi(
-                url=property.solved_ac_search_problem_url(),
-                tags=args.tags,
+                url=constant.solved_ac_search_problem_url(),
+                tags=args.tags or config.command.random.tags,
                 lang="ko",
-                tier=args.tier,
+                tier=args.tier or config.command.random.tier,
                 user=credential.username,
             )
 
@@ -36,5 +37,5 @@ class RandomCommand(Command):
 
             status.update("Opening in browser...")
             webbrowser.open(
-                boj.core.property.boj_problem_url(random_problem["problemId"])
+                boj.core.constant.boj_problem_url(random_problem["problemId"])
             )

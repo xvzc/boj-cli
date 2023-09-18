@@ -96,7 +96,7 @@ class CodeRunner:
 
             futures = [
                 asyncio.ensure_future(
-                    self._fork_async_testcase(
+                    self._run_testcase_async(
                         task_id=task_id,
                         testcase=testcase,
                         progress=progress,
@@ -114,13 +114,14 @@ class CodeRunner:
                 [future.result() for future in futures], key=lambda x: x.testcase_id
             )
 
-            for output in outputs:
-                progress.console.log(
-                    _create_output_label(output.testcase_id, output.color)
-                )
-                progress.console.log(output.text, end="\n\n")
+            if self.verbose:
+                for output in outputs:
+                    progress.console.log(
+                        _create_output_label(output.testcase_id, output.color)
+                    )
+                    progress.console.log(output.text, end="\n\n")
 
-    async def _fork_async_testcase(
+    async def _run_testcase_async(
         self,
         task_id,
         testcase: Testcase,

@@ -39,4 +39,10 @@ class Credential:
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
+    def session_cookies_of(self, online_judge_token):
+        return {
+            "bojautologin": self.token,
+            "OnlineJudge": online_judge_token
+        }
+
 

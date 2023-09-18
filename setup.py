@@ -1,5 +1,7 @@
-from setuptools import setup
 import os
+
+from setuptools import setup
+
 import version
 
 latest_version = version.get_latest_version("boj-cli")
@@ -39,5 +41,6 @@ setup(
         "websockets==10.4",
         "PyYAML==6.0",
         "dependency-injector==4.41.0",
+        "webdriver_manager==4.0.0",
     ],
 )

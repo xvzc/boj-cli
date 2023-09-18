@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 
 from boj.core.data import Credential
 from boj.core.error import AuthenticationError
-from boj.core.property import key_file_path, credential_file_path
+from boj.core.constant import key_file_path, credential_file_path
 from boj.core.util import read_file
 
 
@@ -34,4 +34,4 @@ def read_credential() -> Credential:
         return Credential(username=decrypted["username"], token=decrypted["token"])
     except Exception as e:
         print(e)
-        raise AuthenticationError()
+        raise AuthenticationError("Failed to read the credential")

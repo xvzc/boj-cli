@@ -4,7 +4,7 @@
     <option name="enabledOnReformat" value="true" />
     <option name="executionMode" value="BINARY" />
     <option name="pathToExecutable" value="$PROJECT_DIR$/.venv/bin/black" />
-    <option name="sdkUUID" value="ea1488e7-f049-4085-a917-cb8c0eaf36f4" />
+    <option name="sdkUUID" value="c5267a17-e1ff-4a7f-9569-34d85c258ea7" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (boj-cli)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (boj-cli)" project-jdk-type="Python SDK" />
 </project>

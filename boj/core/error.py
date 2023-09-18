@@ -1,14 +1,26 @@
-from boj.core.base import BojError
+class BojError(BaseException):
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class AuthenticationError(BojError):
-    def __init__(self):
-        super().__init__("Authentication failed.")
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
+class DeprecatedError(BojError):
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class HttpError(BojError):
     def __init__(self, url):
         super().__init__(f"Error while calling remote service: {url}")
+
+
+class ParsingHtmlError(BojError):
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class IllegalStatementError(BojError):
@@ -27,5 +39,9 @@ class FileIOError(BojError):
 
 
 class RunCodeError(BojError):
+    def __init__(self, msg):
+        super().__init__(msg)
+
+class WebSocketError(BojError):
     def __init__(self, msg):
         super().__init__(msg)

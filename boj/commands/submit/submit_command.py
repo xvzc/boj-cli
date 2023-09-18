@@ -1,85 +1,62 @@
-import json
-import time
-
 import boj.core.auth
-import boj.core.property
+import boj.core.constant
 import boj.core.util as util
-from boj.commands.submit import crawler as crawler, websocket
+from boj.commands.submit import websocket
 from boj.core.base import Command
+from boj.core.config import Config
+from boj.core.data import Credential
 from boj.core.out import BojConsole
+from boj.core import http
+from boj.core import constant
+from boj.pages.main_page import BojMainPage
+from boj.pages.status_page import BojStatusPage
+from boj.pages.submit_page import BojSubmitPage
 
 
 class SubmitCommand(Command):
-    def execute(self, args):
+    def execute(self, args, config: Config):
         console = BojConsole()
 
         with console.status("Loading source file...") as status:
-            problem = util.read_solution(args.file)
+            solution = util.read_solution(args.file)
 
             status.update("Authenticating...")
-            credential = boj.core.auth.read_credential()
-            if not credential:
-                status.stop()
-                console.print_err("Login required.")
+            credential: Credential = boj.core.auth.read_credential()
 
-            online_judge = crawler.query_online_judge_token(
-                boj.core.property.boj_home_url()
+            response = http.get(
+                url=constant.boj_main_url(), headers=constant.default_headers()
             )
-            cookies = {
-                "bojautologin": credential["token"],
-                "OnlineJudge": online_judge,
-            }
+            main_page = BojMainPage(html=response.text, cookies=response.cookies)
 
-            submit_url = boj.core.property.boj_submit_url(problem.id)
-            csrf_key = crawler.query_csrf_key(submit_url, cookies)
-            if not csrf_key:
-                status.stop()
-                console.print_err("Authentication failed.")
-                exit(1)
+            response = http.get(
+                url=constant.boj_submit_url(solution.id),
+                headers=constant.default_headers(),
+                cookies=credential.session_cookies_of(main_page.online_judge_token()),
+            )
+
+            submit_page = BojSubmitPage(html=response.text)
 
             # Set payload for the submit request
+            language = (
+                args.lang or config.of_filetype(solution.filetype).default_language
+            )
             payload = {
-                "csrf_key": csrf_key,
-                "problem_id": problem.id,
-                "language": 0,
-                "code_open": "open",
-                "source": problem.source,
+                "csrf_key": submit_page.query_csrf_key(),
+                "problem_id": solution.id,
+                "language": util.convert_language_code(language),
+                "code_open": args.open or config.command.submit.open,
+                "source": solution.source,
             }
 
-            if args.lang:
-                payload["language"] = util.convert_language_code(args.lang)
-            else:
-                try:
-                    f = util.read_file(boj.core.property.runner_config_file_path(), "r")
-
-                    config = json.loads(f)
-                    filetype_config = config["filetype"][problem.filetype]
-                    default_language = filetype_config["default_language"]
-
-                    payload["language"] = util.convert_language_code(default_language)
-
-                    console.log(
-                        "Default language option is not provided, continuing with your local config."
-                    )
-                    time.sleep(0.7)
-                except (Exception,) as e:
-                    status.stop()
-
-                    console.print_err(
-                        "Default language for the filetype "
-                        + problem.filetype
-                        + " is not set."
-                    )
-                    console.print_err("Please set your config for this filetype.")
-                    console.print_err(
-                        " - Config file path: "
-                        + boj.core.property.runner_config_file_path()
-                    )
-                    exit(1)
-
             status.update("Submitting source code...")
-            solution_id = crawler.send_source_code(submit_url, cookies, payload)
+            response = http.post(
+                constant.boj_submit_url(solution.id),
+                headers=boj.core.constant.default_headers(),
+                cookies=credential.session_cookies_of(main_page.online_judge_token()),
+                data=payload,
+            )
+            status_page = BojStatusPage(html=response.text)
 
             console.log("Submission succeeded.")
 
-        websocket.trace(solution_id)
+        websocket.subscribe_progress(status_page.solution_id())

@@ -5,12 +5,8 @@ def boj_path():
     return f'{str(os.getenv("HOME"))}/.boj-cli'
 
 
-def drivers_dir():
-    return f"{boj_path()}/drivers"
-
-
-def runner_config_file_path():
-    return f"{boj_path()}/config.json"
+def config_file_path():
+    return f"{boj_path()}/config.yaml"
 
 
 def key_file_path():
@@ -25,20 +21,20 @@ def testcase_file_path():
     return f"./testcase.yaml"
 
 
-def boj_home_url():
+def boj_main_url():
     return "https://www.acmicpc.net"
 
 
 def boj_login_url():
-    return f"{boj_home_url()}/login?next=%2F"
+    return f"{boj_main_url()}/login?next=%2F"
 
 
 def boj_submit_url(problem_id):
-    return f"{boj_home_url()}/submit/{str(problem_id)}"
+    return f"{boj_main_url()}/submit/{str(problem_id)}"
 
 
 def boj_problem_url(problem_id):
-    return f"{boj_home_url()}/problem/{str(problem_id)}"
+    return f"{boj_main_url()}/problem/{str(problem_id)}"
 
 
 def boj_websocket_url():
@@ -61,7 +57,7 @@ def salt():
     return "6843f2dc-24fa-11e9-b84a-f8633f2431a4"
 
 
-def headers():
+def default_headers():
     return {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/98.0.4758.102 Safari/537.36 "

@@ -8,21 +8,32 @@
 
 # 로컬 설정
 `filetype.default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
+
 > ~/.boj-cli/config.json
-```json
-{
-    "filetype": {
-        "py": {
-            "default_language": "python3",
-            "run": "python3 $file"
-        },
-        "cpp": {
-            "default_language": "c++17",
-            "compile": "g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out",
-            "run": "./a.out"
-        }
-    }
-}
+```yaml
+command:
+  random:
+    tier: g1..g5
+    tags:
+      - dp
+      - math
+  run:
+    verbose: false
+    timeout: 15
+  submit:
+    verbose: false
+    timeout: 15
+    open: onlyaccepted
+filetype:
+  py:
+    default_language: 'python3'
+    run: 'python3 $file'
+  cpp:
+    default_language: 'c++17'
+    compile: |
+      g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out
+    run: './a.out'
+
 ```
 
 # 사용법
@@ -89,8 +100,8 @@ ex) boj submit ./1234.cpp
 
 ### Options
 ```
---lang str: 제출할 언어를 선택합니다. 
-옵션이 주어지지 않은경우 local config 값으로 실행됩니다.
+--lang str: 제출할 언어를 선택합니다. 옵션이 주어지지 않은경우 local config 값으로 실행됩니다.
+--open [ open | close | onlyaccepted ]: 코드 공개 여부를 설정합니다.
 ```
 
 ---

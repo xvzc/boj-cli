@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 
 from boj.core.base import Page
 from boj.core.data import Testcase
-from boj.core import property
+from boj.core import constant
 
 
 class BojProblemPage(Page):
@@ -31,8 +31,8 @@ class BojProblemPage(Page):
         for data_in, data_out in zip(inputs, outputs):
             testcases.append(
                 Testcase(
-                    data_in=property.salt() + data_in + "\n",
-                    data_out=property.salt() + data_out + "\n",
+                    data_in=constant.salt() + data_in + "\n",
+                    data_out=constant.salt() + data_out + "\n",
                 )
             )
 

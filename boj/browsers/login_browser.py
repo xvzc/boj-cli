@@ -29,6 +29,6 @@ class LoginBrowser(Browser):
         element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "username")))
         cookie = self.driver.get_cookie("bojautologin")
         if "value" not in cookie:
-            raise AuthenticationError()
+            raise AuthenticationError("Failed to read session token")
 
         return Credential(username=element.text, token=cookie["value"])

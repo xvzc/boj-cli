@@ -1,0 +1,22 @@
+command:
+  random:
+    tier: g1..g5
+    tags:
+      - dp
+      - math
+  run:
+    verbose: false
+    timeout: 15
+  submit:
+    verbose: false
+    timeout: 15
+    open: onlyaccepted
+filetype:
+  py:
+    default_language: 'python3'
+    run: 'python3 $file'
+  cpp:
+    default_language: 'c++17'
+    compile: |
+      g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out
+    run: './a.out'
