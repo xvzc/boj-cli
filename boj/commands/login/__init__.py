@@ -1,3 +1,3 @@
-from boj.commands.login.command import execute
+from boj.commands.login.login_command import LoginCommand
 
-__all__ = ['execute']
+__all__ = ["LoginCommand"]

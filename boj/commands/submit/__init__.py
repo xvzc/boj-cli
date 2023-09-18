@@ -1,3 +1,3 @@
-from boj.commands.submit.command import execute
+from boj.commands.submit.submit_command import SubmitCommand
 
-__all__ = ['execute']
+__all__ = ["SubmitCommand"]

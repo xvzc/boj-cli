@@ -1,3 +1,3 @@
-from boj.commands.random.command import execute
+from boj.commands.random.random_command import RandomCommand
 
-__all__ = ['execute']
+__all__ = ["RandomCommand"]

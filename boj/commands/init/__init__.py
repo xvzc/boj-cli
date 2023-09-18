@@ -1,3 +1,3 @@
-from boj.commands.init.command import execute
+from boj.commands.init.init_command import InitCommand
 
-__all__ = ['execute']
+__all__ = ["InitCommand"]

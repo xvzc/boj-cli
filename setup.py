@@ -1,17 +1,19 @@
-from setuptools import setup
 import os
+
+from setuptools import setup
+
 import version
 
-latest_version = version.get_latest_version('boj-cli')
+latest_version = version.get_latest_version("boj-cli")
 if "BOJ_CLI_NEXT_VERSION" in os.environ:
-    cur_version: str = os.environ['BOJ_CLI_NEXT_VERSION'][1:]
+    cur_version: str = os.environ["BOJ_CLI_NEXT_VERSION"][1:]
 else:
-    cur_version= str(latest_version)
+    cur_version = str(latest_version)
 
 setup(
-    long_description='Command line interface for BOJ',
+    long_description="Command line interface for BOJ",
     entry_points={
-        "console_scripts": ["boj=boj.main:entry"],
+        "console_scripts": ["boj=boj.entry:cli"],
     },
     version=cur_version,
     name="boj-cli",
@@ -38,5 +40,7 @@ setup(
         "urllib3==1.26.14",
         "websockets==10.4",
         "PyYAML==6.0",
+        "dependency-injector==4.41.0",
+        "webdriver_manager==4.0.0",
     ],
 )
