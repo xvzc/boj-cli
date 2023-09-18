@@ -46,7 +46,7 @@ def add_login_parser(subparsers):
 
 def add_open_parser(subparsers):
     problem_parser = subparsers.add_parser(
-        "open", help="opens the given id of open in browser"
+        "open", help="opens a problem of given id in browser"
     )
     problem_parser.add_argument(
         "id",
@@ -58,7 +58,7 @@ def add_open_parser(subparsers):
 
 def add_random_parser(subparsers):
     random_parser = subparsers.add_parser(
-        "random", help="queries and shows random open in browser"
+        "random", help="queries and opens a random problem in browser"
     )
     random_parser.add_argument(
         "--tier",
@@ -100,7 +100,7 @@ def add_submit_parser(subparsers):
     # Submit command parser
     submit_parser = subparsers.add_parser(
         "submit",
-        help="submits your solution",
+        help="submits your solution and trace the realtime statement",
     )
     submit_parser.add_argument(
         "file",

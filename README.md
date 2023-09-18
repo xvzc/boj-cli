@@ -44,11 +44,11 @@ usage: boj [-h] [-v] {login,submit,open,run,init,random} ...
 positional arguments:
   {login,submit,open,run,init,random}
     login               logs in to BOJ
-    submit              submits your solution
-    open                opens the given id of open in browser
+    submit              submits your solution and trace the realtime statement
+    open                opens a problem of given id in browser
     run                 runs generated testcases
     init                creates testcases in current directory
-    random              queries and shows random open in browser
+    random              queries and opens a random problem in browser
 
 options:
   -h, --help            show this help message and exit
