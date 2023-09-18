@@ -1,5 +1,5 @@
 import requests
-import json
+
 try:
     from packaging.version import parse
 except ImportError:
@@ -11,10 +11,10 @@ URL_PATTERN = 'https://pypi.python.org/pypi/{package}/json'
 
 def get_latest_version(package, url_pattern=URL_PATTERN):
     """Return version of package on pypi.python.org using json."""
-    req = requests.get(url_pattern.format(package=package))
+    res = requests.get(url_pattern.format(package=package))
     version = parse('0')
-    if req.status_code == requests.codes.ok:
-        j = json
+    if res.status_code == requests.codes.ok:
+        j = res.json()
         releases = j.get('releases', [])
         for release in releases:
             ver = parse(release)
