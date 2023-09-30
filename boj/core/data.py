@@ -24,9 +24,6 @@ class Testcase:
     def __repr__(self):
         return "Testcase {" + str(self.data_in) + ", " + self.data_out + "}"
 
-    def to_dict(self):
-        return {"input": self.data_in, "output": self.data_out}
-
 
 class Credential:
     username: str
@@ -44,5 +41,3 @@ class Credential:
             "bojautologin": self.token,
             "OnlineJudge": online_judge_token
         }
-
-

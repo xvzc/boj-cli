@@ -16,23 +16,23 @@ class BojProblemPage(Page):
         inputs = []
         outputs = []
         for data in sample_data:
-            text = data.text
+            text = data.text.strip()
 
             if "input" in str(data.get("id", "")):
                 text = text.rstrip()
-                inputs.append(text.rstrip())
+                inputs.append(text)
 
             if "output" in str(data.get("id", "")):
                 text = text.rstrip()
-                outputs.append(text.rstrip())
+                outputs.append(text)
 
         test_idx = 1
         testcases: list[Testcase] = []
         for data_in, data_out in zip(inputs, outputs):
             testcases.append(
                 Testcase(
-                    data_in=constant.salt() + data_in + "\n",
-                    data_out=constant.salt() + data_out + "\n",
+                    data_in=data_in,
+                    data_out=data_out
                 )
             )
 

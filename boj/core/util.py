@@ -104,19 +104,26 @@ def read_testcases() -> list[Testcase]:
     ]
 
 
-def testcases_to_yaml(testcases: list[Testcase]):
-    def str_presenter(dumper, data):
-        if isinstance(data, str) and data.startswith(constant.salt()):
-            data = data.replace(constant.salt(), "")
-            return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+def testcases_to_yaml_content(testcases: list[Testcase]):
+    yaml_content = ""
+    for testcase in testcases:
+        yaml_content = yaml_content + "- input: |\n"
 
-        return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+        input_content = ""
+        for line in testcase.data_in.splitlines():
+            input_content = input_content + (" "*4) + line + "\n"
 
-    yaml.add_representer(str, str_presenter)
-    yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
+        yaml_content = yaml_content + input_content
 
-    yaml_testcases = yaml.dump([t.to_dict() for t in testcases], indent=2)
-    return yaml_testcases.replace("- input", "\n- input").lstrip()
+        yaml_content = yaml_content + (" "*2) + "output: |\n"
+        output_content = ""
+        for line in testcase.data_out.splitlines():
+            output_content = output_content + (" "*4) + line + "\n"
+
+        yaml_content = yaml_content + output_content
+        yaml_content = yaml_content + "\n"
+
+    return yaml_content
 
 
 def read_config_file() -> dict:

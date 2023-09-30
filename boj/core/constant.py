@@ -53,10 +53,6 @@ def solved_ac_search_problem_url():
     return f"{solved_ac_search_url()}/problem"
 
 
-def salt():
-    return "6843f2dc-24fa-11e9-b84a-f8633f2431a4"
-
-
 def default_headers():
     return {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "

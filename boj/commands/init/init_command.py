@@ -22,7 +22,7 @@ class InitCommand(Command):
             problem_page = BojProblemPage(html=response.text)
 
             testcases = problem_page.extract_testcases()
-            yaml_testcases = util.testcases_to_yaml(testcases)
+            yaml_testcases = util.testcases_to_yaml_content(testcases)
 
             util.write_file(constant.testcase_file_path(), yaml_testcases, "w")
             console.print("Testcases have been created.")
