@@ -25,3 +25,6 @@ PyYAML==6.0
 dependency-injector==4.41.0
 black==23.7.0
 webdriver_manager==4.0.0
+getversion==1.0.2
+pytest==7.4.2
+
