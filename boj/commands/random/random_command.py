@@ -3,12 +3,12 @@ import webbrowser
 
 import boj.core.auth
 import boj.core.constant
-from boj.api.search import SolvedAcSearchApi
 from boj.core import constant
 from boj.core.base import Command
 from boj.core.config import Config, RandomOption
 from boj.core.error import IllegalStatementError
 from boj.core.out import BojConsole
+from boj.api.search import SolvedAcSearchApi, SolvedAcSearchApiParam
 
 
 class RandomCommand(Command):
@@ -18,10 +18,12 @@ class RandomCommand(Command):
             credential = boj.core.auth.read_credential()
             api = SolvedAcSearchApi(
                 url=constant.solved_ac_search_problem_url(),
-                tags=args.tags or config.command.random.tags,
-                lang="ko",
-                tier=args.tier or config.command.random.tier,
-                user=credential.username,
+                param=SolvedAcSearchApiParam(
+                    tags=args.tags or config.command.random.tags,
+                    lang="ko",
+                    tier=args.tier or config.command.random.tier,
+                    user=credential.username,
+                ),
             )
 
             status.update("Calling solved.ac API...")
