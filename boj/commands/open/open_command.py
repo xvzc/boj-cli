@@ -10,4 +10,4 @@ class OpenCommand(Command):
     def execute(self, args, config: Config):
         console = BojConsole()
         with console.status("Opening in browser..."):
-            webbrowser.open(boj.core.constant.boj_problem_url(args.id))
+            webbrowser.open(boj.core.constant.boj_problem_url(args.problem_id))

@@ -30,7 +30,7 @@ def create_dir():
 def read_file(path, opt):
     try:
         if not os.path.isfile(path):
-            raise FileIOError(f"{path} is not a file")
+            raise FileIOError(f"{path} is not a file or doesn't exist")
 
         with open(path, opt) as file:
             data = file.read()

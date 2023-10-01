@@ -42,6 +42,7 @@ class RunCodeError(BojError):
     def __init__(self, msg):
         super().__init__(msg)
 
+
 class WebSocketError(BojError):
     def __init__(self, msg):
         super().__init__(msg)

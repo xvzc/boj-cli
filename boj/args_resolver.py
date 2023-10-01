@@ -49,7 +49,7 @@ def add_open_parser(subparsers):
         "open", help="opens a problem of given id in browser"
     )
     problem_parser.add_argument(
-        "id",
+        "problem_id",
         metavar="PROBLEM_ID",
         type=int,
         help="problem id",
@@ -78,7 +78,6 @@ def add_run_parser(subparsers):
     run_parser.add_argument(
         "file",
         metavar="FILE",
-        type=validate_file,
         help="file path of the source code",
     )
     run_parser.add_argument(
@@ -92,6 +91,7 @@ def add_run_parser(subparsers):
         "-t",
         "--timeout",
         default=None,
+        type=int,
         help="timeout for each test",
     )
 
@@ -105,7 +105,6 @@ def add_submit_parser(subparsers):
     submit_parser.add_argument(
         "file",
         metavar="FILE",
-        type=validate_file,
         help="local file path of your source code",
     )
     submit_parser.add_argument(
@@ -121,21 +120,21 @@ def add_submit_parser(subparsers):
         type=validate_code_open,
         help="whether to publicly open the submitted code ('open' | 'close' | 'onlyaccepted')",
     )
+    submit_parser.add_argument(
+        "-t",
+        "--timeout",
+        default=None,
+        type=int,
+        help="timeout for websocket",
+    )
 
 
 def get_version():
-    return f'boj-cli {boj.__version__}'
-
-
-def validate_file(file):
-    if os.path.isfile(file):
-        return file
-    else:
-        raise argparse.ArgumentTypeError(f"'{file}' No such file.")
+    return f"boj-cli {boj.__version__}"
 
 
 def validate_code_open(value):
-    if value not in ['open', 'close', 'onlyaccepted']:
-        raise argparse.ArgumentTypeError(f"'{value}' is not a valid option.")
+    if value not in ["open", "close", "onlyaccepted", None]:
+        raise ValueError(f"'{value}' is not a valid option.")
 
     return value
