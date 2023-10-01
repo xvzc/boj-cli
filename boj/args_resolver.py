@@ -1,6 +1,6 @@
 import argparse
 import os
-import pkg_resources  # part of setuptools
+import boj
 
 
 def create_parser():
@@ -124,10 +124,7 @@ def add_submit_parser(subparsers):
 
 
 def get_version():
-    try:
-        return str(pkg_resources.require("boj-cli")[0]).strip()
-    except (Exception,) as e:
-        return "0.0.0"
+    return f'boj-cli {boj.__version__}'
 
 
 def validate_file(file):
