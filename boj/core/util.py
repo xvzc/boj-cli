@@ -3,24 +3,20 @@ import ntpath
 import os
 import yaml
 
-from rich.console import Console
-
 from boj.core import constant
-from boj.core.config import FiletypeConfig
 from boj.core.data import Solution, Testcase
-from boj.core.error import ParsingConfigError, FileIOError
+from boj.core.error import FileIOError, IllegalStatementError
 
 
 def convert_language_code(lang):
     lang_dict = constant.lang_dict()
     if lang not in lang_dict:
-        console = Console()
-        console.print(lang + " is not a supported language")
+        raise IllegalStatementError(lang + " is not a supported language")
 
     return lang_dict[lang]
 
 
-def create_dir():
+def create_boj_dir():
     try:
         os.makedirs(constant.boj_path(), exist_ok=True)
     except OSError as e:
@@ -59,34 +55,6 @@ def read_solution(path):
     source = read_file(path, "r")
     problem_id, filetype = parse_path(path)
     return Solution(problem_id, filetype, source)
-
-
-def read_runner_config(filetype):
-    try:
-        runner_config = read_json(constant.config_file_path()).get("filetype", None)
-        if not runner_config:
-            raise ParsingConfigError(
-                '"filetype" property is not found in the runner config'
-            )
-
-        file_config = runner_config[filetype]
-
-        if "default_language" not in file_config:
-            raise ParsingConfigError(
-                '"default_language" property is not found in the runner config'
-            )
-
-        if "run" not in file_config:
-            raise ParsingConfigError('"run" property is not found in the runner config')
-
-        return FiletypeConfig(
-            default_language=file_config["default_language"],
-            compile_command=file_config.get("compile", None),
-            run_command=file_config["run"],
-        )
-    except Exception as e:
-        print(e)
-        raise ParsingConfigError("Error while parsing runner config.")
 
 
 def parse_path(file_path: str):

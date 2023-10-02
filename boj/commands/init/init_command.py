@@ -6,7 +6,7 @@ from boj.core import util
 from boj.core.base import Command
 from boj.core.config import Config
 from boj.core.out import BojConsole
-from boj.pages.problem_page import BojProblemPage
+from boj.pages.boj_problem_page import BojProblemPage
 
 
 class InitCommand(Command):

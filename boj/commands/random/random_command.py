@@ -8,7 +8,7 @@ from boj.core.base import Command
 from boj.core.config import Config, RandomOption
 from boj.core.error import IllegalStatementError
 from boj.core.out import BojConsole
-from boj.api.search import SolvedAcSearchApi, SolvedAcSearchApiParam
+from boj.api.solved_ac_search_api import SolvedAcSearchApi, SolvedAcSearchApiParam
 
 
 class RandomCommand(Command):

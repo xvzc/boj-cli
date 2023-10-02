@@ -8,9 +8,9 @@ from boj.core.data import Credential
 from boj.core.out import BojConsole
 from boj.core import http
 from boj.core import constant
-from boj.pages.main_page import BojMainPage
-from boj.pages.status_page import BojStatusPage
-from boj.pages.submit_page import BojSubmitPage
+from boj.pages.boj_main_page import BojMainPage
+from boj.pages.boj_status_page import BojStatusPage
+from boj.pages.boj_submit_page import BojSubmitPage
 
 
 class SubmitCommand(Command):

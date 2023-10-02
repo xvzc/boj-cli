@@ -41,7 +41,7 @@ class Container(containers.DeclarativeContainer):
 
 @inject
 def cli():
-    util.create_dir()
+    util.create_boj_dir()
     parser = args_resolver.create_parser()
     args = parser.parse_args()
     if args.command is None:
