@@ -16,9 +16,9 @@ from boj.args_resolver import add_open_parser
 @pytest.mark.parametrize(
     "test_in, expected",
     [
-        (["init", "1234"], Namespace(command="init", problem_id=1234)),
-        (["init", "14500"], Namespace(command="init", problem_id=14500)),
-        (["init", "1919"], Namespace(command="init", problem_id=1919)),
+        (["init", "1234"], Namespace(command="init", problem_id=1234, lang=None)),
+        (["init", "14500"], Namespace(command="init", problem_id=14500, lang=None)),
+        (["init", "1919", "--lang", "cpp"], Namespace(command="init", problem_id=1919, lang="cpp")),
     ],
 )
 def test_init_command_parser(test_in, expected):

@@ -21,7 +21,7 @@ class RunCommand(Command):
 
         code_runner = CodeRunner(
             file_path=args.file,
-            runner_config=config.of_filetype(solution.filetype),
+            runner_config=config.filetype_config_of(solution.filetype),
             verbose=args.verbose or config.command.run.verbose,
             testcases=testcases,
         )

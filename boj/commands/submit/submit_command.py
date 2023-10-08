@@ -38,7 +38,7 @@ class SubmitCommand(Command):
 
             # Set payload for the submit request
             language = (
-                args.lang or config.of_filetype(solution.filetype).default_language
+                args.lang or config.filetype_config_of(solution.filetype).default_language
             )
             payload = {
                 "csrf_key": submit_page.query_csrf_key(),

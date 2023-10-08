@@ -18,15 +18,22 @@ def convert_language_code(lang):
 
 def create_boj_dir():
     try:
-        os.makedirs(constant.boj_path(), exist_ok=True)
+        os.makedirs(constant.boj_dir_path(), exist_ok=True)
+        os.makedirs(constant.template_dir_path(), exist_ok=True)
     except OSError as e:
         raise e
+
+
+def file_exists(path):
+    if os.path.isfile(path):
+        return True
+    return False
 
 
 def read_file(path, opt):
     try:
         if not os.path.isfile(path):
-            raise FileIOError(f"{path} is not a file or doesn't exist")
+            raise FileIOError(f"'{path}' is not a file or doesn't exist")
 
         with open(path, opt) as file:
             data = file.read()
@@ -79,14 +86,14 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
 
         input_content = ""
         for line in testcase.data_in.splitlines():
-            input_content = input_content + (" "*4) + line + "\n"
+            input_content = input_content + (" " * 4) + line + "\n"
 
         yaml_content = yaml_content + input_content
 
-        yaml_content = yaml_content + (" "*2) + "output: |\n"
+        yaml_content = yaml_content + (" " * 2) + "output: |\n"
         output_content = ""
         for line in testcase.data_out.splitlines():
-            output_content = output_content + (" "*4) + line + "\n"
+            output_content = output_content + (" " * 4) + line + "\n"
 
         yaml_content = yaml_content + output_content
         yaml_content = yaml_content + "\n"
@@ -94,11 +101,15 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
     return yaml_content
 
 
+def read_template(lang) -> str:
+    return read_file(f"{constant.template_dir_path()}/template.{lang}", "r")
+
+
 def read_config_file() -> dict:
-    if os.path.isfile(f"{constant.boj_path()}/config.json"):
+    if os.path.isfile(f"{constant.boj_dir_path()}/config.json"):
         print("'config.json' is deprecated. Remove it and use 'config.yaml' instead.")
 
-    if not os.path.isfile(f"{constant.boj_path()}/config.yaml"):
+    if not os.path.isfile(f"{constant.boj_dir_path()}/config.yaml"):
         print("'config.yaml' is not found. Using default values.")
         return {}
 

@@ -1,0 +1,7 @@
+filetype:
+  cpp:
+    default_language: 'c++17'
+    compile: |
+      g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out
+    run: './a.out'
+

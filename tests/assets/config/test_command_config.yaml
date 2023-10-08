@@ -1,0 +1,13 @@
+command:
+  random:
+    tier: g1..g5
+    tags:
+      - dp
+      - math
+  run:
+    verbose: false
+    timeout: 15
+  submit:
+    verbose: false
+    timeout: 15
+    open: close

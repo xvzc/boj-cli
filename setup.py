@@ -8,4 +8,3 @@ else:
     cur_version = "0.0.0"
 
 setup(version=cur_version)
-
