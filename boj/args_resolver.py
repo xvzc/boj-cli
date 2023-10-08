@@ -39,7 +39,7 @@ def add_init_parser(subparsers):
         "-l",
         "--lang",
         default=None,
-        help="language to load the template file with",
+        help="If given, this will create file with the content of template file",
     )
 
 

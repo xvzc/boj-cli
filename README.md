@@ -12,6 +12,8 @@
 > ~/.boj-cli/config.json
 ```yaml
 command:
+  init:
+    lang: cpp # Make sure that you have ~/.boj-cli/templates/template.cpp
   random:
     tier: g1..g5
     tags:
@@ -66,12 +68,18 @@ $ boj login
 
 ---
 
-## 테스트케이스 불러오기
+## 테스트케이스 및 템플릿 파일 불러오기
 백준 온라인저지에 올라와있는 문제에서 테스트케이스를 추려내어 현재 경로에 `testcase.yaml` 파일을 생성합니다.
 생성된 `testcase.yaml`의 포멧에 맞게 커스텀 테스트케이스 또한 추가할 수 있습니다.
+`lang` 옵션에 값을 할당하면 템플릿 파일을 읽어 현재 경로에 `{문제번호}.{언어}` 파일을 생성합니다.
 ```
 $ boj init {PROBLEM_ID}
-ex) boj init 1234
+```
+
+### Options
+```
+--lang str: 언어를 특정해서 ~/.boj-cli/templates/template.{lang} 파일을 읽어올 수 있도록 합니다.
+            값이 존재하지 않으면 템플릿 파일을 불러오지 않습니다.
 ```
 
 ---

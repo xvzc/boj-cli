@@ -1,4 +1,6 @@
 command:
+  init:
+    lang: cpp # Make sure that you have ~/.boj-cli/templates/template.cpp
   random:
     tier: g1..g5
     tags:

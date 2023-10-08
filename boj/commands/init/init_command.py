@@ -28,7 +28,6 @@ class InitCommand(Command):
             console.print("Testcases have been created.")
 
             lang = args.lang or config.command.init.lang
-            print(lang)
             if not lang:
                 return
 
