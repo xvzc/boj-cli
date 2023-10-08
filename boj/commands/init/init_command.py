@@ -6,7 +6,7 @@ from boj.core import util
 from boj.core.base import Command
 from boj.core.config import Config
 from boj.core.out import BojConsole
-from boj.pages.problem_page import BojProblemPage
+from boj.pages.boj_problem_page import BojProblemPage
 
 
 class InitCommand(Command):
@@ -26,3 +26,16 @@ class InitCommand(Command):
 
             util.write_file(constant.testcase_file_path(), yaml_testcases, "w")
             console.print("Testcases have been created.")
+
+            lang = args.lang or config.command.init.lang
+            if not lang:
+                return
+
+            if util.file_exists(f"./{args.problem_id}.{args.lang}"):
+                console.log(
+                    f"Template file has not been loaded because the file '{args.problem_id}.{args.lang}' already exists."
+                )
+                return
+
+            template = util.read_template(lang)
+            util.write_file(f"{args.problem_id}.{lang}", template, "w")

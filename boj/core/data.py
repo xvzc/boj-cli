@@ -12,8 +12,16 @@ class Solution:
             "Problem {" + str(self.id) + ", " + self.filetype + ", " + self.source + "}"
         )
 
+    def __eq__(self, other):
+        return (
+            self.id == other.id
+            and self.filetype == other.filetype
+            and self.source == other.source
+        )
+
 
 class Testcase:
+    __test__ = False
     data_in: str
     data_out: str
 
@@ -33,11 +41,14 @@ class Credential:
         self.username = username
         self.token = token
 
+    def __repr__(self):
+        return "Credential {" + str(self.username) + ", " + self.token + "}"
+
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
+    def __eq__(self, other):
+        return self.username == other.username and self.token == other.token
+
     def session_cookies_of(self, online_judge_token):
-        return {
-            "bojautologin": self.token,
-            "OnlineJudge": online_judge_token
-        }
+        return {"bojautologin": self.token, "OnlineJudge": online_judge_token}

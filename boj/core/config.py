@@ -1,3 +1,5 @@
+from enum import Enum
+
 from boj.core.error import ParsingConfigError
 from boj.core import util
 
@@ -8,8 +10,10 @@ class LoginOption:
 
 
 class InitOption:
-    def __init__(self):
-        pass
+    lang: str
+
+    def __init__(self, lang):
+        self.lang = lang
 
 
 class OpenOption:
@@ -64,6 +68,30 @@ class CommandConfig:
     submit: SubmitOption
 
 
+class DefaultConfig:
+    class Login(Enum):
+        pass
+
+    class Init(Enum):
+        lang: str = None
+
+    class Open(Enum):
+        pass
+
+    class Random(Enum):
+        tier: str = None
+        tags: list[str] = []
+
+    class Run(Enum):
+        verbose: bool = False
+        timeout: int = 15
+
+    class Submit(Enum):
+        verbose: bool = False
+        timeout: int = 15
+        open: str = "onlyaccepted"
+
+
 class FiletypeConfig:
     default_language: str
     compile: str
@@ -83,7 +111,7 @@ class Config:
         self.command = CommandConfig()
         self.filetype = {}
 
-    def of_filetype(self, filetype) -> FiletypeConfig:
+    def filetype_config_of(self, filetype) -> FiletypeConfig:
         config = self.filetype[filetype]
         if not config.default_language:
             raise ParsingConfigError(
@@ -107,20 +135,28 @@ def load() -> Config:
         f["filetype"] = {}
 
     config = Config()
+    config.command.init = InitOption(
+        lang=f["command"].get("init", {}).get("lang", DefaultConfig.Init.lang.value),
+    )
+
     config.command.run = RunOption(
-        verbose=f["command"].get("run", {}).get("verbose", False),
-        timeout=f["command"].get("run", {}).get("timeout", 15),
+        verbose=f["command"].get("run", {}).get("verbose", DefaultConfig.Run.verbose.value),
+        timeout=f["command"].get("run", {}).get("timeout", DefaultConfig.Run.timeout.value),
     )
 
     config.command.submit = SubmitOption(
-        verbose=f["command"].get("submit", {}).get("verbose", False),
-        timeout=f["command"].get("submit", {}).get("timeout", 15),
-        open=f["command"].get("submit", {}).get("open", "onlyaccepted"),
+        verbose=f["command"]
+        .get("submit", {})
+        .get("verbose", DefaultConfig.Submit.verbose.value),
+        timeout=f["command"]
+        .get("submit", {})
+        .get("timeout", DefaultConfig.Submit.timeout.value),
+        open=f["command"].get("submit", {}).get("open", DefaultConfig.Submit.open.value),
     )
 
     config.command.random = RandomOption(
-        tier=f["command"].get("random", {}).get("tier", None),
-        tags=f["command"].get("random", {}).get("tags", []),
+        tier=f["command"].get("random", {}).get("tier", DefaultConfig.Random.tier.value),
+        tags=f["command"].get("random", {}).get("tags", DefaultConfig.Random.tags.value),
     )
 
     for k, v in f["filetype"].items():

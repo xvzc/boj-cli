@@ -3,34 +3,37 @@ import ntpath
 import os
 import yaml
 
-from rich.console import Console
-
 from boj.core import constant
-from boj.core.config import FiletypeConfig
 from boj.core.data import Solution, Testcase
-from boj.core.error import ParsingConfigError, FileIOError
+from boj.core.error import FileIOError, IllegalStatementError
 
 
 def convert_language_code(lang):
     lang_dict = constant.lang_dict()
     if lang not in lang_dict:
-        console = Console()
-        console.print(lang + " is not a supported language")
+        raise IllegalStatementError(lang + " is not a supported language")
 
     return lang_dict[lang]
 
 
-def create_dir():
+def create_boj_dir():
     try:
-        os.makedirs(constant.boj_path(), exist_ok=True)
+        os.makedirs(constant.boj_dir_path(), exist_ok=True)
+        os.makedirs(constant.template_dir_path(), exist_ok=True)
     except OSError as e:
         raise e
+
+
+def file_exists(path):
+    if os.path.isfile(path):
+        return True
+    return False
 
 
 def read_file(path, opt):
     try:
         if not os.path.isfile(path):
-            raise FileIOError(f"{path} is not a file or doesn't exist")
+            raise FileIOError(f"'{path}' is not a file or doesn't exist")
 
         with open(path, opt) as file:
             data = file.read()
@@ -61,34 +64,6 @@ def read_solution(path):
     return Solution(problem_id, filetype, source)
 
 
-def read_runner_config(filetype):
-    try:
-        runner_config = read_json(constant.config_file_path()).get("filetype", None)
-        if not runner_config:
-            raise ParsingConfigError(
-                '"filetype" property is not found in the runner config'
-            )
-
-        file_config = runner_config[filetype]
-
-        if "default_language" not in file_config:
-            raise ParsingConfigError(
-                '"default_language" property is not found in the runner config'
-            )
-
-        if "run" not in file_config:
-            raise ParsingConfigError('"run" property is not found in the runner config')
-
-        return FiletypeConfig(
-            default_language=file_config["default_language"],
-            compile_command=file_config.get("compile", None),
-            run_command=file_config["run"],
-        )
-    except Exception as e:
-        print(e)
-        raise ParsingConfigError("Error while parsing runner config.")
-
-
 def parse_path(file_path: str):
     tokens = ntpath.basename(str(file_path)).split(".")
     problem_id = tokens[0]
@@ -111,14 +86,14 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
 
         input_content = ""
         for line in testcase.data_in.splitlines():
-            input_content = input_content + (" "*4) + line + "\n"
+            input_content = input_content + (" " * 4) + line + "\n"
 
         yaml_content = yaml_content + input_content
 
-        yaml_content = yaml_content + (" "*2) + "output: |\n"
+        yaml_content = yaml_content + (" " * 2) + "output: |\n"
         output_content = ""
         for line in testcase.data_out.splitlines():
-            output_content = output_content + (" "*4) + line + "\n"
+            output_content = output_content + (" " * 4) + line + "\n"
 
         yaml_content = yaml_content + output_content
         yaml_content = yaml_content + "\n"
@@ -126,11 +101,15 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
     return yaml_content
 
 
+def read_template(lang) -> str:
+    return read_file(f"{constant.template_dir_path()}/template.{lang}", "r")
+
+
 def read_config_file() -> dict:
-    if os.path.isfile(f"{constant.boj_path()}/config.json"):
+    if os.path.isfile(f"{constant.boj_dir_path()}/config.json"):
         print("'config.json' is deprecated. Remove it and use 'config.yaml' instead.")
 
-    if not os.path.isfile(f"{constant.boj_path()}/config.yaml"):
+    if not os.path.isfile(f"{constant.boj_dir_path()}/config.yaml"):
         print("'config.yaml' is not found. Using default values.")
         return {}
 

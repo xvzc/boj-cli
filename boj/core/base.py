@@ -37,7 +37,7 @@ class Browser:
         self.url = url
         options = Options()
         options.add_argument("start-maximized")
-        driver_cache_manager = DriverCacheManager(root_dir=constant.boj_path())
+        driver_cache_manager = DriverCacheManager(root_dir=constant.boj_dir_path())
 
         self.driver = webdriver.Chrome(
             options=options,

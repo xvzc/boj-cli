@@ -35,6 +35,12 @@ def add_init_parser(subparsers):
         type=int,
         help="problem id",
     )
+    init_parser.add_argument(
+        "-l",
+        "--lang",
+        default=None,
+        help="If given, this will create file with the content of template file",
+    )
 
 
 def add_login_parser(subparsers):

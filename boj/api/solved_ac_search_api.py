@@ -5,7 +5,7 @@ from boj.core.base import Api
 
 
 class SolvedAcSearchApiParam:
-    tags: str
+    tags: list[str]
     lang: str
     tier: str
     user: str
@@ -36,9 +36,9 @@ class SolvedAcSearchApi(Api):
     url: str
     param: SolvedAcSearchApiParam
 
-    def __init__(self, url, tags, lang, tier, user):
+    def __init__(self, url: str, param: SolvedAcSearchApiParam):
         self.url = url
-        self.param = SolvedAcSearchApiParam(tags=tags, lang=lang, tier=tier, user=user)
+        self.param = param
 
     def request(self):
         params = {
