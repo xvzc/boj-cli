@@ -128,7 +128,7 @@ class CodeRunner:
         progress,
     ):
         process = await asyncio.create_subprocess_shell(
-            self.runner_config.run,
+            self.runner_config.run.replace("$file", self.file_path),
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
