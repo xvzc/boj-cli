@@ -135,15 +135,15 @@ class CodeRunner:
             shell=True,
         )
 
-        test_input = testcase.data_in.rstrip()
-        answer = testcase.data_out.rstrip()
+        test_input = "\n".join([line.rstrip() for line in testcase.data_in.splitlines()])
+        answer = "\n".join([line.rstrip() for line in testcase.data_out.splitlines()])
 
         try:
             output, error = await asyncio.wait_for(
                 process.communicate(input=test_input.encode("utf-8")), timeout=10
             )
 
-            output = output.decode("utf-8").rstrip()
+            output = "\n".join([line.rstrip() for line in output.decode("utf-8").splitlines()])
             error = error.decode("utf-8").rstrip()
 
             await asyncio.sleep(uniform(0.2, 1.5))
