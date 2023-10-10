@@ -31,9 +31,9 @@ class InitCommand(Command):
             if not lang:
                 return
 
-            if util.file_exists(f"./{args.problem_id}.{args.lang}"):
+            if util.file_exists(f"./{args.problem_id}.{lang}"):
                 console.log(
-                    f"Template file has not been loaded because the file '{args.problem_id}.{args.lang}' already exists."
+                    f"Template file has not been loaded because the file '{args.problem_id}.{lang}' already exists."
                 )
                 return
 
