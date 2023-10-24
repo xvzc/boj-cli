@@ -21,15 +21,16 @@ def test_solution(problem_id, filetype, source):
 
 
 @pytest.mark.parametrize(
-    "data_in, data_out",
+    "label, data_in, data_out",
     [
-        ("TestDataIn1", "TestDataOut1"),
-        ("TestDataIn2", "TestDataOut2"),
-        ("TestDataIn3", "TestDataOut3"),
-        ("TestDataIn4", "TestDataOut4"),
+        ("TestLabel1", "TestDataIn1", "TestDataOut1"),
+        ("TestLabel2", "TestDataIn2", "TestDataOut2"),
+        ("TestLabel3", "TestDataIn3", "TestDataOut3"),
+        ("TestLabel4", "TestDataIn4", "TestDataOut4"),
     ],
 )
-def test_testcase(data_in, data_out):
-    testcase = Testcase(data_in=data_in, data_out=data_out)
+def test_testcase(label, data_in, data_out):
+    testcase = Testcase(label=label, data_in=data_in, data_out=data_out)
+    assert testcase.label == label
     assert testcase.data_in == data_in
     assert testcase.data_out == data_out

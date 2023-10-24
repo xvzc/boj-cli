@@ -22,7 +22,7 @@ def credential_file_path():
 
 
 def testcase_file_path():
-    return f"./testcase.yaml"
+    return f"./testcase.toml"
 
 
 def boj_main_url():

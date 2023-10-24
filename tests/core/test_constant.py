@@ -24,7 +24,7 @@ def test_credential_file_path():
 
 
 def test_testcase_file_path():
-    assert constant.testcase_file_path() == "./testcase.yaml"
+    assert constant.testcase_file_path() == "./testcase.toml"
 
 
 def test_boj_main_url():

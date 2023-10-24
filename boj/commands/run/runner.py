@@ -1,4 +1,5 @@
 import asyncio
+import time
 from random import uniform
 from subprocess import Popen, PIPE
 
@@ -8,27 +9,27 @@ from boj.core.data import Testcase
 from boj.core.config import FiletypeConfig
 from boj.core.error import RunCodeError
 from boj.core.out import BojConsole
+from boj.core import util
 
 
-def _create_status_label(color, label):
-    return "[" + color + "]" + label.ljust(9, " ")
+def _create_case_label(width, label: str):
+    label = label.ljust(width + 1, " ")
+    return f"[cyan]CASE #{label}"
 
 
-def _create_testcase_label(task_id):
-    return ("[cyan]#" + str(task_id + 1)).ljust(10, " ")
-
-
-def _create_output_label(task_id, color):
-    return ("[" + color + "]" + "OUTPUT [cyan]#" + str(task_id + 1)).ljust(26, " ")
+def _create_status_label(color, label: str):
+    return f"[{color}]{label}"
 
 
 class Output:
-    testcase_id: int
+    testcase: Testcase
+    task_id: Testcase
     text: str
     color: str
 
-    def __init__(self, task_id, text, color):
-        self.testcase_id = task_id
+    def __init__(self, testcase, task_id, text, color):
+        self.testcase = testcase
+        self.task_id = task_id
         self.text = text
         self.color = color
 
@@ -52,6 +53,7 @@ class CodeRunner:
             return
 
         with console.status("Compiling..") as status:
+            time.sleep(0.6)
             try:
                 command = self.runner_config.compile.replace("$file", self.file_path)
                 process = Popen(
@@ -85,19 +87,21 @@ class CodeRunner:
         )
 
         with progress:
+            label_width = max([len(testcase.label) for testcase in self.testcases])
             task_ids = [
                 progress.add_task(
-                    _create_testcase_label(testcase_id)
-                    + _create_status_label("yellow", "Running"),
+                    description=_create_case_label(label_width, testcase.label)
+                    + _create_status_label("yellow", "Running.."),
                     total=1,
                 )
-                for testcase_id in range(len(self.testcases))
+                for testcase in self.testcases
             ]
 
             futures = [
                 asyncio.ensure_future(
                     self._run_testcase_async(
                         task_id=task_id,
+                        label_width=label_width,
                         testcase=testcase,
                         progress=progress,
                     )
@@ -111,18 +115,26 @@ class CodeRunner:
             loop.close()
 
             outputs = sorted(
-                [future.result() for future in futures], key=lambda x: x.testcase_id
+                [future.result() for future in futures], key=lambda x: x.task_id
             )
 
-            if self.verbose:
-                for output in outputs:
-                    progress.console.log(
-                        _create_output_label(output.testcase_id, output.color)
-                    )
-                    progress.console.log(output.text, end="\n\n")
+            if not self.verbose:
+                return
+
+            progress.console.log("---------------------------------")
+            for output in outputs:
+                progress.console.log(
+                    f"• {_create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
+                )
+                progress.console.log("[magenta]Expected:")
+                progress.console.log(f"[white]{output.testcase.data_out}", end="")
+                progress.console.log("[magenta]Yours:")
+                progress.console.log(f"[white]{output.text}", end="")
+                progress.console.log("---------------------------------")
 
     async def _run_testcase_async(
         self,
+        label_width,
         task_id,
         testcase: Testcase,
         progress,
@@ -135,53 +147,48 @@ class CodeRunner:
             shell=True,
         )
 
-        test_input = "\n".join([line.rstrip() for line in testcase.data_in.splitlines()])
-        answer = "\n".join([line.rstrip() for line in testcase.data_out.splitlines()])
+        answer = testcase.data_out
+        test_input = testcase.data_in.encode("utf-8")
 
         try:
             output, error = await asyncio.wait_for(
-                process.communicate(input=test_input.encode("utf-8")), timeout=10
+                process.communicate(input=test_input), timeout=10
             )
 
-            output = "\n".join([line.rstrip() for line in output.decode("utf-8").splitlines()])
+            output = util.normalize(output.decode("utf-8"))
             error = error.decode("utf-8").rstrip()
 
             await asyncio.sleep(uniform(0.2, 1.5))
 
             if process.returncode != 0:
                 color = "bold magenta"
-                progress.update(
-                    task_id=task_id,
-                    description=_create_testcase_label(task_id)
-                    + _create_status_label(color, "ERROR"),
-                    completed=1,
-                )
-                return Output(task_id=task_id, text=error, color=color)
-
-            if answer.rstrip() == output:
+                status = "ERROR"
+                text = error
+            elif answer == output:
                 color = "bold green"
-                progress.update(
-                    task_id=task_id,
-                    description=_create_testcase_label(task_id)
-                    + _create_status_label(color, "PASSED"),
-                    completed=1,
-                )
-                return Output(task_id=task_id, text=output, color=color)
+                status = "PASSED"
+                text = output
             else:
                 color = "bold red"
-                progress.update(
-                    task_id=task_id,
-                    description=_create_testcase_label(task_id)
-                    + _create_status_label(color, "FAILED"),
-                    completed=1,
-                )
-                return Output(task_id=task_id, text=output, color=color)
+                status = "FAILED"
+                text = output
 
-        except asyncio.exceptions.TimeoutError:
             progress.update(
                 task_id=task_id,
-                description=_create_testcase_label(task_id)
-                + _create_status_label("magenta", "Timed out"),
+                description=_create_case_label(label_width, testcase.label)
+                + _create_status_label(color, status),
                 completed=1,
             )
-            return
+
+            return Output(task_id=task_id, testcase=testcase, text=text, color=color)
+
+        except asyncio.exceptions.TimeoutError:
+            color = "magenta"
+            status = "TIMED OUT"
+            progress.update(
+                task_id=task_id,
+                description=_create_case_label(label_width, testcase.label)
+                + _create_status_label(color, status),
+                completed=1,
+            )
+            return Output(task_id=task_id, testcase=testcase, text="", color=status)

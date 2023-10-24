@@ -2,10 +2,12 @@ import json
 import ntpath
 import os
 import yaml
+import tomllib
 
 from boj.core import constant
 from boj.core.data import Solution, Testcase
 from boj.core.error import FileIOError, IllegalStatementError
+from boj.core import util
 
 
 def convert_language_code(lang):
@@ -58,6 +60,11 @@ def read_yaml(path):
     return yaml.safe_load(stream)
 
 
+def read_toml(path):
+    stream = read_file(path, "r")
+    return tomllib.loads(stream)
+
+
 def read_solution(path):
     source = read_file(path, "r")
     problem_id, filetype = parse_path(path)
@@ -72,17 +79,17 @@ def parse_path(file_path: str):
 
 
 def read_testcases() -> list[Testcase]:
-    testcases = read_yaml(constant.testcase_file_path())
+    testcases = read_toml(constant.testcase_file_path())
     return [
-        Testcase(data_in=testcase.get("input", ""), data_out=testcase.get("output", ""))
-        for testcase in testcases
+        Testcase(label=k, data_in=normalize(v["input"]), data_out=normalize(v["output"]))
+        for k, v in testcases.items()
     ]
 
 
 def testcases_to_yaml_content(testcases: list[Testcase]):
     yaml_content = ""
     for testcase in testcases:
-        yaml_content = yaml_content + "- input: |\n"
+        yaml_content = yaml_content + "- input: |2\n"
 
         input_content = ""
         for line in testcase.data_in.splitlines():
@@ -90,7 +97,7 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
 
         yaml_content = yaml_content + input_content
 
-        yaml_content = yaml_content + (" " * 2) + "output: |\n"
+        yaml_content = yaml_content + (" " * 2) + "output: |2\n"
         output_content = ""
         for line in testcase.data_out.splitlines():
             output_content = output_content + (" " * 4) + line + "\n"
@@ -99,6 +106,25 @@ def testcases_to_yaml_content(testcases: list[Testcase]):
         yaml_content = yaml_content + "\n"
 
     return yaml_content
+
+
+def testcases_to_toml_content(testcases: list[Testcase]):
+    toml_content = ""
+    for idx, val in enumerate(testcases):
+        content = [
+            f"[{idx + 1}]",
+            'input = """',
+            val.data_in,
+            '"""',
+            "",
+            'output = """',
+            val.data_out,
+            '"""',
+            "\n",
+        ]
+        toml_content += "\n".join(content)
+
+    return toml_content
 
 
 def read_template(lang) -> str:
@@ -117,3 +143,9 @@ def read_config_file() -> dict:
         return read_yaml(constant.config_file_path())
     except (Exception,) as e:
         return {}
+
+
+def normalize(s: str):
+    s = s.rstrip()
+    normalized_text = "\n".join([line.rstrip() for line in s.splitlines()])
+    return normalized_text

@@ -22,10 +22,12 @@ class Solution:
 
 class Testcase:
     __test__ = False
+    label: str
     data_in: str
     data_out: str
 
-    def __init__(self, data_in, data_out):
+    def __init__(self, label, data_in, data_out):
+        self.label = label
         self.data_in = data_in
         self.data_out = data_out
 
