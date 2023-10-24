@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 
 from boj.core.base import Page
 from boj.core.data import Testcase
-from boj.core import constant
+from boj.core import util
 
 
 class BojProblemPage(Page):
@@ -16,14 +16,12 @@ class BojProblemPage(Page):
         inputs = []
         outputs = []
         for data in sample_data:
-            text = data.text.strip()
+            text = util.normalize(data.text)
 
             if "input" in str(data.get("id", "")):
-                text = text.rstrip()
                 inputs.append(text)
 
             if "output" in str(data.get("id", "")):
-                text = text.rstrip()
                 outputs.append(text)
 
         test_idx = 1
@@ -31,6 +29,7 @@ class BojProblemPage(Page):
         for data_in, data_out in zip(inputs, outputs):
             testcases.append(
                 Testcase(
+                    label=test_idx,
                     data_in=data_in,
                     data_out=data_out
                 )
