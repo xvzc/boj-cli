@@ -162,10 +162,10 @@ $ cd 1234 && boj run
 ```sh
 $ boj clean
 ```
-solvedac API를 활용해서 문제를 검색하고, 기본 브라우저에서 링크로 이동합니다.
+`boj submit` 명령어 수행 결과로 accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브힙니다.  
+> 아카이브 되는 파일은 `yyyymmdd_hhmmss_{filename}`의 포멧으로 저장됩니다.
 ```
---tier, -i: 문제 티어 쿼리
---tags, -t: 문제 태그 쿼리
+--origin, -o: 아카이브 파일 포멧을 무시하고 원본 파일 이름을 사용하며, 파일 이름이 이미 존재하면 덮어씁니다.
 ```
 ---
 
