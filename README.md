@@ -8,7 +8,7 @@
    * [Installation](#installation)
    * [Configuration](#configuration)
    * [Usage](#usage)
-      * [Init](##init)
+      * [Init](#init)
       * [Login](#login)
       * [Add](#add)
       * [Run](#run)
@@ -169,6 +169,7 @@ solvedac API를 활용해서 문제를 검색하고, 기본 브라우저에서 �
 $ boj open 1234
 ```
 기본 브라우저에서 문제 번호에 해당하는 링크로 이동합니다.
+
 ---
 
 ## random
