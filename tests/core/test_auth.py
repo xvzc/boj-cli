@@ -2,7 +2,7 @@ import pytest
 
 import boj.core.auth
 from boj.core import auth
-from boj.core.data import Credential
+from boj.data.credential import Credential
 
 
 @pytest.mark.parametrize(

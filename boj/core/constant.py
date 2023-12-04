@@ -2,7 +2,7 @@ import os
 
 
 def boj_dir_path():
-    return f'{str(os.getenv("HOME"))}/.boj-cli'
+    return os.path.expanduser("~/.boj-cli")
 
 
 def config_file_path():
@@ -11,10 +11,6 @@ def config_file_path():
 
 def key_file_path():
     return f"{boj_dir_path()}/key"
-
-
-def template_dir_path():
-    return f"{boj_dir_path()}/templates"
 
 
 def credential_file_path():

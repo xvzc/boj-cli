@@ -2,7 +2,7 @@ import json
 
 from cryptography.fernet import Fernet
 
-from boj.core.data import Credential
+from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 from boj.core.constant import key_file_path, credential_file_path
 from boj.core import util

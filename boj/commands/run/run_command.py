@@ -1,30 +1,45 @@
 import time
 
-import boj.core.util as util
 from boj.commands.run.runner import CodeRunner
 from boj.core.base import Command
 from boj.core.config import Config
 from boj.core.out import BojConsole
+from boj.data.boj_info import BojInfo
+from boj.core.error import IllegalStatementError, ResourceNotFoundError
+from boj.data.solution import Solution
+from boj.data.testcase import TomlTestcase
 
 
 class RunCommand(Command):
-    def execute(self, args, config: Config):
+    def execute(self, args):
         console = BojConsole()
+        with console.status("Loading config...") as status:
+            time.sleep(0.26)
+            config = Config.load()
+
+            status.update("Looking for problem information...")
+            time.sleep(0.29)
+
+            boj_info = BojInfo.find_any(
+                problem_dir=config.workspace.problem_dir,
+                problem_id=args.problem_id
+            )
+            console.log("Successfully loaded configuration")
 
         with console.status("Loading source file...") as status:
-            solution = util.read_solution(args.file)
-            time.sleep(0.7)
+            solution = Solution.read(boj_info)
+            time.sleep(0.21)
 
             status.update("Loading testcases...")
-            testcases = util.read_testcases()
-            time.sleep(0.7)
+            time.sleep(0.22)
 
         code_runner = CodeRunner(
-            file_path=args.file,
-            runner_config=config.filetype_config_of(solution.filetype),
-            verbose=args.verbose or config.command.run.verbose,
-            testcases=testcases,
+            file_path=solution.path,
+            ft_config=config.of_filetype(boj_info.filetype),
+            timeout=args.timeout,
+            testcases=TomlTestcase.read(boj_info.get_testcase_path()),
         )
 
         code_runner.run_compile()  # Run if code_runner.compile != None
         code_runner.run_testcases()
+        code_runner.post_run()

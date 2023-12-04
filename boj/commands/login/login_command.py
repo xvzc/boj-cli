@@ -10,8 +10,7 @@ from boj.core.out import BojConsole
 
 
 class LoginCommand(Command):
-    def execute(self, args, config: Config):
-
+    def execute(self, args):
         console = BojConsole()
         with console.status("Preparing login browser...") as status:
             browser = LoginBrowser(constant.boj_login_url())

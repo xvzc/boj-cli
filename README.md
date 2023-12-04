@@ -3,142 +3,189 @@
 백준 온라인 저지 커맨드라인 인터페이스  
 <img src="https://github.com/xvzc/boj-cli/assets/45588457/f6fcf5b8-b5bd-4674-b018-c6574e98b1c4" width="65%" height="65%">
 
-# 설치
-`$ pip install boj-cli`
+# Table of contents
+<!--ts-->
+   * [Installation](#installation)
+   * [Configuration](#configuration)
+   * [Usage](#usage)
+      * [Init](##init)
+      * [Login](#login)
+      * [Add](#add)
+      * [Run](#run)
+      * [Submit](#submit)
+      * [Clean](#clean)
+      * [Open](#open)
+<!--te-->
 
-# 로컬 설정
-`filetype.default_language`에 들어갈 수 있는 값들은 [지원 언어](#지원-언어)를 참고해주세요.
+# Installation
 
-> ~/.boj-cli/config.json
+```sh
+$ pip install boj-cli
+```
+
+# Configuration
 ```yaml
-command:
-  init:
-    lang: cpp # Make sure that you have ~/.boj-cli/templates/template.cpp
-  random:
-    tier: g1..g5
-    tags:
-      - dp
-      - math
-  run:
-    verbose: false
-    timeout: 15
-  submit:
-    verbose: false
-    timeout: 15
-    open: onlyaccepted
+# ~/myproject/.boj/config.json
+workspace:
+  problem_dir: 'src' # Default: "."
+  archive_dir: 'archives' # Default: "archives"
 filetype:
   py:
-    default_language: 'python3'
+    language: 'python3'
+    filename: main.py # Defailt: main.{filetype}
     run: 'python3 $file'
   cpp:
-    default_language: 'c++17'
-    compile: |
-      g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out
+    language: 'c++17'
+    compile: 'g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out'
     run: './a.out'
-
+    after: rm -rf a.out
+    manifest_files:
+      - compile_flags.txt
+  rs:
+    language: 'rust2021'
+    filename: main.rs # Default: main.{filetype}
+    source_dir: src
+    compile: 'rustc $file -o main'
+    run: './main'
+    after: rm -rf ./main
+    manifest_files:
+      - Cargo.toml
 ```
+> `filetype.language`에 들어갈 수 있는 값들은 [Supported languages](#supported-languages)를 참고해주세요.
 
-# 사용법
+
+# Usage
 ```
-$ boj --help
-usage: boj [-h] [-v] {login,submit,open,run,init,random} ...
+usage: boj [-h] [-v] {init,add,login,open,random,run,submit,clean} ...
 
 positional arguments:
-  {login,submit,open,run,init,random}
+  {init,add,login,open,random,run,submit,clean}
+    init                initializes BOJ directory
+    add                 sets up an environment of the given problem id
     login               logs in to BOJ
-    submit              submits your solution and trace the realtime statement
     open                opens a problem of given id in browser
-    run                 runs generated testcases
-    init                creates testcases in current directory
     random              queries and opens a random problem in browser
+    run                 runs generated testcases
+    submit              submits your solution and trace the realtime statement
+    clean               archives accepted source files
 
 options:
   -h, --help            show this help message and exit
   -v, --version         show version
 ```
 
-## 로그인
-백준 온라인 저지에서는 로그인 시 `reCAPTCHA`를 사용하고있기 때문에 로그인 과정은 조금 번거로울 수 있습니다. 
+## init
+
+```sh
+$ boj init
 ```
+
+현재 경로를 BOJ 디렉토리로 설정하고 다음과 같은 리소스들을 생성합니다.
+
+- `./.boj`
+- `./.boj/config.yaml`
+- `./.boj/templates`
+
+---
+
+## login
+
+```sh
 $ boj login
 ```
 
-위 명령어를 실행하면 `selenium` 브라우저가 실행됩니다. 로그인 정보를 입력하고 `reCAPTCHA`를 수행하면 로그인 세션 정보는 암호화되어 저장됩니다.
+백준 온라인 저지에서는 로그인 시 `reCAPTCHA`를 사용하고있기 때문에 로그인 과정은 조금 번거로울 수 있습니다.
+위 명령어를 실행하면 `selenium` 브라우저가 실행되고, `reCAPTCHA`를 포함한 로그인을 수행하면 세션 정보를 로컬 디렉토리 `$HOME/.boj-cli`에 암호화해서 저장합니다.
 > 로그인 시 "로그인 상태 유지" 체크 박스를 반드시 선택해주세요.
+---
+
+## add
+
+```sh
+$ boj add 1234 -f cpp
+Testcases have been created.
+
+$ tree .
+.
+└── 1234
+    ├── .boj-info.json
+    ├── compile_flags.txt
+    ├── main.cpp
+    └── testcase.toml
+```
+백준 온라인 저지 문제를 풀기위한 폴더를 생성하고 다음과 같은 작업들을 수행합니다.
+- `./.boj/templates` 폴더에 위치한 템플릿 파일 불러오기.
+- 크롤링을 활용해서 toml 파일로 파싱한 테스트케이스 파일 생성.
+- manifest 파일 생성. (e.g. package.json, Cargo.toml ...)
+- 
+
+```
+--filetype, -f str: 파일 타입을 지정합니다. (e.g. cpp, ts, rs, py ...)
+```
 
 ---
 
-## 테스트케이스 및 템플릿 파일 불러오기
-백준 온라인저지에 올라와있는 문제에서 테스트케이스를 추려내어 현재 경로에 `testcase.toml` 파일을 생성합니다.
-생성된 `testcase.toml`의 포멧에 맞게 커스텀 테스트케이스 또한 추가할 수 있습니다.
-`lang` 옵션에 값을 할당하면 템플릿 파일을 읽어 현재 경로에 `{문제번호}.{언어}` 파일을 생성합니다.
-```
-$ boj init {PROBLEM_ID}
-```
+## run
+```sh
+# Outside of problem dir
+$ boj run 1234
 
-### Options
+# Inside of problem dir
+$ boj run
 ```
---lang str: 언어를 특정해서 ~/.boj-cli/templates/template.{lang} 파일을 읽어올 수 있도록 합니다.
-            값이 존재하지 않으면 템플릿 파일을 불러오지 않습니다.
-```
-
----
-
-## 테스트케이스 실행하기
-`init` 명령어로 생성한 테스트케이스를 활용해 `testcase.toml` 파일에 있는 모든 테스트케이스를 비동기적으로 실행하고
+`boj add` 명령어로 생성한 테스트케이스를 활용해 `testcase.toml` 파일에 있는 모든 테스트케이스를 비동기적으로 실행하고
 정답을 비교합니다.
 ```
-$ boj run {FILE_PATH}
-```
-
-### Options
-```
---verbose bool: 자세한 아웃풋을 출력합니다. (예: 컴파일 에러)  
 --timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (Default: 5초)
 ```
 
 ---
 
-## 코드 제출하기
-로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 출력합니다.
-```
+## submit
+```sh
 $ boj submit {FILE_PATH}
 ex) boj submit ./1234.cpp
 ```
-
-### Options
+로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 출력합니다.
 ```
---lang str: 제출할 언어를 선택합니다. 옵션이 주어지지 않은경우 local config 값으로 실행됩니다.
 --open [ open | close | onlyaccepted ]: 코드 공개 여부를 설정합니다.
+--timeout int: 제출 현황 웹소켓의 타임아웃 설정(초) (Default: 15)
 ```
 
 ---
-
-## 브라우저에서 문제 링크 열기
-문제 링크를 기본 브라우저에서 엽니다.
+## clean
+```sh
+$ boj clean
 ```
-$ boj open {PROBLEM_ID}
-ex) boj open 1234
+solvedac API를 활용해서 문제를 검색하고, 기본 브라우저에서 링크로 이동합니다.
 ```
-
+--tier, -i: 문제 티어 쿼리
+--tags, -t: 문제 태그 쿼리
+```
 ---
 
-## 랜덤 문제 브라우저에서 열기
-랜덤 문제 링크를 기본 브라우저에서 엽니다.
+## open
+```sh
+$ boj open 1234
 ```
+기본 브라우저에서 문제 번호에 해당하는 링크로 이동합니다.
+---
+
+## random
+```sh
 $ boj random --tier g1..g5 --tags dp math
 ```
-
-> 여러개의 tags 옵션은 OR 조건으로 동작합니다.
+solvedac API를 활용해서 문제를 검색하고, 기본 브라우저에서 링크로 이동합니다.
+> 여러개의 tags 옵션은 'OR' 조건으로 동작합니다.  
 > '내가 풀지 않은 문제' 만 쿼리됩니다.
 
-### Options
 ```
---tier: 문제 티어 쿼리
---tags: 문제 태그 쿼리
+--tier, -i: 문제 티어 쿼리
+--tags, -t: 문제 태그 쿼리
 ```
 
-# 지원 언어
+# Supported languages
+
 - `c++17`
 - `python3`
 - `pypy3`

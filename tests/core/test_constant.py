@@ -7,10 +7,6 @@ def test_boj_dir_path():
     assert constant.boj_dir_path() == f'{str(os.getenv("HOME"))}/.boj-cli'
 
 
-def test_template_dir_path():
-    assert constant.template_dir_path() == f'{constant.boj_dir_path()}/templates'
-
-
 def test_config_file_path():
     assert constant.config_file_path() == f"{constant.boj_dir_path()}/config.yaml"
 

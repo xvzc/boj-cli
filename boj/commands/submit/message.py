@@ -202,78 +202,78 @@ class Message:
             details=[],
         )
 
+    @classmethod
+    async def of(cls, message: dict):
+        if message["event"] == "pusher:connection_established":
+            return cls.connection_established()
 
-async def parse_message(message: dict):
-    if message["event"] == "pusher:connection_established":
-        return Message.connection_established()
+        if message["event"] == "pusher_internal:subscription_succeeded":
+            return cls.subscription_succeeded()
 
-    if message["event"] == "pusher_internal:subscription_succeeded":
-        return Message.subscription_succeeded()
+        if message["event"] == "pusher:error":
+            raise WebSocketError("Websocket error")
 
-    if message["event"] == "pusher:error":
-        raise WebSocketError("Websocket error")
+        if message["event"] != "update":
+            raise WebSocketError("Unknown websocket event")
 
-    if message["event"] != "update":
-        raise WebSocketError("Unknown websocket event")
+        data = json.loads(message["data"])
+        progress = data["progress"] if "progress" in data else 0
 
-    data = json.loads(message["data"])
-    progress = data["progress"] if "progress" in data else 0
+        if data["result"] <= 2:
+            return cls.waiting(progress)
 
-    if data["result"] <= 2:
-        return Message.waiting(progress)
+        if data["result"] == 3:
+            return cls.running(progress)
 
-    if data["result"] == 3:
-        return Message.running(progress)
+        # Accepted.
+        if data["result"] == 4:
+            details = [
+                Detail(name="Memory", description=str(data["memory"]) + " kb"),
+                Detail(name="Time  ", description=str(data["time"]) + " ms"),
+            ]
 
-    # Accepted.
-    if data["result"] == 4:
-        details = [
-            Detail(name="Memory", description=str(data["memory"]) + " kb"),
-            Detail(name="Time  ", description=str(data["time"]) + " ms"),
-        ]
+            if "subtask_score" in data:
+                details.append(
+                    Detail(name="Score ", description=str(data["subtask_score"]))
+                )
 
-        if "subtask_score" in data:
-            details.append(
-                Detail(name="Score ", description=str(data["subtask_score"]))
-            )
+            return cls.accepted(details)
 
-        return Message.accepted(details)
+        if data["result"] == 5:
+            return cls.wrong_format(progress)
 
-    if data["result"] == 5:
-        return Message.wrong_format(progress)
+        if data["result"] == 6:
+            return cls.wrong_answer(progress)
 
-    if data["result"] == 6:
-        return Message.wrong_answer(progress)
+        if data["result"] == 7:
+            return cls.time_limit_exceeded(progress)
 
-    if data["result"] == 7:
-        return Message.time_limit_exceeded(progress)
+        if data["result"] == 8:
+            return cls.memory_limit_exceeded(progress)
 
-    if data["result"] == 8:
-        return Message.memory_limit_exceeded(progress)
+        if data["result"] == 9:
+            return cls.output_limit_exceeded(progress)
 
-    if data["result"] == 9:
-        return Message.output_limit_exceeded(progress)
+        if data["result"] == 10:
+            details = []
+            if "rte_reason" in data:
+                details.append(Detail(name="Reason", description=str(data["rte_reason"])))
 
-    if data["result"] == 10:
-        details = []
-        if "rte_reason" in data:
-            details.append(Detail(name="Reason", description=str(data["rte_reason"])))
+            return cls.runtime_error(progress, details)
 
-        return Message.runtime_error(progress, details)
+        if data["result"] == 11:
+            return cls.compile_error(progress)
 
-    if data["result"] == 11:
-        return Message.compile_error(progress)
+        # Partial points
+        if data["result"] == 15:
+            details = []
+            if "subtask_score" in data:
+                details.append(Detail(name="Score", description=str(data["subtask_score"])))
 
-    # Partial points
-    if data["result"] == 15:
-        details = []
-        if "subtask_score" in data:
-            details.append(Detail(name="Score", description=str(data["subtask_score"])))
+            return cls.partial_points(progress, details)
 
-        return Message.partial_points(progress, details)
+        # Runtime error investigation
+        if data["result"] == 16:
+            return cls.runtime_error_waiting(progress)
 
-    # Runtime error investigation
-    if data["result"] == 16:
-        return Message.runtime_error_waiting(progress)
-
-    raise WebSocketError("Unknown websocket status")
+        raise WebSocketError("Unknown websocket status")

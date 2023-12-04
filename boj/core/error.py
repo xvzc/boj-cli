@@ -28,6 +28,11 @@ class IllegalStatementError(BojError):
         super().__init__(msg)
 
 
+class ResourceNotFoundError(BojError):
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
 class ParsingConfigError(BojError):
     def __init__(self, msg):
         super().__init__(msg)

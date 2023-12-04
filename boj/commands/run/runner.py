@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from boj.core.data import Testcase
+from boj.data.testcase import Testcase, TomlTestcase
 from boj.core.config import FiletypeConfig
 from boj.core.error import RunCodeError
 from boj.core.out import BojConsole
@@ -36,26 +36,26 @@ class Output:
 
 class CodeRunner:
     file_path: str
-    runner_config: FiletypeConfig
-    testcases: list[Testcase]
-    verbose: bool
+    language_config: FiletypeConfig
+    toml_testcase: TomlTestcase
+    timeout: int
 
-    def __init__(self, file_path, runner_config, testcases, verbose):
+    def __init__(self, file_path, ft_config, testcases, timeout):
         self.file_path = file_path
-        self.runner_config = runner_config
-        self.verbose = verbose
-        self.testcases = testcases
+        self.language_config = ft_config
+        self.toml_testcase = testcases
+        self.timeout = timeout
 
     def run_compile(self):
         console = BojConsole()
 
-        if not self.runner_config.compile:
+        if not self.language_config.compile:
             return
 
         with console.status("Compiling..") as status:
-            time.sleep(0.6)
+            time.sleep(0.3)
             try:
-                command = self.runner_config.compile.replace("$file", self.file_path)
+                command = self.language_config.compile.replace("$file", self.file_path)
                 process = Popen(
                     command,
                     stdout=PIPE,
@@ -77,7 +77,7 @@ class CodeRunner:
 
             except Exception as e:
                 status.stop()
-                raise RunCodeError("Compile error")
+                raise e
 
     def run_testcases(self):
         progress = Progress(
@@ -87,14 +87,14 @@ class CodeRunner:
         )
 
         with progress:
-            label_width = max([len(testcase.label) for testcase in self.testcases])
+            label_width = max([len(testcase.label) for testcase in self.toml_testcase.testcases])
             task_ids = [
                 progress.add_task(
                     description=_create_case_label(label_width, testcase.label)
                     + _create_status_label("yellow", "Running.."),
                     total=1,
                 )
-                for testcase in self.testcases
+                for testcase in self.toml_testcase.testcases
             ]
 
             futures = [
@@ -106,7 +106,7 @@ class CodeRunner:
                         progress=progress,
                     )
                 )
-                for task_id, testcase in zip(task_ids, self.testcases)
+                for task_id, testcase in zip(task_ids, self.toml_testcase.testcases)
             ]
 
             # Run all testcases parallel
@@ -117,9 +117,6 @@ class CodeRunner:
             outputs = sorted(
                 [future.result() for future in futures], key=lambda x: x.task_id
             )
-
-            if not self.verbose:
-                return
 
             progress.console.log("---------------------------------")
             for output in outputs:
@@ -140,7 +137,7 @@ class CodeRunner:
         progress,
     ):
         process = await asyncio.create_subprocess_shell(
-            self.runner_config.run.replace("$file", self.file_path),
+            self.language_config.run.replace("$file", self.file_path),
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
@@ -152,13 +149,13 @@ class CodeRunner:
 
         try:
             output, error = await asyncio.wait_for(
-                process.communicate(input=test_input), timeout=10
+                process.communicate(input=test_input), timeout=self.timeout
             )
 
             output = util.normalize(output.decode("utf-8"))
             error = error.decode("utf-8").rstrip()
 
-            await asyncio.sleep(uniform(0.2, 1.5))
+            await asyncio.sleep(uniform(0.2, 0.7))
 
             if process.returncode != 0:
                 color = "bold magenta"
@@ -192,3 +189,33 @@ class CodeRunner:
                 completed=1,
             )
             return Output(task_id=task_id, testcase=testcase, text="", color=status)
+
+    def post_run(self):
+        console = BojConsole()
+
+        if not self.language_config.after:
+            return
+
+        try:
+            command = self.language_config.after
+            process = Popen(
+                command,
+                stdout=PIPE,
+                stderr=PIPE,
+                shell=True,
+                text=True,
+            )
+
+            output, error = process.communicate()
+
+            if output:
+                console.log(output)
+
+            if error:
+                console.log(error)
+
+            if process.returncode != 0:
+                raise RunCodeError("Error while running 'after' command")
+
+        except Exception as e:
+            raise e

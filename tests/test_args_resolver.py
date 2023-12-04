@@ -2,7 +2,7 @@ import argparse
 from argparse import Namespace
 import pytest
 from boj.args_resolver import (
-    add_init_parser,
+    add_add_parser,
     add_random_parser,
     add_run_parser,
     add_submit_parser,
@@ -16,15 +16,24 @@ from boj.args_resolver import add_open_parser
 @pytest.mark.parametrize(
     "test_in, expected",
     [
-        (["init", "1234"], Namespace(command="init", problem_id=1234, lang=None)),
-        (["init", "14500"], Namespace(command="init", problem_id=14500, lang=None)),
-        (["init", "1919", "--lang", "cpp"], Namespace(command="init", problem_id=1919, lang="cpp")),
+        (
+            ["add", "1234", "--filetype", "cpp"],
+            Namespace(command="add", problem_id=1234, filetype="cpp"),
+        ),
+        (
+            ["add", "14500", "--filetype", "rs"],
+            Namespace(command="add", problem_id=14500, filetype="rs"),
+        ),
+        (
+            ["add", "1919", "--filetype", "java"],
+            Namespace(command="add", problem_id=1919, filetype="java"),
+        ),
     ],
 )
-def test_init_command_parser(test_in, expected):
+def test_add_command_parser(test_in, expected):
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command")  # this line changed
-    add_init_parser(subparsers)
+    add_add_parser(subparsers)
     assert parser.parse_args(test_in) == expected
 
 
@@ -59,10 +68,10 @@ def test_open_command_parser(test_in, expected):
 @pytest.mark.parametrize(
     "test_in, expected",
     [
-        (["random"], Namespace(command="random", tags=None, tier=None)),
+        (["random"], Namespace(command="random", tags=[], tier=None)),
         (
             ["random", "--tier", "g2..g5"],
-            Namespace(command="random", tags=None, tier="g2..g5"),
+            Namespace(command="random", tags=[], tier="g2..g5"),
         ),
         (
             ["random", "--tags", "dp", "math"],
@@ -85,20 +94,24 @@ def test_random_command_parser(test_in, expected):
     "test_in, expected",
     [
         (
-            ["run", "1234.cpp"],
-            Namespace(command="run", file="1234.cpp", verbose=None, timeout=None),
+            ["run", "1234"],
+            Namespace(command="run", problem_id="1234", timeout=15),
         ),
         (
-            ["run", "1234.cpp", "--timeout", "123"],
-            Namespace(command="run", file="1234.cpp", verbose=None, timeout=123),
+            ["run", "1234", "--timeout", "123"],
+            Namespace(command="run", problem_id="1234", timeout=123),
         ),
         (
-            ["run", "1234.cpp", "--verbose", "--timeout", "123"],
-            Namespace(command="run", file="1234.cpp", verbose=True, timeout=123),
+            ["run", "1234", "--timeout", "129"],
+            Namespace(command="run", problem_id="1234", timeout=129),
         ),
         (
-            ["run", "1234.cpp", "-v", "-t", "123"],
-            Namespace(command="run", file="1234.cpp", verbose=True, timeout=123),
+            ["run", "1234", "-t", "129"],
+            Namespace(command="run", problem_id="1234", timeout=129),
+        ),
+        (
+            ["run", "1234", "-t", "9"],
+            Namespace(command="run", problem_id="1234", timeout=9),
         ),
     ],
 )
@@ -113,27 +126,31 @@ def test_run_command_parser(test_in, expected):
     "test_in, expected",
     [
         (
-            ["submit", "1234.cpp"],
+            ["submit", "1234"],
             Namespace(
-                command="submit", file="1234.cpp", lang=None, open=None, timeout=None
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=15
             ),
         ),
         (
-            ["submit", "1234.cpp", "--lang", "cpp"],
+            ["submit", "1234"],
             Namespace(
-                command="submit", file="1234.cpp", lang="cpp", open=None, timeout=None
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=15
             ),
         ),
         (
-            ["submit", "1234.cpp", "--open", "open"],
+            ["submit", "1234", "--open", "open"],
+            Namespace(command="submit", problem_id="1234", open="open", timeout=15),
+        ),
+        (
+            ["submit", "1234", "--timeout", "123"],
             Namespace(
-                command="submit", file="1234.cpp", lang=None, open="open", timeout=None
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=123
             ),
         ),
         (
-            ["submit", "1234.cpp", "--timeout", "123"],
+            ["submit", "1234", "--timeout", "123", "--open", "close"],
             Namespace(
-                command="submit", file="1234.cpp", lang=None, open=None, timeout=123
+                command="submit", problem_id="1234", open="close", timeout=123
             ),
         ),
     ],

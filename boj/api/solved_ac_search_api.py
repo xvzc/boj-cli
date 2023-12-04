@@ -17,10 +17,10 @@ class SolvedAcSearchApiParam:
         self.user = user
 
     def to_query_string(self):
-        tier_query = f"tier:{self.tier}"
+        tier_query = f"tier:{self.tier}" if self.tier else ""
         solved_by_query = f"-solved_by:{self.user}"
-        language_query = f"lang:{self.lang}"
-        tags_query = f'({" | ".join(["tag:" + tag for tag in self.tags ])})'
+        language_query = f"lang:{self.lang}" if self.lang else ""
+        tags_query = f'({" | ".join(["tag:" + tag for tag in self.tags ])})' if self.tags else ""
 
         return " ".join(
             [
