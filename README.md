@@ -131,10 +131,11 @@ $ tree .
 $ boj run 1234
 
 # Inside of problem dir
-$ boj run
+$ cd 1234 && boj run
 ```
 `boj add` 명령어로 생성한 테스트케이스를 활용해 `testcase.toml` 파일에 있는 모든 테스트케이스를 비동기적으로 실행하고
 정답을 비교합니다.
+> 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 ```
 --timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (Default: 5초)
 ```
@@ -143,10 +144,14 @@ $ boj run
 
 ## submit
 ```sh
-$ boj submit {FILE_PATH}
-ex) boj submit ./1234.cpp
+# Outside of problem dir
+$ boj submit 1234
+
+# Inside of problem dir
+$ cd 1234 && boj run
 ```
 로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 출력합니다.
+> 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 ```
 --open [ open | close | onlyaccepted ]: 코드 공개 여부를 설정합니다.
 --timeout int: 제출 현황 웹소켓의 타임아웃 설정(초) (Default: 15)
