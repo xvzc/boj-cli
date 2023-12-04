@@ -15,6 +15,7 @@
       * [Submit](#submit)
       * [Clean](#clean)
       * [Open](#open)
+      * [Random](#random)
 <!--te-->
 
 # Installation
