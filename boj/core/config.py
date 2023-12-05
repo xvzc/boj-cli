@@ -87,7 +87,7 @@ class Config:
     @classmethod
     def load(
         cls,
-        suffix: str = ".boj/config.yaml",
+        suffix: str = os.path.join(".boj", "config.yaml"),
         cwd=os.path.expanduser(os.getcwd()),
     ):
         try:

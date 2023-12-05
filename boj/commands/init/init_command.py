@@ -13,7 +13,7 @@ class InitCommand(Command):
     def execute(self, args):
         console = BojConsole()
         try:
-            suffix=".boj/config.yaml"
+            suffix = os.path.join(".boj", "config.yaml")
             workspace_root = util.search_file_in_parent_dirs(
                 suffix=suffix, cwd=os.path.expanduser(os.getcwd())
             ).replace(os.path.join("", suffix), "")
@@ -21,7 +21,9 @@ class InitCommand(Command):
 
         except ResourceNotFoundError:  # when not initialized
             workspace_root = os.path.expanduser(os.getcwd())
-            message = f"Successfully initialized '{os.path.join(workspace_root, '.boj')}'"
+            message = (
+                f"Successfully initialized '{os.path.join(workspace_root, '.boj')}'"
+            )
 
         os.makedirs(os.path.join(workspace_root, ".boj"), exist_ok=True)
         os.makedirs(os.path.join(workspace_root, ".boj", "templates"), exist_ok=True)

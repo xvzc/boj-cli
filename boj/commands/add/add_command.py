@@ -1,6 +1,5 @@
 import os
 import time
-from pathlib import Path
 
 from boj.core import http
 from boj.core import constant
@@ -29,7 +28,6 @@ class AddCommand(Command):
 
             if util.file_exists(os.path.join(problem_dir, ".boj-info.json")):
                 raise IllegalStatementError(f"Problem {args.problem_id} already exists")
-
 
             # Get HTML content of given problem id from BOJ
             response = http.get(
