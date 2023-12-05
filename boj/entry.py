@@ -59,7 +59,7 @@ def cli():
         container.dispatcher_factory().commands[args.command].execute(args)
     except BojError as e:
         SystemExit(e)
-        console.log(str(e))
+        console.log("Error: " + str(e))
         # print(str(e))
         exit(1)
     except BaseException as e:

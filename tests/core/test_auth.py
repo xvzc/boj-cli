@@ -62,7 +62,7 @@ def test_decrypt(key, plain_text):
     ],
 )
 def test_read_credential(key, credential, mocker):
-    def side_effect(path: str, opt):
+    def side_effect(path: str):
         if path.endswith("key"):
             return key
         if path.endswith("credential"):

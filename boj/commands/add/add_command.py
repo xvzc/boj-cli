@@ -1,11 +1,12 @@
 import os
 import time
+from pathlib import Path
 
 from boj.core import http
 from boj.core import constant
 from boj.core import util
 from boj.core.base import Command
-from boj.core.error import ParsingConfigError
+from boj.core.error import ParsingConfigError, IllegalStatementError
 from boj.core.config import Config, FiletypeConfig
 from boj.core.out import BojConsole
 from boj.data.template_file import TemplateFile
@@ -21,6 +22,14 @@ class AddCommand(Command):
         console = BojConsole()
         with console.status("Creating testcases...") as status:
             time.sleep(0.5)
+
+            problem_dir = os.path.join(
+                config.workspace.problem_dir, str(args.problem_id)
+            )
+
+            if util.file_exists(os.path.join(problem_dir, ".boj-info.json")):
+                raise IllegalStatementError(f"Problem {args.problem_id} already exists")
+
 
             # Get HTML content of given problem id from BOJ
             response = http.get(
@@ -44,24 +53,6 @@ class AddCommand(Command):
             toml_testcase.save(dir_=source_dir)
             console.print("Testcases have been created.")
 
-            # Create BojInfo
-            problem_dir = os.path.join(config.workspace.problem_dir, str(args.problem_id))
-            boj_info = BojInfo(
-                root_dir=problem_dir,
-                id_=args.problem_id,
-                title=problem_page.extract_title(),
-                filetype=args.filetype,
-                language=filetype_config.language,
-                source_path=os.path.join(source_dir, filetype_config.filename).replace(
-                    f"{problem_dir}/", ""
-                ),
-                testcase_path=os.path.join(source_dir, "testcase.toml").replace(
-                    f"{problem_dir}/", ""
-                ),
-                accepted=False,
-            )
-            boj_info.save()
-
             # Create manifest files
             if filetype_config.manifest_files:
                 for f in filetype_config.manifest_files:
@@ -75,12 +66,6 @@ class AddCommand(Command):
 
             # Create template file
             file_path = os.path.join(source_dir, filetype_config.filename)
-            if util.file_exists(file_path):
-                console.log(
-                    f"Template file has not been loaded. The file '{file_path}' already exists."
-                )
-                return
-
             try:
                 template = TemplateFile.read_file(
                     path=os.path.join(
@@ -90,4 +75,27 @@ class AddCommand(Command):
                 template.save(path=file_path)
             except (FileNotFoundError,) as e:
                 console.log(e)
-                util.write_file(file_path, "", "w")
+                util.write_file(
+                    file_path,
+                    bytes("", "utf-8"),
+                )
+
+            # Create BojInfo
+            boj_info = BojInfo(
+                root_dir=problem_dir,
+                id_=args.problem_id,
+                title=problem_page.extract_title(),
+                filetype=args.filetype,
+                language=filetype_config.language,
+                source_path=os.path.join(source_dir, filetype_config.filename).replace(
+                    os.path.join(problem_dir, ""), ""
+                ),
+                testcase_path=os.path.join(source_dir, "testcase.toml").replace(
+                    os.path.join(problem_dir, ""), ""
+                ),
+                checksum=util.file_hash(
+                    os.path.join(source_dir, filetype_config.filename)
+                ),
+                accepted=False,
+            )
+            boj_info.save()

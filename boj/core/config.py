@@ -1,4 +1,5 @@
 import os.path
+from pathlib import Path
 
 from boj.core.error import ParsingConfigError, ResourceNotFoundError
 from boj.core import util
@@ -16,13 +17,13 @@ class FiletypeConfig:
 
     def __init__(
         self,
-        language,
-        filename,
-        source_dir,
-        compile_,
-        run_,
-        after,
-        manifest_files,
+        language: str,
+        filename: str,
+        source_dir: str,
+        compile_: str,
+        run_: str,
+        after: str,
+        manifest_files: list[str],
     ):
         self.language = language
         self.filename = filename
@@ -33,11 +34,7 @@ class FiletypeConfig:
         self.manifest_files = manifest_files
 
     def get_relative_source_dir(self, problem_id: str):
-        relative_dir = f"{problem_id}"
-        if self.source_dir:
-            relative_dir += f"/{self.source_dir}"
-
-        return relative_dir
+        return str(Path(os.path.join(relative_dir, self.source_dir)))
 
 
 class WorkspaceConfig:
@@ -46,7 +43,9 @@ class WorkspaceConfig:
     archive_dir: str
     template_dir: str
 
-    def __init__(self, root_dir, problem_dir, archive_dir, template_dir):
+    def __init__(
+        self, root_dir: str, problem_dir: str, archive_dir: str, template_dir: str
+    ):
         self.root_dir = os.path.expanduser(root_dir)
         self.problem_dir = os.path.expanduser(problem_dir)
         self.template_dir = template_dir
@@ -81,12 +80,18 @@ class Config:
 
     def get_source_dir(self, problem_id: str, filetype: str):
         filetype_config = self.of_filetype(filetype)
-        return os.path.join(self.workspace.problem_dir, str(problem_id), filetype_config.source_dir)
+        return os.path.join(
+            self.workspace.problem_dir, str(problem_id), filetype_config.source_dir
+        )
 
     @classmethod
-    def load(cls, suffix=".boj/config.yaml", cwd=os.path.expanduser(os.getcwd())):
+    def load(
+        cls,
+        suffix: str = ".boj/config.yaml",
+        cwd=os.path.expanduser(os.getcwd()),
+    ):
         try:
-            config_file_path = util.search_file_in_parent_dirs(suffix, cwd=cwd)
+            config_file_path = util.search_file_in_parent_dirs(str(suffix), cwd=cwd)
         except ResourceNotFoundError:
             raise IllegalStatementError(
                 "This is not a BOJ directory (or any of the parent directories)"
@@ -107,7 +112,7 @@ class Config:
             f["filetype"] = {}
 
         # Load workspace config
-        workspace_root = config_file_path.replace(f"/{suffix}", "")
+        workspace_root = str(Path(config_file_path.replace(suffix, "")))
         workspace_config = WorkspaceConfig(
             root_dir=workspace_root,
             problem_dir=os.path.join(
@@ -116,7 +121,7 @@ class Config:
             archive_dir=os.path.join(
                 workspace_root, f["workspace"].get("archive_dir", "archives")
             ),
-            template_dir=f"{workspace_root}/.boj/templates",
+            template_dir=str(Path(os.path.join(workspace_root, ".boj", "templates"))),
         )
 
         # Load filetype config
@@ -132,7 +137,4 @@ class Config:
                 manifest_files=v.get("manifest_files", []),
             )
 
-        return cls(
-            workspace_config=workspace_config,
-            filetype_config=filetype_config
-        )
+        return cls(workspace_config=workspace_config, filetype_config=filetype_config)

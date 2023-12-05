@@ -79,5 +79,6 @@ class SubmitCommand(Command):
             timeout=args.timeout,
         )
 
+        boj_info.checksum = util.file_hash(solution.path)
         boj_info.accepted = (message.status == "Accepted")
         boj_info.save()

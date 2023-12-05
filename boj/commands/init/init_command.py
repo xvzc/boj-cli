@@ -13,25 +13,20 @@ class InitCommand(Command):
     def execute(self, args):
         console = BojConsole()
         try:
+            suffix=".boj/config.yaml"
             workspace_root = util.search_file_in_parent_dirs(
-                suffix=".boj/config.yaml", cwd=os.path.expanduser(os.getcwd())
-            )
-            os.makedirs(os.path.join(workspace_root, ".boj"), exist_ok=True)
-            os.makedirs(
-                os.path.join(workspace_root, ".boj", "templates"), exist_ok=True
-            )
-
-            if not util.file_exists(os.path.join(workspace_root, ".boj", "config.yaml")):
-                Path(f"{workspace_root}/.boj/config.yaml").touch()
-
-            console.log(f"Reinitialized '{workspace_root}/.boj'")
+                suffix=suffix, cwd=os.path.expanduser(os.getcwd())
+            ).replace(os.path.join("", suffix), "")
+            message = f"Reinitialized '{os.path.join(workspace_root, '.boj')}'"
 
         except ResourceNotFoundError:  # when not initialized
-            cwd = os.path.expanduser(os.getcwd())
-            os.makedirs(os.path.join(cwd, ".boj"), exist_ok=True)
-            os.makedirs(os.path.join(cwd, ".boj", "templates"), exist_ok=True)
+            workspace_root = os.path.expanduser(os.getcwd())
+            message = f"Successfully initialized '{os.path.join(workspace_root, '.boj')}'"
 
-            if not util.file_exists(f"{cwd}/.boj/config.yaml"):
-                Path(f"{cwd}/.boj/config.yaml").touch()
+        os.makedirs(os.path.join(workspace_root, ".boj"), exist_ok=True)
+        os.makedirs(os.path.join(workspace_root, ".boj", "templates"), exist_ok=True)
 
-            console.log("Successfully initialized BOJ directory")
+        if not util.file_exists(os.path.join(workspace_root, ".boj", "config.yaml")):
+            Path(os.path.join(workspace_root, ".boj", "config.yaml")).touch()
+
+        console.log(message)

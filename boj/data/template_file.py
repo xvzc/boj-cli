@@ -12,10 +12,13 @@ class TemplateFile:
     @classmethod
     def read_file(cls, path: str):
         try:
-            content = util.read_file(os.path.expanduser(path), "r")
+            content = bytes.decode(
+                util.read_file(os.path.expanduser(path)),
+                encoding="utf-8"
+            )
             return cls(content=content)
         except FileNotFoundError as e:
             raise e
 
     def save(self, path: str):
-        util.write_file(path, self.content, "w")
+        util.write_file(path, bytes(self.content, 'utf-8'))

@@ -27,8 +27,8 @@ def decrypt(k, c):
 
 def read_credential() -> Credential:
     try:
-        key = util.read_file(key_file_path(), "rb")
-        credential = util.read_file(credential_file_path(), "rb")
+        key = util.read_file(key_file_path())
+        credential = util.read_file(credential_file_path())
         decrypted = json.loads(decrypt(key, credential))
 
         return Credential(username=decrypted["username"], token=decrypted["token"])

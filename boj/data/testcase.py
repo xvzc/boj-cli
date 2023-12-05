@@ -1,3 +1,5 @@
+import os
+
 from boj.core import util
 
 
@@ -37,9 +39,8 @@ class TomlTestcase:
     def save(self, dir_: str):
         toml_content = self._create_toml_content()
         util.write_file(
-            f"{dir_}/testcase.toml",
-            toml_content,
-            "w",
+            os.path.join(dir_, "testcase.toml"),
+            bytes(toml_content, 'utf-8'),
         )
 
     def _create_toml_content(self):

@@ -11,17 +11,28 @@ class Solution:
 
     def __repr__(self):
         return (
-            "Problem {" + str(self.id) + ", " + self.language + ", " + self.source_code + "}"
+            "Problem {"
+            + str(self.id)
+            + ", "
+            + self.language
+            + ", "
+            + self.source_code
+            + "}"
         )
 
     def __eq__(self, other):
         return (
-                self.id == other.id
-                and self.language == other.filetype
-                and self.source_code == other.source_code
+            self.id == other.id
+            and self.language == other.filetype
+            and self.source_code == other.source_code
         )
 
     @classmethod
     def read(cls, boj_info: BojInfo):
-        source = util.read_file(boj_info.get_source_path(), "r")
-        return Solution(path=boj_info.get_source_path(), id_=boj_info.id, language=boj_info.language, source_code=source)
+        source = util.read_file(boj_info.get_source_path()).decode("utf-8")
+        return Solution(
+            path=boj_info.get_source_path(),
+            id_=boj_info.id,
+            language=boj_info.language,
+            source_code=source,
+        )

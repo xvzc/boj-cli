@@ -9,13 +9,13 @@ from boj.core.error import ParsingConfigError
 @pytest.mark.parametrize(
     "test_conf",
     [
-        (util.read_yaml("tests/assets/config/test_filetype_config.yaml")),
+        util.read_yaml(os.path.join("tests", "assets", "config", "test_filetype_config.yaml")),
     ],
 )
 def test_filetype_config(test_conf):
     conf = Config.load(
         suffix="test_filetype_config.yaml",
-        cwd=os.path.expanduser(f"{os.getcwd()}/tests/assets/config"),
+        cwd=os.path.join(os.getcwd(), "tests", "assets", "config"),
     )
     filetype_conf = conf.of_filetype("cpp")
     assert filetype_conf.language == test_conf["filetype"]["cpp"]["language"]
@@ -28,18 +28,18 @@ def test_filetype_config(test_conf):
     [
         (
             "test_filetype_no_lang_config.yaml",
-            util.read_yaml("tests/assets/config/test_filetype_no_lang_config.yaml"),
+            util.read_yaml(os.path.join("tests", "assets", "config", "test_filetype_no_lang_config.yaml")),
         ),
         (
             "test_filetype_no_run_config.yaml",
-            util.read_yaml("tests/assets/config/test_filetype_no_run_config.yaml"),
+            util.read_yaml(os.path.join("tests", "assets", "config", "test_filetype_no_run_config.yaml")),
         ),
     ],
 )
 def test_filetype_config_throws_error(suffix, test_conf):
     conf = Config.load(
         suffix=suffix,
-        cwd=os.path.expanduser(f"{os.getcwd()}/tests/assets/config"),
+        cwd=os.path.join(os.getcwd(), "tests", "assets", "config"),
     )
     with pytest.raises(ParsingConfigError) as e:
         conf.of_filetype("cpp")

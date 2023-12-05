@@ -28,10 +28,17 @@ class CleanCommand(Command):
                 time.sleep(0.1)
                 problem_root = os.path.join(config.workspace.problem_dir, problem_id)
                 if not os.path.isfile(os.path.join(problem_root, ".boj-info.json")):
+                    console.log(f"[{str(problem_id.zfill(8))}] Not a directory that has been added via 'boj add'")
                     continue
 
                 boj_info = BojInfo.read(problem_root=problem_root)
                 if not boj_info.accepted:
+                    console.log(f"[{str(problem_id.zfill(8))}] The last submission has not been 'Accepted' yet")
+                    continue
+
+                checksum = util.file_hash(boj_info.get_source_path())
+                if boj_info.checksum != checksum:
+                    console.log(f"[{str(problem_id.zfill(8))}] The source code has been changed since the last submit")
                     continue
 
                 archive_problem_root = os.path.join(
@@ -45,10 +52,11 @@ class CleanCommand(Command):
                     name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{name}"
 
                 util.copy_file(
-                    from_=boj_info.get_source_path(),
-                    to=os.path.join(archive_problem_root, name),
+                    from_path=boj_info.get_source_path(),
+                    to_path=os.path.join(archive_problem_root, name),
                 )
                 tobe_removed.append(problem_root)
+                console.log(f"[{str(problem_id.zfill(8))}] Successfully archived")
 
             for p in tobe_removed:
                 shutil.rmtree(path=p)
