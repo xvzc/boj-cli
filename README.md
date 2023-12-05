@@ -18,6 +18,9 @@ Command line interface for Baekjoon Online Judge.
       * [Open](#open)
       * [Random](#random)
 <!--te-->
+# Requirements
+- `Python <= 3.12`
+- `MacOS`, `Linux`, `Windows`
 
 # Installation
 
