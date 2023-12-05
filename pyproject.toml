@@ -10,7 +10,6 @@ dependencies = [
     "cffi==1.15.1",
     "charset-normalizer==3.0.1",
     "cryptography==39.0.0",
-    "greenlet==2.0.1",
     "idna==3.4",
     "mdurl==0.1.2",
     "selenium==4.11.2",
@@ -25,7 +24,6 @@ dependencies = [
     "urllib3==1.26.14",
     "websockets==10.4",
     "PyYAML==5.3.1",
-    "dependency-injector==4.41.0",
     "webdriver_manager==4.0.0",
 ]
 requires-python = ">=3.9"
