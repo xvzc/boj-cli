@@ -24,7 +24,7 @@ dependencies = [
     "soupsieve==2.3.2.post1",
     "urllib3==1.26.14",
     "websockets==10.4",
-    "PyYAML==6.0",
+    "PyYAML==5.3.1",
     "dependency-injector==4.41.0",
     "webdriver_manager==4.0.0",
 ]
