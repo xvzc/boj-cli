@@ -61,5 +61,6 @@ class CleanCommand(Command):
             for p in tobe_removed:
                 shutil.rmtree(path=p)
 
+            console.rule(style="dim white")
             console.print(f"Archived {len(tobe_removed)} files to '{config.workspace.archive_dir}'")
 

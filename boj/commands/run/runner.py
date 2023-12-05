@@ -118,7 +118,7 @@ class CodeRunner:
                 [future.result() for future in futures], key=lambda x: x.task_id
             )
 
-            progress.console.log("---------------------------------")
+            progress.console.rule(style="dim white")
             for output in outputs:
                 progress.console.log(
                     f"• {_create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
@@ -127,7 +127,7 @@ class CodeRunner:
                 progress.console.log(f"[white]{output.testcase.data_out}", end="")
                 progress.console.log("[magenta]Yours:")
                 progress.console.log(f"[white]{output.text}", end="")
-                progress.console.log("---------------------------------")
+                progress.console.rule(style="dim white")
 
     async def _run_testcase_async(
         self,

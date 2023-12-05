@@ -51,7 +51,6 @@ class AddCommand(Command):
             problem_page = BojProblemPage(html=response.text)
             toml_testcase = TomlTestcase(problem_page.extract_testcases())
             toml_testcase.save(dir_=source_dir)
-            console.print("Testcases have been created.")
 
             # Create manifest files
             if filetype_config.manifest_files:
@@ -99,3 +98,4 @@ class AddCommand(Command):
                 accepted=False,
             )
             boj_info.save()
+            console.print(f"Successfully initialized the problem {args.problem_id}")

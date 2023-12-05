@@ -73,6 +73,7 @@ class SubmitCommand(Command):
 
             console.log("Submission succeeded")
 
+        console.rule(style="dim white")
         console.print(f"[bold]• [{boj_info.id}] {boj_info.title}")
         message = websocket.subscribe_progress(
             status_page.solution_id(),
