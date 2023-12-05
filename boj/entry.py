@@ -1,11 +1,8 @@
-import dataclasses
 import traceback
-from typing import Dict
-
-from dependency_injector import containers, providers
-from dependency_injector.wiring import inject
 
 from boj import args_resolver
+from boj.commands.add.add_command import AddCommand
+from boj.commands.clean import CleanCommand
 from boj.commands.init.init_command import InitCommand
 from boj.commands.login.login_command import LoginCommand
 from boj.commands.open.open_command import OpenCommand
@@ -14,48 +11,42 @@ from boj.commands.run.run_command import RunCommand
 from boj.commands.submit.submit_command import SubmitCommand
 from boj.core import util
 from boj.core.base import Command
-from boj.core import config
 from boj.core.error import BojError
+from boj.core.out import BojConsole
 
 
-@dataclasses.dataclass
-class Dispatcher:
-    commands: Dict[str, Command]
+class CommandFactory:
+    @classmethod
+    def get(cls, command: str) -> Command:
+        return {
+            "init": InitCommand(),
+            "add": AddCommand(),
+            "login": LoginCommand(),
+            "open": OpenCommand(),
+            "random": RandomCommand(),
+            "run": RunCommand(),
+            "submit": SubmitCommand(),
+            "clean": CleanCommand(),
+        }[command]
 
 
-class Container(containers.DeclarativeContainer):
-    dispatcher_factory: dict[str, Command] = providers.Factory(
-        Dispatcher,
-        commands=providers.Dict(
-            {
-                "init": providers.Factory(InitCommand),
-                "login": providers.Factory(LoginCommand),
-                "open": providers.Factory(OpenCommand),
-                "random": providers.Factory(RandomCommand),
-                "run": providers.Factory(RunCommand),
-                "submit": providers.Factory(SubmitCommand),
-            }
-        ),
-    )
-
-
-@inject
 def cli():
-    util.create_boj_dir()
     parser = args_resolver.create_parser()
     args = parser.parse_args()
     if args.command is None:
         parser.print_help()
         exit(0)
 
+    console = BojConsole()
     try:
-        container = Container()
-        container.dispatcher_factory().commands[args.command].execute(args, config.load())
+        util.create_temp_dir()
+        CommandFactory.get(args.command).execute(args)
     except BojError as e:
         SystemExit(e)
-        print(str(e))
+        console.log("Error: " + str(e))
+        # print(str(e))
         exit(1)
     except BaseException as e:
-        print(e.args)
+        console.log(e.args)
         traceback.print_exc()
         exit(1)

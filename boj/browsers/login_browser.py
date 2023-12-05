@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from boj.core.base import Browser
-from boj.core.data import Credential
+from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 
 

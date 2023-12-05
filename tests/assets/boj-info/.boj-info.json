@@ -1,0 +1,10 @@
+{
+    "id": 1010,
+    "title": "다리 놓기",
+    "filetype": "rs",
+    "language": "rust2021",
+    "source_path": "src/main.rs",
+    "testcase_path": "src/testcase.toml",
+    "checksum": "7eaa627985214f8d37c96d1b77c57c93",
+    "accepted": false
+}

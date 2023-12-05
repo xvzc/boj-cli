@@ -1,42 +1,34 @@
-import time
+from pathlib import Path
 
-from boj.core import http
-from boj.core import constant
-from boj.core import util
 from boj.core.base import Command
 from boj.core.config import Config
+from boj.core.error import IllegalStatementError, ResourceNotFoundError
+from boj.core import util
+import os
+
 from boj.core.out import BojConsole
-from boj.pages.boj_problem_page import BojProblemPage
 
 
 class InitCommand(Command):
-    def execute(self, args, config: Config):
+    def execute(self, args):
         console = BojConsole()
-        with console.status("Creating testcases...") as status:
-            time.sleep(0.5)
-            response = http.get(
-                url=constant.boj_problem_url(args.problem_id),
-                headers=constant.default_headers(),
+        try:
+            suffix = os.path.join(".boj", "config.yaml")
+            workspace_root = util.search_file_in_parent_dirs(
+                suffix=suffix, cwd=os.path.expanduser(os.getcwd())
+            ).replace(os.path.join("", suffix), "")
+            message = f"Reinitialized '{os.path.join(workspace_root, '.boj')}'"
+
+        except ResourceNotFoundError:  # when not initialized
+            workspace_root = os.path.expanduser(os.getcwd())
+            message = (
+                f"Successfully initialized '{os.path.join(workspace_root, '.boj')}'"
             )
 
-            problem_page = BojProblemPage(html=response.text)
+        os.makedirs(os.path.join(workspace_root, ".boj"), exist_ok=True)
+        os.makedirs(os.path.join(workspace_root, ".boj", "templates"), exist_ok=True)
 
-            testcases = problem_page.extract_testcases()
-            # yaml_testcases = util.testcases_to_yaml_content(testcases)
-            toml_testcases = util.testcases_to_toml_content(testcases)
+        if not util.file_exists(os.path.join(workspace_root, ".boj", "config.yaml")):
+            Path(os.path.join(workspace_root, ".boj", "config.yaml")).touch()
 
-            util.write_file(constant.testcase_file_path(), toml_testcases, "w")
-            console.print("Testcases have been created.")
-
-            lang = args.lang or config.command.init.lang
-            if not lang:
-                return
-
-            if util.file_exists(f"./{args.problem_id}.{lang}"):
-                console.log(
-                    f"Template file has not been loaded because the file '{args.problem_id}.{lang}' already exists."
-                )
-                return
-
-            template = util.read_template(lang)
-            util.write_file(f"{args.problem_id}.{lang}", template, "w")
+        console.log(message)

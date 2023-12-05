@@ -14,32 +14,41 @@ def create_parser():
         help="show version",
     )
 
-    subparsers = parser.add_subparsers(dest="command")  # this line changed
-    add_login_parser(subparsers)
-    add_submit_parser(subparsers)
-    add_open_parser(subparsers)
-    add_run_parser(subparsers)
+    subparsers = parser.add_subparsers(dest="command")
     add_init_parser(subparsers)
+    add_add_parser(subparsers)
+    add_login_parser(subparsers)
+    add_open_parser(subparsers)
     add_random_parser(subparsers)
+    add_run_parser(subparsers)
+    add_submit_parser(subparsers)
+    add_clean_parser(subparsers)
 
     return parser
 
 
 def add_init_parser(subparsers):
     init_parser = subparsers.add_parser(
-        "init", help="creates testcases in current directory"
+        "init", help="initializes BOJ directory"
     )
-    init_parser.add_argument(
+
+
+def add_add_parser(subparsers):
+    add_parser = subparsers.add_parser(
+        "add", help="sets up an environment of the given problem id"
+    )
+    add_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         type=int,
         help="problem id",
     )
-    init_parser.add_argument(
-        "-l",
-        "--lang",
-        default=None,
-        help="If given, this will create file with the content of template file",
+    add_parser.add_argument(
+        "-f",
+        "--filetype",
+        metavar="FILETYPE",
+        required=True,
+        help="select the filetype to set up the environment with",
     )
 
 
@@ -67,36 +76,33 @@ def add_random_parser(subparsers):
         "random", help="queries and opens a random problem in browser"
     )
     random_parser.add_argument(
+        "-t",
+        "--tags",
+        nargs="*",
+        default=[],
+        help="tags",
+    )
+    random_parser.add_argument(
+        "-i",
         "--tier",
         default=None,
         help="tier",
-    )
-    random_parser.add_argument(
-        "--tags",
-        nargs="*",
-        default=None,
-        help="tags",
     )
 
 
 def add_run_parser(subparsers):
     run_parser = subparsers.add_parser("run", help="runs generated testcases")
     run_parser.add_argument(
-        "file",
-        metavar="FILE",
-        help="file path of the source code",
-    )
-    run_parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
+        "problem_id",
+        metavar="PROBLEM_ID",
         default=None,
-        help="show detailed output",
+        nargs='?',
+        help="problem id",
     )
     run_parser.add_argument(
         "-t",
         "--timeout",
-        default=None,
+        default=15,
         type=int,
         help="timeout for each test",
     )
@@ -109,29 +115,39 @@ def add_submit_parser(subparsers):
         help="submits your solution and trace the realtime statement",
     )
     submit_parser.add_argument(
-        "file",
-        metavar="FILE",
-        help="local file path of your source code",
-    )
-    submit_parser.add_argument(
-        "-l",
-        "--lang",
+        "problem_id",
+        metavar="PROBLEM_ID",
         default=None,
-        help="language to submit your source code as",
+        nargs='?',
+        help="problem id",
     )
     submit_parser.add_argument(
         "-o",
         "--open",
-        default=None,
+        default="onlyaccepted",
         type=validate_code_open,
         help="whether to publicly open the submitted code ('open' | 'close' | 'onlyaccepted')",
     )
     submit_parser.add_argument(
         "-t",
         "--timeout",
-        default=None,
+        default=15,
         type=int,
         help="timeout for websocket",
+    )
+
+
+def add_clean_parser(subparsers):
+    submit_parser = subparsers.add_parser(
+        "clean",
+        help="archives accepted source files",
+    )
+    submit_parser.add_argument(
+        "-o",
+        "--origin",
+        action="store_true",
+        default=False,
+        help="use the original filename and overwrite the archived file if it is duplicated",
     )
 
 

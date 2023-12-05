@@ -2,7 +2,7 @@ import pytest
 
 import boj.core.auth
 from boj.core import auth
-from boj.core.data import Credential
+from boj.data.credential import Credential
 
 
 @pytest.mark.parametrize(
@@ -62,7 +62,7 @@ def test_decrypt(key, plain_text):
     ],
 )
 def test_read_credential(key, credential, mocker):
-    def side_effect(path: str, opt):
+    def side_effect(path: str):
         if path.endswith("key"):
             return key
         if path.endswith("credential"):

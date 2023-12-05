@@ -2,7 +2,7 @@ import json
 
 from cryptography.fernet import Fernet
 
-from boj.core.data import Credential
+from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 from boj.core.constant import key_file_path, credential_file_path
 from boj.core import util
@@ -27,8 +27,8 @@ def decrypt(k, c):
 
 def read_credential() -> Credential:
     try:
-        key = util.read_file(key_file_path(), "rb")
-        credential = util.read_file(credential_file_path(), "rb")
+        key = util.read_file(key_file_path())
+        credential = util.read_file(credential_file_path())
         decrypted = json.loads(decrypt(key, credential))
 
         return Credential(username=decrypted["username"], token=decrypted["token"])

@@ -13,7 +13,7 @@ from boj.core import constant
 
 class Command(metaclass=ABCMeta):
     @abstractmethod
-    def execute(self, args, config: Config):
+    def execute(self, args):
         """Implement this method"""
 
 

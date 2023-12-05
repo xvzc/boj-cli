@@ -1,24 +1,41 @@
+import time
+
 import boj.core.auth
 import boj.core.constant
 import boj.core.util as util
 from boj.commands.submit import websocket
 from boj.core.base import Command
 from boj.core.config import Config
-from boj.core.data import Credential
+from boj.data.boj_info import BojInfo
+from boj.data.credential import Credential
 from boj.core.out import BojConsole
 from boj.core import http
 from boj.core import constant
+from boj.data.solution import Solution
 from boj.pages.boj_main_page import BojMainPage
 from boj.pages.boj_status_page import BojStatusPage
 from boj.pages.boj_submit_page import BojSubmitPage
 
 
 class SubmitCommand(Command):
-    def execute(self, args, config: Config):
+    def execute(self, args):
+        config = Config.load()
+
         console = BojConsole()
+        with console.status("Loading config...") as status:
+            time.sleep(0.23)
+
+            status.update("Looking for problem information...")
+            time.sleep(0.21)
+
+            boj_info = BojInfo.find_any(
+                problem_dir=config.workspace.problem_dir,
+                problem_id=args.problem_id
+            )
+            console.log("Successfully loaded configuration")
 
         with console.status("Loading source file...") as status:
-            solution = util.read_solution(args.file)
+            solution = Solution.read(boj_info)
 
             status.update("Authenticating...")
             credential: Credential = boj.core.auth.read_credential()
@@ -37,15 +54,12 @@ class SubmitCommand(Command):
             submit_page = BojSubmitPage(html=response.text)
 
             # Set payload for the submit request
-            language = (
-                args.lang or config.filetype_config_of(solution.filetype).default_language
-            )
             payload = {
                 "csrf_key": submit_page.query_csrf_key(),
                 "problem_id": solution.id,
-                "language": util.convert_language_code(language),
-                "code_open": args.open or config.command.submit.open,
-                "source": solution.source,
+                "language": util.convert_language_code(boj_info.language),
+                "code_open": args.open,
+                "source": solution.source_code,
             }
 
             status.update("Submitting source code...")
@@ -57,6 +71,15 @@ class SubmitCommand(Command):
             )
             status_page = BojStatusPage(html=response.text)
 
-            console.log("Submission succeeded.")
+            console.log("Submission succeeded")
 
-        websocket.subscribe_progress(status_page.solution_id())
+        console.rule(style="dim white")
+        console.print(f"[bold]• [{boj_info.id}] {boj_info.title}")
+        message = websocket.subscribe_progress(
+            status_page.solution_id(),
+            timeout=args.timeout,
+        )
+
+        boj_info.checksum = util.file_hash(solution.path)
+        boj_info.accepted = (message.status == "Accepted")
+        boj_info.save()

@@ -10,8 +10,7 @@ from boj.core.out import BojConsole
 
 
 class LoginCommand(Command):
-    def execute(self, args, config: Config):
-
+    def execute(self, args):
         console = BojConsole()
         with console.status("Preparing login browser...") as status:
             browser = LoginBrowser(constant.boj_login_url())
@@ -29,7 +28,7 @@ class LoginCommand(Command):
 
             status.update("Writing to file...")
             time.sleep(0.3)
-            util.write_file(constant.key_file_path(), key, "wb")
-            util.write_file(constant.credential_file_path(), encrypted, "wb")
+            util.write_file(constant.key_file_path(), key)
+            util.write_file(constant.credential_file_path(), encrypted)
 
         console.print("[green]Login succeeded")

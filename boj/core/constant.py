@@ -2,27 +2,19 @@ import os
 
 
 def boj_dir_path():
-    return f'{str(os.getenv("HOME"))}/.boj-cli'
+    return os.path.join(os.path.expanduser("~"), ".boj-cli")
 
 
 def config_file_path():
-    return f"{boj_dir_path()}/config.yaml"
+    return os.path.join(boj_dir_path(), "config.yaml")
 
 
 def key_file_path():
-    return f"{boj_dir_path()}/key"
-
-
-def template_dir_path():
-    return f"{boj_dir_path()}/templates"
+    return os.path.join(boj_dir_path(), "key")
 
 
 def credential_file_path():
-    return f"{boj_dir_path()}/credential"
-
-
-def testcase_file_path():
-    return f"./testcase.toml"
+    return os.path.join(boj_dir_path(), "credential")
 
 
 def boj_main_url():

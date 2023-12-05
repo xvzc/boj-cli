@@ -4,27 +4,19 @@ from boj.core import constant
 
 
 def test_boj_dir_path():
-    assert constant.boj_dir_path() == f'{str(os.getenv("HOME"))}/.boj-cli'
-
-
-def test_template_dir_path():
-    assert constant.template_dir_path() == f'{constant.boj_dir_path()}/templates'
+    assert constant.boj_dir_path() == os.path.join(os.path.expanduser("~"), ".boj-cli")
 
 
 def test_config_file_path():
-    assert constant.config_file_path() == f"{constant.boj_dir_path()}/config.yaml"
+    assert constant.config_file_path() == os.path.join(constant.boj_dir_path(), "config.yaml")
 
 
 def test_key_file_path():
-    assert constant.key_file_path() == f"{constant.boj_dir_path()}/key"
+    assert constant.key_file_path() == os.path.join(constant.boj_dir_path(), "key")
 
 
 def test_credential_file_path():
-    assert constant.credential_file_path() == f"{constant.boj_dir_path()}/credential"
-
-
-def test_testcase_file_path():
-    assert constant.testcase_file_path() == "./testcase.toml"
+    assert constant.credential_file_path() == os.path.join(constant.boj_dir_path(), "credential")
 
 
 def test_boj_main_url():

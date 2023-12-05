@@ -1,24 +1,24 @@
-command:
-  init:
-    lang: cpp # Make sure that you have ~/.boj-cli/templates/template.cpp
-  random:
-    tier: g1..g5
-    tags:
-      - dp
-      - math
-  run:
-    verbose: false
-    timeout: 15
-  submit:
-    verbose: false
-    timeout: 15
-    open: onlyaccepted
+workspace:
+  problem_dir: 'src' # Default: "."
+  archive_dir: 'archives' # Default: "archives"
 filetype:
   py:
-    default_language: 'python3'
+    language: 'python3'
+    filename: main.py # Defailt: main.{filetype}
     run: 'python3 $file'
   cpp:
-    default_language: 'c++17'
-    compile: |
-      g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out
+    language: 'c++17'
+    compile: 'g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out'
     run: './a.out'
+    after: rm -rf a.out
+    manifest_files:
+      - compile_flags.txt
+  rs:
+    language: 'rust2021'
+    filename: main.rs # Default: main.{filetype}
+    source_dir: src
+    compile: 'rustc $file -o main'
+    run: './main'
+    after: rm -rf ./main
+    manifest_files:
+      - Cargo.toml

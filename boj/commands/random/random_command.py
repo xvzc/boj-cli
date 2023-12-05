@@ -5,23 +5,23 @@ import boj.core.auth
 import boj.core.constant
 from boj.core import constant
 from boj.core.base import Command
-from boj.core.config import Config, RandomOption
+from boj.core.config import Config
 from boj.core.error import IllegalStatementError
 from boj.core.out import BojConsole
 from boj.api.solved_ac_search_api import SolvedAcSearchApi, SolvedAcSearchApiParam
 
 
 class RandomCommand(Command):
-    def execute(self, args, config: Config):
+    def execute(self, args):
         console = BojConsole()
         with console.status("Reading credential...") as status:
             credential = boj.core.auth.read_credential()
             api = SolvedAcSearchApi(
                 url=constant.solved_ac_search_problem_url(),
                 param=SolvedAcSearchApiParam(
-                    tags=args.tags or config.command.random.tags,
+                    tags=args.tags,
                     lang="ko",
-                    tier=args.tier or config.command.random.tier,
+                    tier=args.tier,
                     user=credential.username,
                 ),
             )

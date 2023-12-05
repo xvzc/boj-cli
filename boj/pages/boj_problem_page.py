@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 from boj.core.base import Page
-from boj.core.data import Testcase
+from boj.data.testcase import Testcase
 from boj.core import util
 
 
@@ -38,3 +38,8 @@ class BojProblemPage(Page):
             test_idx += 1
 
         return testcases
+
+    def extract_title(self):
+        soup = BeautifulSoup(self.html, "html.parser")
+        title = soup.find("span", id = "problem_title")
+        return title.text

@@ -3,7 +3,7 @@ import time
 from bs4 import BeautifulSoup
 
 from boj.core.base import Page
-from boj.core.data import Credential
+from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 
 
