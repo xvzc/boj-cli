@@ -1,14 +1,11 @@
 import hashlib
 import io
 import json
-import ntpath
 import os
 import yaml
 import tomllib
 
 from boj.core import constant
-from boj.data.testcase import Testcase
-from boj.data.solution import Solution
 from boj.core.error import FileIOError, IllegalStatementError, ResourceNotFoundError
 from pathlib import PurePath, Path
 

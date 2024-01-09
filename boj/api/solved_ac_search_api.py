@@ -20,7 +20,9 @@ class SolvedAcSearchApiParam:
         tier_query = f"tier:{self.tier}" if self.tier else ""
         solved_by_query = f"-solved_by:{self.user}"
         language_query = f"lang:{self.lang}" if self.lang else ""
-        tags_query = f'({" | ".join(["tag:" + tag for tag in self.tags ])})' if self.tags else ""
+        tags_query = (
+            f'({" | ".join(["tag:" + tag for tag in self.tags ])})' if self.tags else ""
+        )
 
         return " ".join(
             [
@@ -48,5 +50,7 @@ class SolvedAcSearchApi(Api):
             "direction": "asc",
         }
 
-        response = requests.get(headers=constant.default_headers(), url=self.url, params=params)
+        response = requests.get(
+            headers=constant.default_headers(), url=self.url, params=params
+        )
         return response

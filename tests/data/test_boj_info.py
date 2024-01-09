@@ -2,32 +2,35 @@ import os.path
 
 import pytest
 
-from boj.core.error import ResourceNotFoundError, IllegalStatementError
+from boj.core.error import IllegalStatementError
 from boj.data.boj_info import BojInfo
 
 
-def test_read():
-    boj_info = BojInfo.read(
-        problem_root=os.path.join(os.getcwd(), "tests", "assets", "boj-info")
+def test_read(request):
+    rootdir = request.config.rootdir
+    info = BojInfo.read(
+        problem_root=os.path.join(rootdir, "tests", "assets", "boj-info")
     )
-    assert boj_info.id == 1010
+    assert info.id == 1010
 
 
-def test_find_any_with_backtrace():
-    boj_info = BojInfo.find_any(
+def test_find_any_with_backtrace(request):
+    rootdir = request.config.rootdir
+    info = BojInfo.find_any(
         problem_dir="",
         problem_id="",
-        cwd=os.path.join(os.getcwd(), "tests", "assets", "boj-info"),
+        cwd=os.path.join(rootdir, "tests", "assets", "boj-info"),
     )
-    assert boj_info.id == 1010
+    assert info.id == 1010
 
 
-def test_find_any_with_read():
-    boj_info = BojInfo.find_any(
-        problem_dir=os.path.join(os.getcwd(), "tests", "assets"),
+def test_find_any_with_read(request):
+    rootdir = request.config.rootdir
+    info = BojInfo.find_any(
+        problem_dir=os.path.join(rootdir, "tests", "assets"),
         problem_id="boj-info",
     )
-    assert boj_info.id == 1010
+    assert info.id == 1010
 
 
 @pytest.mark.parametrize(
