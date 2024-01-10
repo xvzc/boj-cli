@@ -30,7 +30,7 @@ $ pip install boj-cli
 
 # Configuration
 ```yaml
-# ~/myproject/.boj/config.json
+# ~/myproject/.boj/config.yaml
 workspace:
   problem_dir: 'src' # Default: "."
   archive_dir: 'archives' # Default: "archives"
