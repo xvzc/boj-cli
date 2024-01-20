@@ -1,11 +1,15 @@
 name: Release drafter
 
 on:
-  workflow_dispatch
-
-  # push:
-  #   branches:
-  #     - release
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 permissions:
   contents: read
@@ -48,3 +52,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+
