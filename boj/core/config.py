@@ -33,9 +33,6 @@ class FiletypeConfig:
         self.after = after
         self.manifest_files = manifest_files
 
-    def get_relative_source_dir(self, problem_id: str):
-        return str(Path(os.path.join(relative_dir, self.source_dir)))
-
 
 class WorkspaceConfig:
     root_dir: str
@@ -91,7 +88,7 @@ class Config:
         cwd=os.path.expanduser(os.getcwd()),
     ):
         try:
-            config_file_path = util.search_file_in_parent_dirs(str(suffix), cwd=cwd)
+            config_file_path = util.search_file_upward(str(suffix), cwd=cwd)
         except ResourceNotFoundError:
             raise IllegalStatementError(
                 "This is not a BOJ directory (or any of the parent directories)"
@@ -99,7 +96,7 @@ class Config:
 
         try:
             f = util.read_yaml(config_file_path)
-        except (Exception,) as e:
+        except (Exception,):
             raise IllegalStatementError("Error while reading 'config.yaml'")
 
         if f is None:
@@ -123,6 +120,11 @@ class Config:
             ),
             template_dir=str(Path(os.path.join(workspace_root, ".boj", "templates"))),
         )
+
+        if workspace_config.problem_dir == workspace_config.archive_dir:
+            raise ParsingConfigError(
+                "'problem_dir' and 'archive_dir' " + "can not be the same"
+            )
 
         # Load filetype config
         filetype_config = {}

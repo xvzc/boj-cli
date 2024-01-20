@@ -1,0 +1,10 @@
+{
+    "id": 3052,
+    "title": "나머지",
+    "filetype": "cpp",
+    "language": "c++17",
+    "source_path": "main.cpp",
+    "testcase_path": "testcase.toml",
+    "checksum": "c7555c508ce43f826fdeb1b7e936abfd",
+    "accepted": true
+}

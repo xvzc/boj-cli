@@ -9,28 +9,36 @@ from boj.data.boj_info import BojInfo
 def test_read(request):
     rootdir = request.config.rootdir
     info = BojInfo.read(
-        problem_root=os.path.join(rootdir, "tests", "assets", "boj-info")
+        dir=os.path.join(rootdir, "tests", "assets", "problems", "3052")
     )
-    assert info.id == 1010
+    assert info.id == 3052
 
 
 def test_find_any_with_backtrace(request):
     rootdir = request.config.rootdir
     info = BojInfo.find_any(
-        problem_dir="",
-        problem_id="",
-        cwd=os.path.join(rootdir, "tests", "assets", "boj-info"),
+        problem_dir=None,
+        problem_id=None,
+        cwd=os.path.join(rootdir, "tests", "assets", "problems", "3052"),
     )
-    assert info.id == 1010
+    assert info.id == 3052
 
 
 def test_find_any_with_read(request):
     rootdir = request.config.rootdir
     info = BojInfo.find_any(
-        problem_dir=os.path.join(rootdir, "tests", "assets"),
-        problem_id="boj-info",
+        problem_dir=os.path.join(rootdir, "tests", "assets", "problems"),
+        problem_id="3052",
     )
-    assert info.id == 1010
+    assert info.id == 3052
+
+
+def test_find_upward(request):
+    rootdir = request.config.rootdir
+    info = BojInfo.find_upward(
+        cwd=os.path.join(rootdir, "tests", "assets", "problems", "3052"),
+    )
+    assert info.id == 3052
 
 
 @pytest.mark.parametrize(

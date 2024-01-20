@@ -67,7 +67,8 @@ def read_toml(path):
 
 
 def file_hash(path):
-    return hashlib.file_digest(io.BytesIO(read_file(path)), "sha256").hexdigest()[:32]
+    digest = hashlib.file_digest(io.BytesIO(read_file(path)), "sha256")
+    return digest.hexdigest()[:32]
 
 
 def read_config_file(dir_: str) -> dict:
@@ -78,7 +79,7 @@ def read_config_file(dir_: str) -> dict:
 
     try:
         return read_yaml(config_file_path)
-    except (Exception,) as e:
+    except (Exception,):
         return {}
 
 
@@ -88,17 +89,24 @@ def normalize(s: str):
     return normalized_text
 
 
-def search_file_in_parent_dirs(suffix: str, cwd=os.path.expanduser(os.getcwd())):
-    cwd = PurePath(cwd)
+def search_file_upward(
+    suffix: str,
+    cwd=os.path.expanduser(os.getcwd()),
+    only_dir=False
+):
+    path = PurePath(cwd)
     home = PurePath(os.path.expanduser("~"))
     while True:
-        query = Path(os.path.join(cwd, suffix))
+        query = Path(os.path.join(path, suffix))
         if file_exists(str(query)):
-            return str(query)
+            if only_dir:
+                return path
+            else:
+                return str(query)
 
-        if str(home) == str(cwd):
+        if str(home) == str(path):
             raise ResourceNotFoundError(
                 f"Can not find the file '{suffix}' in any of the parent directories"
             )
 
-        cwd = cwd.parent
+        path = path.parent

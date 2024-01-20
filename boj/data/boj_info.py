@@ -58,49 +58,58 @@ class BojInfo(object):
         }
 
     @classmethod
-    def read(cls, problem_root: str):
-        d = util.read_json(os.path.join(problem_root, ".boj-info.json"))
-        return cls(
-            root_dir=problem_root,
-            id_=d["id"],
-            title=d["title"],
-            filetype=d["filetype"],
-            language=d["language"],
-            source_path=d["source_path"],
-            testcase_path=d["testcase_path"],
-            checksum=d["checksum"],
-            accepted=d["accepted"],
-        )
+    def read(cls, dir: str):
+        try:
+            d = util.read_json(os.path.join(dir, ".boj-info.json"))
+            return cls(
+                root_dir=dir,
+                id_=d["id"],
+                title=d["title"],
+                filetype=d["filetype"],
+                language=d["language"],
+                source_path=d["source_path"],
+                testcase_path=d["testcase_path"],
+                checksum=d["checksum"],
+                accepted=d["accepted"],
+            )
+        except FileNotFoundError:
+            raise IllegalStatementError(
+                f"Can not find '{dir}/.boj-info.json'. " +
+                "Did you run 'boj add $problem_id'?"
+            )
 
     @classmethod
     def find_any(
-        cls, problem_dir: str, problem_id: str, cwd=os.path.expanduser(os.getcwd())
+        cls, problem_dir: str,
+        problem_id: str,
+        cwd=os.path.expanduser(os.getcwd())
+    ):
+        if problem_id:
+            return cls.read(os.path.join(problem_dir, problem_id))
+        else:
+            return cls.find_upward(cwd=cwd)
+
+    @classmethod
+    def find_upward(
+        cls, cwd=os.path.expanduser(os.getcwd())
     ):
         try:
-            if problem_id:
-                return cls.read(os.path.join(problem_dir, problem_id))
-            else:
-                boj_info_suffix = ".boj-info.json"
-                boj_info_path = util.search_file_in_parent_dirs(
-                    boj_info_suffix, cwd=cwd
-                )
-                return cls.read(
-                    problem_root=str(Path(boj_info_path.replace(boj_info_suffix, "")))
-                )
-
-        except FileNotFoundError:
-            raise IllegalStatementError(
-                f"Can not find the problem {problem_id} (.boj-info.json). Did you run 'boj add'?"
+            boj_info_path = util.search_file_upward(
+                suffix=".boj-info.json", cwd=cwd, only_dir=True
             )
+            return cls.read(dir=str(Path(boj_info_path)))
+
         except ResourceNotFoundError:
             raise IllegalStatementError(
-                "Please provide the 'problem id' to run this command outside of problem directories"
+                "Please provide the 'problem id' " +
+                "to run this command outside of problem directories"
             )
 
     def save(self):
         util.write_file(
             os.path.join(self.root_dir, ".boj-info.json"),
-            bytes(json.dumps(self.to_dict(), indent=4, ensure_ascii=False), "utf-8"),
+            bytes(json.dumps(self.to_dict(), indent=4,
+                  ensure_ascii=False), "utf-8"),
         )
 
     def __repr__(self):

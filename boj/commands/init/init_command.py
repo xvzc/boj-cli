@@ -1,8 +1,7 @@
 from pathlib import Path
 
 from boj.core.base import Command
-from boj.core.config import Config
-from boj.core.error import IllegalStatementError, ResourceNotFoundError
+from boj.core.error import ResourceNotFoundError
 from boj.core import util
 import os
 
@@ -14,7 +13,7 @@ class InitCommand(Command):
         console = BojConsole()
         try:
             suffix = os.path.join(".boj", "config.yaml")
-            workspace_root = util.search_file_in_parent_dirs(
+            workspace_root = util.search_file_upward(
                 suffix=suffix, cwd=os.path.expanduser(os.getcwd())
             ).replace(os.path.join("", suffix), "")
             message = f"Reinitialized '{os.path.join(workspace_root, '.boj')}'"
