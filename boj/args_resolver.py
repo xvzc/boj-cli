@@ -66,6 +66,8 @@ def add_open_parser(subparsers):
     problem_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
+        default=None,
+        nargs='?',
         type=int,
         help="problem id",
     )
