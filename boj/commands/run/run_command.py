@@ -5,7 +5,6 @@ from boj.core.base import Command
 from boj.core.config import Config
 from boj.core.out import BojConsole
 from boj.data.boj_info import BojInfo
-from boj.core.error import IllegalStatementError, ResourceNotFoundError
 from boj.data.solution import Solution
 from boj.data.testcase import TomlTestcase
 
