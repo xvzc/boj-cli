@@ -25,35 +25,31 @@ class CleanCommand(Command):
                 time.sleep(0.063)
                 problem_root = os.path.join(config.workspace.problem_dir, problem_id)
 
-                skip = False
-                log = None
-
                 filename = os.path.join(problem_root, ".boj-info.json")
-                if not os.path.isfile(filename) and not log:
-                    skip = True
+                if not os.path.isfile(filename):
                     log = (
                         f"'{problem_id}' not a directory "
                         + "that has been added via 'boj add'"
                     )
+                    console.log(f"[yellow][SKIP][/ yellow] {log}")
+                    continue
 
                 boj_info = BojInfo.read(dir=problem_root)
-                if not boj_info.accepted and not log:
-                    skip = True
+                if not boj_info.accepted:
                     log = (
                         f"'{problem_id}' "
                         + "last submission has not been 'Accepted' yet"
                     )
+                    console.log(f"[yellow][SKIP][/ yellow] {log}")
+                    continue
 
                 checksum = util.file_hash(boj_info.get_source_path())
-                if boj_info.checksum != checksum and not log:
-                    skip = True
+                if boj_info.checksum != checksum:
                     log = (
                         f"'{problem_id}' "
                         + "source code has been changed since the last submit"
                     )
-
-                if skip:
-                    console.log(f"[red][SKIP][/ red] {log}")
+                    console.log(f"[yellow][SKIP][/ yellow] {log}")
                     continue
 
                 archive_problem_root = os.path.join(
