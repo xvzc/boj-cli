@@ -7,9 +7,9 @@ on:
         required: true
         type: choice
         options:
-          - major
-          - minor
           - patch
+          - minor
+          - major
 
 permissions:
   contents: read
@@ -27,7 +27,7 @@ jobs:
       - uses: release-drafter/release-drafter@v5
         id: release
         with:
-          config-name: release-template.yaml
+          config-name: ${{ inputs.version }}-release.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
