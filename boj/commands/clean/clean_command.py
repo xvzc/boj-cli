@@ -1,5 +1,4 @@
 import os
-import time
 from datetime import datetime
 
 import shutil
@@ -10,46 +9,50 @@ from boj.core.out import BojConsole
 from boj.data.boj_info import BojInfo
 
 
+class Items:
+    def __init__(self, skip, message, dir):
+        self.skip = skip
+        self.message = message
+        self.dir = dir
+
+
 class CleanCommand(Command):
     def execute(self, args):
         config = Config.load()
         console = BojConsole()
+
         with console.status("Preparing...") as status:
-            time.sleep(0.46)
-
             status.update("Looking for accepted problems...")
-            time.sleep(0.23)
 
-            tobe_removed = []
+            items = []
             for problem_id in os.listdir(config.workspace.problem_dir):
-                time.sleep(0.063)
                 problem_root = os.path.join(config.workspace.problem_dir, problem_id)
 
                 filename = os.path.join(problem_root, ".boj-info.json")
                 if not os.path.isfile(filename):
-                    log = (
+                    message = (
                         f"'{problem_id}' not a directory "
                         + "that has been added via 'boj add'"
                     )
-                    console.log(f"[yellow][SKIP][/ yellow] {log}")
+                    items.append(Items(skip=True, message=message, dir=problem_root))
                     continue
 
                 boj_info = BojInfo.read(dir=problem_root)
                 if not boj_info.accepted:
-                    log = (
+                    message = (
                         f"'{problem_id}' "
                         + "last submission has not been 'Accepted' yet"
                     )
-                    console.log(f"[yellow][SKIP][/ yellow] {log}")
+                    items.append(Items(skip=True, message=message, dir=problem_root))
                     continue
 
                 checksum = util.file_hash(boj_info.get_source_path())
                 if boj_info.checksum != checksum:
-                    log = (
+                    message = (
                         f"'{problem_id}' "
                         + "source code has been changed since the last submit"
                     )
-                    console.log(f"[yellow][SKIP][/ yellow] {log}")
+                    items.append(Items(skip=True, message=message, dir=problem_root))
                     continue
 
                 archive_problem_root = os.path.join(
@@ -67,17 +70,23 @@ class CleanCommand(Command):
                     to_path=os.path.join(archive_problem_root, name),
                 )
 
-                tobe_removed.append(problem_root)
-                log = f"'{problem_id}' successfully archived"
-                console.log(f"[green][DONE][/ green] {log}")
+                message = f"'{problem_id}' archived"
+                items.append(Items(skip=False, message=message, dir=problem_root))
 
-            for p in tobe_removed:
-                shutil.rmtree(path=p)
+            skip_cnt = sum(i.skip for i in items)
+            done_cnt = len(items) - skip_cnt
 
-            message = (
-                f"Archived {len(tobe_removed)} files to "
-                + f"'{config.workspace.archive_dir}'"
-            )
+            if skip_cnt > 0 or done_cnt > 0:
+                console.rule(style="dim white")
+
+            for item in items:
+                if item.skip:
+                    console.log(f"[yellow][SKIP][/ yellow] {item.message}")
+                else:
+                    console.log(f"[green][DONE][/ green] {item.message}")
+                    shutil.rmtree(path=item.dir)
 
             console.rule(style="dim white")
-            console.print(message)
+            console.log(
+                f"Archived {done_cnt} files to '{config.workspace.archive_dir}'"
+            )
