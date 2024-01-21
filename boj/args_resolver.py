@@ -49,6 +49,13 @@ def add_add_parser(subparsers):
         required=True,
         help="select the filetype to set up the environment with",
     )
+    add_parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        default=False,
+        help="select the filetype to set up the environment with",
+    )
 
 
 def add_login_parser(subparsers):
