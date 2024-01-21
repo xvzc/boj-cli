@@ -17,16 +17,16 @@ from boj.args_resolver import add_open_parser
     "test_in, expected",
     [
         (
-            ["add", "1234", "--type", "cpp"],
-            Namespace(command="add", problem_id=1234, filetype="cpp"),
+            ["add", "1234", "--type", "cpp", "-f"],
+            Namespace(command="add", problem_id=1234, filetype="cpp", force=True),
         ),
         (
-            ["add", "14500", "--type", "rs"],
-            Namespace(command="add", problem_id=14500, filetype="rs"),
+            ["add", "14500", "--type", "rs", "--force"],
+            Namespace(command="add", problem_id=14500, filetype="rs", force=True),
         ),
         (
             ["add", "1919", "--type", "java"],
-            Namespace(command="add", problem_id=1919, filetype="java"),
+            Namespace(command="add", problem_id=1919, filetype="java", force=False),
         ),
     ],
 )
@@ -149,9 +149,7 @@ def test_run_command_parser(test_in, expected):
         ),
         (
             ["submit", "1234", "--timeout", "123", "--open", "close"],
-            Namespace(
-                command="submit", problem_id="1234", open="close", timeout=123
-            ),
+            Namespace(command="submit", problem_id="1234", open="close", timeout=123),
         ),
     ],
 )
