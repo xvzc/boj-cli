@@ -122,7 +122,6 @@ $ tree .
 - `./.boj/templates` 폴더에 위치한 템플릿 파일 불러오기.
 - 크롤링을 활용해서 toml 파일로 파싱한 테스트케이스 파일 생성.
 - manifest 파일 생성. (e.g. package.json, Cargo.toml ...)
-- 
 
 ```
 --filetype, -f str: 파일 타입을 지정합니다. (e.g. cpp, ts, rs, py ...)
