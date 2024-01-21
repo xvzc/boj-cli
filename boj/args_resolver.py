@@ -28,9 +28,7 @@ def create_parser():
 
 
 def add_init_parser(subparsers):
-    init_parser = subparsers.add_parser(
-        "init", help="initializes BOJ directory"
-    )
+    _ = subparsers.add_parser("init", help="initializes BOJ directory")
 
 
 def add_add_parser(subparsers):
@@ -44,8 +42,9 @@ def add_add_parser(subparsers):
         help="problem id",
     )
     add_parser.add_argument(
-        "-f",
-        "--filetype",
+        "-t",
+        "--type",
+        dest="filetype",
         metavar="FILETYPE",
         required=True,
         help="select the filetype to set up the environment with",
@@ -67,7 +66,7 @@ def add_open_parser(subparsers):
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
-        nargs='?',
+        nargs="?",
         type=int,
         help="problem id",
     )
@@ -98,7 +97,7 @@ def add_run_parser(subparsers):
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
-        nargs='?',
+        nargs="?",
         help="problem id",
     )
     run_parser.add_argument(
@@ -114,13 +113,13 @@ def add_submit_parser(subparsers):
     # Submit command parser
     submit_parser = subparsers.add_parser(
         "submit",
-        help="submits your solution and trace the realtime statement",
+        help="submit your solution and trace the realtime statement",
     )
     submit_parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
-        nargs='?',
+        nargs="?",
         help="problem id",
     )
     submit_parser.add_argument(
@@ -128,7 +127,8 @@ def add_submit_parser(subparsers):
         "--open",
         default="onlyaccepted",
         type=validate_code_open,
-        help="whether to publicly open the submitted code ('open' | 'close' | 'onlyaccepted')",
+        help="whether to publicly open the submitted code "
+        + "('open' | 'close' | 'onlyaccepted')",
     )
     submit_parser.add_argument(
         "-t",
@@ -149,7 +149,8 @@ def add_clean_parser(subparsers):
         "--origin",
         action="store_true",
         default=False,
-        help="use the original filename and overwrite the archived file if it is duplicated",
+        help="use the original filename and overwrite the archived file "
+        + "if it is duplicated",
     )
 
 
