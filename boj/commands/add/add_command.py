@@ -19,12 +19,13 @@ class AddCommand(Command):
 
         console = BojConsole()
         with console.status("Checking for status..") as status:
-
             problem_dir = os.path.join(
-                config.workspace.problem_dir, str(args.problem_id)
+                config.workspace.ongoing_dir, str(args.problem_id)
             )
 
-            if util.file_exists(os.path.join(problem_dir, ".boj-info.json")):
+            if not args.force and util.file_exists(
+                os.path.join(problem_dir, ".boj-info.json")
+            ):
                 raise IllegalStatementError(f"Problem {args.problem_id} already exists")
 
             # Get language config
@@ -85,10 +86,10 @@ class AddCommand(Command):
                 filetype=args.filetype,
                 language=filetype_config.language,
                 source_path=os.path.join(source_dir, filetype_config.filename).replace(
-                    os.path.join(problem_dir, ""), ""
+                    problem_dir + os.sep, ""
                 ),
                 testcase_path=os.path.join(source_dir, "testcase.toml").replace(
-                    os.path.join(problem_dir, ""), ""
+                    problem_dir + os.sep, ""
                 ),
                 checksum=util.file_hash(
                     os.path.join(source_dir, filetype_config.filename)
