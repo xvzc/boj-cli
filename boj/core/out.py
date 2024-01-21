@@ -1,5 +1,7 @@
 from typing import Optional
 
+import time
+import random
 from rich.console import Console, RenderableType
 from rich.status import Status
 from rich.style import StyleType
@@ -66,4 +68,7 @@ class BojStatus(Status):
         spinner_style: Optional[StyleType] = None,
         speed: Optional[float] = None,
     ) -> None:
+
+        time.sleep(0.08 + random.uniform(0.1, 0.2))
         super().update(status=f"{self.status_color}{status}")
+        time.sleep(0.08 + random.uniform(0.1, 0.2))

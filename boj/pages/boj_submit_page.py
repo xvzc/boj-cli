@@ -1,9 +1,6 @@
-import time
-
 from bs4 import BeautifulSoup
 
 from boj.core.base import Page
-from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 
 
@@ -25,9 +22,9 @@ class BojSubmitPage(Page):
         input_tags = soup.select("input")
         for tag in input_tags:
             if tag["name"] == "login_user_id":
-                raise AuthenticationError("Authentication failed. Try refreshing your session with 'boj login'.")
-
-        time.sleep(0.5)
+                raise AuthenticationError(
+                    "Authentication failed. Did you run 'boj login'?"
+                )
 
         # Get the csrf_key
         for tag in input_tags:
@@ -35,5 +32,3 @@ class BojSubmitPage(Page):
                 return tag["value"]
 
         raise AuthenticationError("Failed to query csrf token.")
-
-

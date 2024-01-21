@@ -1,11 +1,10 @@
 import os
-import time
 
 from boj.core import http
 from boj.core import constant
 from boj.core import util
 from boj.core.base import Command
-from boj.core.error import ParsingConfigError, IllegalStatementError
+from boj.core.error import IllegalStatementError
 from boj.core.config import Config, FiletypeConfig
 from boj.core.out import BojConsole
 from boj.data.template_file import TemplateFile
@@ -19,8 +18,7 @@ class AddCommand(Command):
         config = Config.load()
 
         console = BojConsole()
-        with console.status("Creating testcases...") as status:
-            time.sleep(0.5)
+        with console.status("Checking for status..") as status:
 
             problem_dir = os.path.join(
                 config.workspace.problem_dir, str(args.problem_id)
@@ -28,12 +26,6 @@ class AddCommand(Command):
 
             if util.file_exists(os.path.join(problem_dir, ".boj-info.json")):
                 raise IllegalStatementError(f"Problem {args.problem_id} already exists")
-
-            # Get HTML content of given problem id from BOJ
-            response = http.get(
-                url=constant.boj_problem_url(args.problem_id),
-                headers=constant.default_headers(),
-            )
 
             # Get language config
             filetype_config: FiletypeConfig = config.of_filetype(args.filetype)
@@ -45,12 +37,20 @@ class AddCommand(Command):
                 exist_ok=True,
             )
 
+            # Get HTML content of given problem id from BOJ
+            status.update("Crawling testcases..")
+            response = http.get(
+                url=constant.boj_problem_url(args.problem_id),
+                headers=constant.default_headers(),
+            )
+
             # Create testcase file
             problem_page = BojProblemPage(html=response.text)
             toml_testcase = TomlTestcase(problem_page.extract_testcases())
             toml_testcase.save(dir_=source_dir)
 
             # Create manifest files
+            status.update("Creating resources..")
             if filetype_config.manifest_files:
                 for f in filetype_config.manifest_files:
                     try:

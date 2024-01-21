@@ -35,59 +35,59 @@ class Output:
 
 
 class CodeRunner:
+    console: BojConsole
     file_path: str
     language_config: FiletypeConfig
     toml_testcase: TomlTestcase
     timeout: int
 
-    def __init__(self, file_path, ft_config, testcases, timeout):
+    def __init__(self, console, file_path, ft_config, testcases, timeout):
+        self.console = console
         self.file_path = file_path
         self.language_config = ft_config
         self.toml_testcase = testcases
         self.timeout = timeout
 
     def run_compile(self):
-        console = BojConsole()
-
         if not self.language_config.compile:
             return
 
-        with console.status("Compiling..") as status:
-            time.sleep(0.3)
-            try:
-                command = self.language_config.compile.replace("$file", self.file_path)
-                process = Popen(
-                    command,
-                    stdout=PIPE,
-                    stderr=PIPE,
-                    shell=True,
-                    text=True,
-                )
+        try:
+            command = self.language_config.compile.replace("$file", self.file_path)
+            process = Popen(
+                command,
+                stdout=PIPE,
+                stderr=PIPE,
+                shell=True,
+                text=True,
+            )
 
-                output, error = process.communicate()
+            output, error = process.communicate()
 
-                if output:
-                    console.log(output)
+            if output:
+                self.console.log(output)
 
-                if error:
-                    console.log(error)
+            if error:
+                self.console.log(error)
 
-                if process.returncode != 0:
-                    raise RunCodeError("Compile error")
+            if process.returncode != 0:
+                raise RunCodeError("Compile error")
 
-            except Exception as e:
-                status.stop()
-                raise e
+        except Exception as e:
+            raise e
 
     def run_testcases(self):
         progress = Progress(
             SpinnerColumn(style="white", finished_text="•"),
             TextColumn("[progress.description]{task.description}"),
-            console=BojConsole(),
+            console=self.console,
         )
 
+        self.console.rule(style="dim white")
         with progress:
-            label_width = max([len(testcase.label) for testcase in self.toml_testcase.testcases])
+            label_width = max(
+                [len(testcase.label) for testcase in self.toml_testcase.testcases]
+            )
             task_ids = [
                 progress.add_task(
                     description=_create_case_label(label_width, testcase.label)
@@ -118,16 +118,15 @@ class CodeRunner:
                 [future.result() for future in futures], key=lambda x: x.task_id
             )
 
-            progress.console.rule(style="dim white")
-            for output in outputs:
-                progress.console.log(
-                    f"• {_create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
-                )
-                progress.console.log("[magenta]Expected:")
-                progress.console.log(f"[white]{output.testcase.data_out}", end="")
-                progress.console.log("[magenta]Yours:")
-                progress.console.log(f"[white]{output.text}", end="")
-                progress.console.rule(style="dim white")
+        for output in outputs:
+            self.console.rule(style="dim white")
+            self.console.log(
+                f"• {_create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
+            )
+            self.console.log("[magenta]Expected:")
+            self.console.log(f"[white]{output.testcase.data_out}", end="")
+            self.console.log("[magenta]Yours:")
+            self.console.log(f"[white]{output.text}", end="")
 
     async def _run_testcase_async(
         self,
@@ -191,8 +190,6 @@ class CodeRunner:
             return Output(task_id=task_id, testcase=testcase, text="", color=status)
 
     def post_run(self):
-        console = BojConsole()
-
         if not self.language_config.after:
             return
 
@@ -209,10 +206,10 @@ class CodeRunner:
             output, error = process.communicate()
 
             if output:
-                console.log(output)
+                self.console.log(output)
 
             if error:
-                console.log(error)
+                self.console.log(error)
 
             if process.returncode != 0:
                 raise RunCodeError("Error while running 'after' command")

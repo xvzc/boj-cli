@@ -23,18 +23,15 @@ class SubmitCommand(Command):
 
         console = BojConsole()
         with console.status("Loading config...") as status:
-            time.sleep(0.23)
 
             status.update("Looking for problem information...")
-            time.sleep(0.21)
 
             boj_info = BojInfo.find_any(
                 problem_dir=config.workspace.problem_dir,
                 problem_id=args.problem_id
             )
-            console.log("Successfully loaded configuration")
 
-        with console.status("Loading source file...") as status:
+            status.update("Loading source file...")
             solution = Solution.read(boj_info)
 
             status.update("Authenticating...")
@@ -70,8 +67,6 @@ class SubmitCommand(Command):
                 data=payload,
             )
             status_page = BojStatusPage(html=response.text)
-
-            console.log("Submission succeeded")
 
         console.rule(style="dim white")
         console.print(f"[bold]• [{boj_info.id}] {boj_info.title}")
