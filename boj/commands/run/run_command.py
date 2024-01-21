@@ -16,7 +16,7 @@ class RunCommand(Command):
             status.update("Looking for problem information...")
 
             boj_info = BojInfo.find_any(
-                problem_dir=config.workspace.problem_dir,
+                ongoing_dir=config.workspace.ongoing_dir,
                 problem_id=args.problem_id
             )
 

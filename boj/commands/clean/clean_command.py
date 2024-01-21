@@ -25,8 +25,8 @@ class CleanCommand(Command):
             status.update("Looking for accepted problems...")
 
             items = []
-            for problem_id in os.listdir(config.workspace.problem_dir):
-                problem_root = os.path.join(config.workspace.problem_dir, problem_id)
+            for problem_id in os.listdir(config.workspace.ongoing_dir):
+                problem_root = os.path.join(config.workspace.ongoing_dir, problem_id)
 
                 filename = os.path.join(problem_root, ".boj-info.json")
                 if not os.path.isfile(filename):

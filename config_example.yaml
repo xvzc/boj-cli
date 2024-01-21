@@ -1,5 +1,5 @@
 workspace:
-  problem_dir: 'src' # Default: "."
+  ongoing_cir: 'src' # Default: ""
   archive_dir: 'archives' # Default: "archives"
 filetype:
   py:
