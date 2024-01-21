@@ -36,15 +36,15 @@ class FiletypeConfig:
 
 class WorkspaceConfig:
     root_dir: str
-    problem_dir: str
+    ongoing_dir: str
     archive_dir: str
     template_dir: str
 
     def __init__(
-        self, root_dir: str, problem_dir: str, archive_dir: str, template_dir: str
+        self, root_dir: str, ongoing_dir: str, archive_dir: str, template_dir: str
     ):
         self.root_dir = os.path.expanduser(root_dir)
-        self.problem_dir = os.path.expanduser(problem_dir)
+        self.ongoing_dir = os.path.expanduser(ongoing_dir)
         self.template_dir = template_dir
         self.archive_dir = archive_dir
 
@@ -78,7 +78,7 @@ class Config:
     def get_source_dir(self, problem_id: str, filetype: str):
         filetype_config = self.of_filetype(filetype)
         return os.path.join(
-            self.workspace.problem_dir, str(problem_id), filetype_config.source_dir
+            self.workspace.ongoing_dir, str(problem_id), filetype_config.source_dir
         )
 
     @classmethod
@@ -112,8 +112,8 @@ class Config:
         workspace_root = str(Path(config_file_path.replace(suffix, "")))
         workspace_config = WorkspaceConfig(
             root_dir=workspace_root,
-            problem_dir=os.path.join(
-                workspace_root, f["workspace"].get("problem_dir", "")
+            ongoing_dir=os.path.join(
+                workspace_root, f["workspace"].get("ongoing_dir", "")
             ),
             archive_dir=os.path.join(
                 workspace_root, f["workspace"].get("archive_dir", "archives")
@@ -121,9 +121,9 @@ class Config:
             template_dir=str(Path(os.path.join(workspace_root, ".boj", "templates"))),
         )
 
-        if workspace_config.problem_dir == workspace_config.archive_dir:
+        if workspace_config.ongoing_dir == workspace_config.archive_dir:
             raise ParsingConfigError(
-                "'problem_dir' and 'archive_dir' " + "can not be the same"
+                "'ongoing_dir' and 'archive_dir' " + "can not be the same"
             )
 
         # Load filetype config

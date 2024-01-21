@@ -37,7 +37,7 @@ $ pip install boj-cli
 ```yaml
 # ~/myproject/.boj/config.yaml
 workspace:
-  problem_dir: 'src' # Default: "."
+  ongoing_cir: 'src' # Default: ""
   archive_dir: 'archives' # Default: "archives"
 filetype:
   py:

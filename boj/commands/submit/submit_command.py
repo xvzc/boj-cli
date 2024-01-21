@@ -1,5 +1,3 @@
-import time
-
 import boj.core.auth
 import boj.core.constant
 import boj.core.util as util
@@ -27,7 +25,7 @@ class SubmitCommand(Command):
             status.update("Looking for problem information...")
 
             boj_info = BojInfo.find_any(
-                problem_dir=config.workspace.problem_dir,
+                ongoing_dir=config.workspace.ongoing_dir,
                 problem_id=args.problem_id
             )
 

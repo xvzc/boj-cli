@@ -74,25 +74,21 @@ class BojInfo(object):
             )
         except FileNotFoundError:
             raise IllegalStatementError(
-                f"Can not find '{dir}/.boj-info.json'. " +
-                "Did you run 'boj add $problem_id'?"
+                f"Can not find '{dir}/.boj-info.json'. "
+                + "Did you run 'boj add $problem_id'?"
             )
 
     @classmethod
     def find_any(
-        cls, problem_dir: str,
-        problem_id: str,
-        cwd=os.path.expanduser(os.getcwd())
+        cls, ongoing_dir: str, problem_id: str, cwd=os.path.expanduser(os.getcwd())
     ):
         if problem_id:
-            return cls.read(os.path.join(problem_dir, problem_id))
+            return cls.read(os.path.join(ongoing_dir, problem_id))
         else:
             return cls.find_upward(cwd=cwd)
 
     @classmethod
-    def find_upward(
-        cls, cwd=os.path.expanduser(os.getcwd())
-    ):
+    def find_upward(cls, cwd=os.path.expanduser(os.getcwd())):
         try:
             boj_info_path = util.search_file_upward(
                 suffix=".boj-info.json", cwd=cwd, only_dir=True
@@ -101,15 +97,14 @@ class BojInfo(object):
 
         except ResourceNotFoundError:
             raise IllegalStatementError(
-                "Please provide the 'problem id' " +
-                "to run this command outside of problem directories"
+                "Please provide the 'problem id' "
+                + "to run this command outside of problem directories"
             )
 
     def save(self):
         util.write_file(
             os.path.join(self.root_dir, ".boj-info.json"),
-            bytes(json.dumps(self.to_dict(), indent=4,
-                  ensure_ascii=False), "utf-8"),
+            bytes(json.dumps(self.to_dict(), indent=4, ensure_ascii=False), "utf-8"),
         )
 
     def __repr__(self):

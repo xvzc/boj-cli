@@ -17,15 +17,15 @@ from boj.args_resolver import add_open_parser
     "test_in, expected",
     [
         (
-            ["add", "1234", "--filetype", "cpp"],
+            ["add", "1234", "--type", "cpp"],
             Namespace(command="add", problem_id=1234, filetype="cpp"),
         ),
         (
-            ["add", "14500", "--filetype", "rs"],
+            ["add", "14500", "--type", "rs"],
             Namespace(command="add", problem_id=14500, filetype="rs"),
         ),
         (
-            ["add", "1919", "--filetype", "java"],
+            ["add", "1919", "--type", "java"],
             Namespace(command="add", problem_id=1919, filetype="java"),
         ),
     ],
