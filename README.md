@@ -1,8 +1,13 @@
 # boj-cli
 
-Command line interface for Baekjoon Online Judge.  
-
-<img src="https://github.com/xvzc/boj-cli/assets/45588457/7e38f42b-be0c-4e56-a4f5-ba5960634a00" width="65%" height="65%">
+<div align="center">
+  <h1 align="center">BOJ-CLI</h2>
+</div>
+<br>
+<div align="center">
+  <p>Command line interface for Baekjoon Online Judge.  </p>
+  <img src="https://github.com/xvzc/boj-cli/assets/45588457/7e38f42b-be0c-4e56-a4f5-ba5960634a00" alt="boj-cli demo">
+</div>
 
 # Table of contents
 <!--ts-->
