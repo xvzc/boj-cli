@@ -30,8 +30,8 @@ class BojProblemPage(Page):
             testcases.append(
                 Testcase(
                     label=test_idx,
-                    data_in=data_in,
-                    data_out=data_out
+                    input_=data_in,
+                    output=data_out
                 )
             )
 

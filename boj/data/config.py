@@ -7,64 +7,102 @@ from boj.core.error import IllegalStatementError
 
 
 class FiletypeConfig:
-    language: str
-    filename: str
-    source_dir: str
-    compile: str
-    run: str
-    after: str
-    manifest_files: list[str]
-
     def __init__(
         self,
         language: str,
         filename: str,
         source_dir: str,
         compile_: str,
-        run_: str,
+        run: str,
         after: str,
         manifest_files: list[str],
     ):
-        self.language = language
-        self.filename = filename
-        self.source_dir = source_dir
-        self.compile = compile_
-        self.run = run_
-        self.after = after
-        self.manifest_files = manifest_files
+        self.__language = language
+        self.__filename = filename
+        self.__source_dir = source_dir
+        self.__compile = compile_
+        self.__run = run
+        self.__after = after
+        self.__manifest_files = manifest_files
+
+    @property
+    def language(self) -> str:
+        return self.__language
+
+    @property
+    def filename(self) -> str:
+        return self.__filename
+
+    @property
+    def source_dir(self) -> str:
+        return self.__source_dir
+
+    @property
+    def compile(self) -> str:
+        return self.__compile
+
+    @property
+    def run(self) -> str:
+        return self.__run
+
+    @property
+    def after(self) -> str:
+        return self.__after
+
+    @property
+    def manifest_files(self) -> list[str]:
+        return self.__manifest_files
 
 
 class WorkspaceConfig:
-    root_dir: str
-    ongoing_dir: str
-    archive_dir: str
-    template_dir: str
-
     def __init__(
         self, root_dir: str, ongoing_dir: str, archive_dir: str, template_dir: str
     ):
-        self.root_dir = os.path.expanduser(root_dir)
-        self.ongoing_dir = os.path.expanduser(ongoing_dir)
-        self.template_dir = template_dir
-        self.archive_dir = archive_dir
+        self.__root_dir = os.path.expanduser(root_dir)
+        self.__ongoing_dir = os.path.expanduser(ongoing_dir)
+        self.__template_dir = template_dir
+        self.__archive_dir = archive_dir
+
+    @property
+    def root_dir(self) -> str:
+        return self.__root_dir
+
+    @property
+    def ongoing_dir(self) -> str:
+        return self.__ongoing_dir
+
+    @property
+    def template_dir(self) -> str:
+        return self.__template_dir
+
+    @property
+    def archive_dir(self) -> str:
+        return self.__archive_dir
 
 
 class Config:
-    workspace: WorkspaceConfig
-    filetype: dict[str, FiletypeConfig]
+    __workspace: WorkspaceConfig
+    __filetype: dict[str, FiletypeConfig]
 
     def __init__(self, workspace_config, filetype_config):
-        self.workspace = workspace_config
-        self.filetype = filetype_config
-        pass
+        self.__workspace = workspace_config
+        self.__filetype = filetype_config
+
+    @property
+    def workspace(self) -> WorkspaceConfig:
+        return self.__workspace
+
+    @property
+    def filetype(self) -> dict[str, FiletypeConfig]:
+        return self.__filetype
 
     def of_filetype(self, ft) -> FiletypeConfig:
-        if ft not in self.filetype:
+        if ft not in self.__filetype:
             raise ParsingConfigError(
                 f"filetype config for '{ft}' is not defined in 'config.yaml'"
             )
 
-        filetype_config = self.filetype[ft]
+        filetype_config = self.__filetype[ft]
         if not filetype_config.language:
             raise ParsingConfigError(
                 f"'language' option for filetype '{ft}' is not found."
@@ -78,7 +116,7 @@ class Config:
     def get_source_dir(self, problem_id: str, filetype: str):
         filetype_config = self.of_filetype(filetype)
         return os.path.join(
-            self.workspace.ongoing_dir, str(problem_id), filetype_config.source_dir
+            self.__workspace.ongoing_dir, str(problem_id), filetype_config.source_dir
         )
 
     @classmethod
@@ -123,7 +161,7 @@ class Config:
 
         if workspace_config.ongoing_dir == workspace_config.archive_dir:
             raise ParsingConfigError(
-                "'ongoing_dir' and 'archive_dir' " + "can not be the same"
+                "'ongoing_dir' and 'archive_dir' can not be the same"
             )
 
         # Load filetype config
@@ -134,7 +172,7 @@ class Config:
                 filename=v.get("filename", f"main.{ft}"),
                 source_dir=v.get("source_dir", ""),
                 compile_=v.get("compile", None),
-                run_=v.get("run", None),
+                run=v.get("run", None),
                 after=v.get("after", None),
                 manifest_files=v.get("manifest_files", []),
             )

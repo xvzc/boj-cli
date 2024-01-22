@@ -9,7 +9,7 @@ from boj.data.boj_info import BojInfo
 def test_read(request):
     rootdir = request.config.rootdir
     info = BojInfo.read(
-        dir=os.path.join(rootdir, "tests", "assets", "problems", "3052")
+        dir_=os.path.join(rootdir, "tests", "assets", "problems", "3052")
     )
     assert info.id == 3052
 
@@ -17,8 +17,8 @@ def test_read(request):
 def test_find_any_with_backtrace(request):
     rootdir = request.config.rootdir
     info = BojInfo.find_any(
-        ongoing_dir=None,
-        problem_id=None,
+        ongoing_dir="",
+        problem_id="",
         cwd=os.path.join(rootdir, "tests", "assets", "problems", "3052"),
     )
     assert info.id == 3052
