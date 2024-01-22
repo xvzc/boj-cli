@@ -7,16 +7,6 @@ import json
 
 
 class BojInfo(object):
-    root_dir: str
-    id: str
-    title: str
-    filetype: str
-    language: str
-    source_path: str
-    testcase_path: str
-    checksum: str
-    accepted: bool
-
     def __init__(
         self,
         root_dir: str,
@@ -29,40 +19,78 @@ class BojInfo(object):
         checksum: str,
         accepted: bool,
     ):
-        self.root_dir = root_dir
-        self.id = id_
-        self.title = title
-        self.filetype = filetype
-        self.language = language
-        self.source_path = source_path
-        self.testcase_path = testcase_path
-        self.checksum = checksum
-        self.accepted = accepted
+        self.__root_dir = root_dir
+        self.__id = id_
+        self.__title = title
+        self.__filetype = filetype
+        self.__language = language
+        self.__source_path = source_path
+        self.__testcase_path = testcase_path
+        self.__checksum = checksum
+        self.__accepted = accepted
 
-    def get_source_path(self):
-        return os.path.join(self.root_dir, self.source_path)
+    @property
+    def root_dir(self) -> str:
+        return self.__root_dir
 
-    def get_testcase_path(self):
-        return os.path.join(self.root_dir, self.testcase_path)
+    @property
+    def id(self) -> str:
+        return self.__id
+
+    @property
+    def title(self) -> str:
+        return self.__title
+
+    @property
+    def filetype(self) -> str:
+        return self.__filetype
+
+    @property
+    def language(self) -> str:
+        return self.__language
+
+    @property
+    def source_path(self) -> str:
+        return os.path.join(self.root_dir, self.__source_path)
+
+    @property
+    def testcase_path(self) -> str:
+        return os.path.join(self.root_dir, self.__testcase_path)
+
+    @property
+    def checksum(self) -> str:
+        return self.__checksum
+
+    @checksum.setter
+    def checksum(self, checksum: str):
+        self.__checksum = checksum
+
+    @property
+    def accepted(self) -> bool:
+        return self.__accepted
+
+    @accepted.setter
+    def accepted(self, accepted: bool):
+        self.__accepted = accepted
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "title": self.title,
-            "filetype": self.filetype,
-            "language": self.language,
-            "source_path": self.source_path,
-            "testcase_path": self.testcase_path,
-            "checksum": self.checksum,
-            "accepted": self.accepted,
+            "id": self.__id,
+            "title": self.__title,
+            "filetype": self.__filetype,
+            "language": self.__language,
+            "source_path": self.__source_path,
+            "testcase_path": self.__testcase_path,
+            "checksum": self.__checksum,
+            "accepted": self.__accepted,
         }
 
     @classmethod
-    def read(cls, dir: str):
+    def read(cls, dir_: str):
         try:
-            d = util.read_json(os.path.join(dir, ".boj-info.json"))
+            d = util.read_json(os.path.join(dir_, ".boj-info.json"))
             return cls(
-                root_dir=dir,
+                root_dir=dir_,
                 id_=d["id"],
                 title=d["title"],
                 filetype=d["filetype"],
@@ -74,7 +102,7 @@ class BojInfo(object):
             )
         except FileNotFoundError:
             raise IllegalStatementError(
-                f"Can not find '{dir}/.boj-info.json'. "
+                f"Can not find '{dir_}/.boj-info.json'. "
                 + "Did you run 'boj add $problem_id'?"
             )
 
@@ -93,7 +121,7 @@ class BojInfo(object):
             boj_info_path = util.search_file_upward(
                 suffix=".boj-info.json", cwd=cwd, only_dir=True
             )
-            return cls.read(dir=str(Path(boj_info_path)))
+            return cls.read(dir_=str(Path(boj_info_path)))
 
         except ResourceNotFoundError:
             raise IllegalStatementError(
@@ -103,19 +131,19 @@ class BojInfo(object):
 
     def save(self):
         util.write_file(
-            os.path.join(self.root_dir, ".boj-info.json"),
+            os.path.join(self.__root_dir, ".boj-info.json"),
             bytes(json.dumps(self.to_dict(), indent=4, ensure_ascii=False), "utf-8"),
         )
 
     def __repr__(self):
         data = {
-            "id": self.id,
-            "title": self.title,
-            "filetype": self.filetype,
-            "language": self.language,
-            "source_path": self.source_path,
-            "testcase_path": self.testcase_path,
-            "checksum": self.checksum,
-            "accepted": self.accepted,
+            "id": self.__id,
+            "title": self.__title,
+            "filetype": self.__filetype,
+            "language": self.__language,
+            "source_path": self.__source_path,
+            "testcase_path": self.__testcase_path,
+            "checksum": self.__checksum,
+            "accepted": self.__accepted,
         }
         return json.dumps(data, ensure_ascii=False)

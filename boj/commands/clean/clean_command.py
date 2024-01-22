@@ -4,7 +4,7 @@ from datetime import datetime
 import shutil
 from boj.core import util
 from boj.core.base import Command
-from boj.core.config import Config
+from boj.data.config import Config
 from boj.core.out import BojConsole
 from boj.data.boj_info import BojInfo
 
@@ -25,8 +25,8 @@ class CleanCommand(Command):
             status.update("Looking for accepted problems...")
 
             items = []
-            for problem_id in os.listdir(config.workspace.ongoing_dir):
-                problem_root = os.path.join(config.workspace.ongoing_dir, problem_id)
+            for problem_id in os.listdir(config.__workspace.__ongoing_dir):
+                problem_root = os.path.join(config.__workspace.__ongoing_dir, problem_id)
 
                 filename = os.path.join(problem_root, ".boj-info.json")
                 if not os.path.isfile(filename):
@@ -37,8 +37,8 @@ class CleanCommand(Command):
                     items.append(Items(skip=True, message=message, dir=problem_root))
                     continue
 
-                boj_info = BojInfo.read(dir=problem_root)
-                if not boj_info.accepted:
+                boj_info = BojInfo.read(dir_=problem_root)
+                if not boj_info.__accepted:
                     message = (
                         f"'{problem_id}' "
                         + "last submission has not been 'Accepted' yet"
@@ -46,8 +46,8 @@ class CleanCommand(Command):
                     items.append(Items(skip=True, message=message, dir=problem_root))
                     continue
 
-                checksum = util.file_hash(boj_info.get_source_path())
-                if boj_info.checksum != checksum:
+                checksum = util.file_hash(boj_info.source_path())
+                if boj_info.__checksum != checksum:
                     message = (
                         f"'{problem_id}' "
                         + "source code has been changed since the last submit"
@@ -56,17 +56,17 @@ class CleanCommand(Command):
                     continue
 
                 archive_problem_root = os.path.join(
-                    config.workspace.archive_dir, problem_id
+                    config.__workspace.__archive_dir, problem_id
                 )
 
                 os.makedirs(name=archive_problem_root, exist_ok=True)
 
-                dir_, name = os.path.split(boj_info.get_source_path())
+                dir_, name = os.path.split(boj_info.source_path())
                 if not args.origin:
                     name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{name}"
 
                 util.copy_file(
-                    from_path=boj_info.get_source_path(),
+                    from_path=boj_info.source_path(),
                     to_path=os.path.join(archive_problem_root, name),
                 )
 
@@ -88,5 +88,5 @@ class CleanCommand(Command):
 
             console.rule(style="dim white")
             console.log(
-                f"Archived {done_cnt} files to '{config.workspace.archive_dir}'"
+                f"Archived {done_cnt} files to '{config.__workspace.__archive_dir}'"
             )

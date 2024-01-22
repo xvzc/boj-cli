@@ -20,7 +20,7 @@ def convert_language_code(lang):
 
 def create_temp_dir():
     try:
-        os.makedirs(constant.boj_dir_path(), exist_ok=True)
+        os.makedirs(constant.boj_cli_path(), exist_ok=True)
     except OSError as e:
         raise e
 

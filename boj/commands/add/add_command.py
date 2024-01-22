@@ -5,10 +5,10 @@ from boj.core import constant
 from boj.core import util
 from boj.core.base import Command
 from boj.core.error import IllegalStatementError
-from boj.core.config import Config, FiletypeConfig
+from boj.data.config import Config, FiletypeConfig
 from boj.core.out import BojConsole
 from boj.data.template_file import TemplateFile
-from boj.data.testcase import TomlTestcase
+from boj.data.testcase import Testcases
 from boj.pages.boj_problem_page import BojProblemPage
 from boj.data.boj_info import BojInfo
 
@@ -47,7 +47,7 @@ class AddCommand(Command):
 
             # Create testcase file
             problem_page = BojProblemPage(html=response.text)
-            toml_testcase = TomlTestcase(problem_page.extract_testcases())
+            toml_testcase = Testcases(problem_page.extract_testcases())
             toml_testcase.save(dir_=source_dir)
 
             # Create manifest files

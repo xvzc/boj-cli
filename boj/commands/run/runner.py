@@ -1,23 +1,22 @@
 import asyncio
-import time
 from random import uniform
 from subprocess import Popen, PIPE
 
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from boj.data.testcase import Testcase, TomlTestcase
-from boj.core.config import FiletypeConfig
+from boj.data.testcase import Testcase, Testcases
+from boj.data.config import FiletypeConfig
 from boj.core.error import RunCodeError
 from boj.core.out import BojConsole
 from boj.core import util
 
 
-def _create_case_label(width, label: str):
+def create_case_label(width, label: str):
     label = label.ljust(width + 1, " ")
     return f"[cyan]CASE #{label}"
 
 
-def _create_status_label(color, label: str):
+def create_status_label(color, label: str):
     return f"[{color}]{label}"
 
 
@@ -38,7 +37,7 @@ class CodeRunner:
     console: BojConsole
     file_path: str
     language_config: FiletypeConfig
-    toml_testcase: TomlTestcase
+    toml_testcase: Testcases
     timeout: int
 
     def __init__(self, console, file_path, ft_config, testcases, timeout):
@@ -90,8 +89,8 @@ class CodeRunner:
             )
             task_ids = [
                 progress.add_task(
-                    description=_create_case_label(label_width, testcase.label)
-                    + _create_status_label("yellow", "Running.."),
+                    description=create_case_label(label_width, testcase.label)
+                    + create_status_label("yellow", "Running.."),
                     total=1,
                 )
                 for testcase in self.toml_testcase.testcases
@@ -121,10 +120,10 @@ class CodeRunner:
         for output in outputs:
             self.console.rule(style="dim white")
             self.console.log(
-                f"• {_create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
+                f"• {create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
             )
             self.console.log("[magenta]Expected:")
-            self.console.log(f"[white]{output.testcase.data_out}", end="")
+            self.console.log(f"[white]{output.testcase.output}", end="")
             self.console.log("[magenta]Yours:")
             self.console.log(f"[white]{output.text}", end="")
 
@@ -143,8 +142,8 @@ class CodeRunner:
             shell=True,
         )
 
-        answer = testcase.data_out
-        test_input = testcase.data_in.encode("utf-8")
+        answer = testcase.output
+        test_input = testcase.input.encode("utf-8")
 
         try:
             output, error = await asyncio.wait_for(
@@ -171,8 +170,8 @@ class CodeRunner:
 
             progress.update(
                 task_id=task_id,
-                description=_create_case_label(label_width, testcase.label)
-                + _create_status_label(color, status),
+                description=create_case_label(label_width, testcase.label)
+                + create_status_label(color, status),
                 completed=1,
             )
 
@@ -183,8 +182,8 @@ class CodeRunner:
             status = "TIMED OUT"
             progress.update(
                 task_id=task_id,
-                description=_create_case_label(label_width, testcase.label)
-                + _create_status_label(color, status),
+                description=create_case_label(label_width, testcase.label)
+                + create_status_label(color, status),
                 completed=1,
             )
             return Output(task_id=task_id, testcase=testcase, text="", color=status)

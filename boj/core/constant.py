@@ -1,20 +1,12 @@
 import os
 
 
-def boj_dir_path():
+def boj_cli_path():
     return os.path.join(os.path.expanduser("~"), ".boj-cli")
 
 
 def config_file_path():
-    return os.path.join(boj_dir_path(), "config.yaml")
-
-
-def key_file_path():
-    return os.path.join(boj_dir_path(), "key")
-
-
-def credential_file_path():
-    return os.path.join(boj_dir_path(), "credential")
+    return os.path.join(boj_cli_path(), "config.yaml")
 
 
 def boj_main_url():

@@ -1,10 +1,8 @@
-from os.path import abspath, join
-from os.path import dirname as d
-
+from os.path import join
 
 import pytest
 from boj.core import util
-from boj.core.config import Config
+from boj.data.config import Config
 from boj.core.error import ParsingConfigError
 
 
@@ -15,13 +13,13 @@ from boj.core.error import ParsingConfigError
     ],
 )
 def test_filetype_config(request, conf_name):
-    rootdir = request.config.rootdir
+    root_dir = request.config.rootdir
     conf = Config.load(
         suffix="test_filetype_config.yaml",
-        cwd=join(rootdir, "tests", "assets", "config"),
+        cwd=join(root_dir, "tests", "assets", "config"),
     )
 
-    test_conf = util.read_yaml(join(rootdir, "tests", "assets", "config", conf_name))
+    test_conf = util.read_yaml(join(root_dir, "tests", "assets", "config", conf_name))
 
     filetype_conf = conf.of_filetype("cpp")
     assert filetype_conf.language == test_conf["filetype"]["cpp"]["language"]

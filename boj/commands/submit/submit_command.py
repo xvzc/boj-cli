@@ -1,11 +1,10 @@
-import boj.core.auth
+import boj.core.crypto
 import boj.core.constant
 import boj.core.util as util
 from boj.commands.submit import websocket
 from boj.core.base import Command
-from boj.core.config import Config
+from boj.data.config import Config
 from boj.data.boj_info import BojInfo
-from boj.data.credential import Credential
 from boj.core.out import BojConsole
 from boj.core import http
 from boj.core import constant
@@ -13,6 +12,7 @@ from boj.data.solution import Solution
 from boj.pages.boj_main_page import BojMainPage
 from boj.pages.boj_status_page import BojStatusPage
 from boj.pages.boj_submit_page import BojSubmitPage
+from boj.data.credential import CredentialIO
 
 
 class SubmitCommand(Command):
@@ -21,19 +21,18 @@ class SubmitCommand(Command):
 
         console = BojConsole()
         with console.status("Loading config...") as status:
-
             status.update("Looking for problem information...")
 
             boj_info = BojInfo.find_any(
-                ongoing_dir=config.workspace.ongoing_dir,
-                problem_id=args.problem_id
+                ongoing_dir=config.workspace.ongoing_dir, problem_id=args.problem_id
             )
 
             status.update("Loading source file...")
             solution = Solution.read(boj_info)
 
             status.update("Authenticating...")
-            credential: Credential = boj.core.auth.read_credential()
+            credential_io = CredentialIO(dir_=constant.boj_cli_path())
+            credential = credential_io.read()
 
             response = http.get(
                 url=constant.boj_main_url(), headers=constant.default_headers()
@@ -43,7 +42,7 @@ class SubmitCommand(Command):
             response = http.get(
                 url=constant.boj_submit_url(solution.id),
                 headers=constant.default_headers(),
-                cookies=credential.session_cookies_of(main_page.online_judge_token()),
+                cookies=credential.make_session_cookies(main_page.online_judge_token()),
             )
 
             submit_page = BojSubmitPage(html=response.text)
@@ -61,7 +60,7 @@ class SubmitCommand(Command):
             response = http.post(
                 constant.boj_submit_url(solution.id),
                 headers=boj.core.constant.default_headers(),
-                cookies=credential.session_cookies_of(main_page.online_judge_token()),
+                cookies=credential.make_session_cookies(main_page.online_judge_token()),
                 data=payload,
             )
             status_page = BojStatusPage(html=response.text)
@@ -74,5 +73,5 @@ class SubmitCommand(Command):
         )
 
         boj_info.checksum = util.file_hash(solution.path)
-        boj_info.accepted = (message.status == "Accepted")
+        boj_info.accepted = message.status == "Accepted"
         boj_info.save()

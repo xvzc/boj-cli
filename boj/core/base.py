@@ -1,4 +1,4 @@
-from abc import *
+from abc import ABCMeta, abstractmethod
 
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -7,7 +7,6 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
 
-from boj.core.config import Config
 from boj.core import constant
 
 
@@ -37,7 +36,7 @@ class Browser:
         self.url = url
         options = Options()
         options.add_argument("start-maximized")
-        driver_cache_manager = DriverCacheManager(root_dir=constant.boj_dir_path())
+        driver_cache_manager = DriverCacheManager(root_dir=constant.boj_cli_path())
 
         self.driver = webdriver.Chrome(
             options=options,

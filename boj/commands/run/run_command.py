@@ -1,10 +1,10 @@
 from boj.commands.run.runner import CodeRunner
 from boj.core.base import Command
-from boj.core.config import Config
+from boj.data.config import Config
 from boj.core.out import BojConsole
 from boj.data.boj_info import BojInfo
 from boj.data.solution import Solution
-from boj.data.testcase import TomlTestcase
+from boj.data.testcase import Testcases
 
 
 class RunCommand(Command):
@@ -30,7 +30,7 @@ class RunCommand(Command):
                 file_path=solution.path,
                 ft_config=config.of_filetype(boj_info.filetype),
                 timeout=args.timeout,
-                testcases=TomlTestcase.read(boj_info.get_testcase_path()),
+                testcases=Testcases.read(boj_info.testcase_path),
             )
 
             status.update("Compiling..")

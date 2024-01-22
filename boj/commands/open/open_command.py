@@ -10,7 +10,6 @@ class OpenCommand(Command):
     def execute(self, args):
         console = BojConsole()
         with console.status("Opening in browser..."):
-            problem_id = None
             if args.problem_id:
                 problem_id = args.problem_id
             else:

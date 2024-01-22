@@ -4,7 +4,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from boj.core.base import Browser
-from boj.data.credential import Credential
 from boj.core.error import AuthenticationError
 
 
@@ -31,4 +30,4 @@ class LoginBrowser(Browser):
         if "value" not in token:
             raise AuthenticationError("Failed to read session token")
 
-        return Credential(username=element.text, token=token["value"])
+        return {"username": element.text, "token": token["value"]}

@@ -1,7 +1,6 @@
 from boj.browsers.login_browser import LoginBrowser
-from boj.core import auth
+from boj.data.credential import Credential, CredentialIO
 from boj.core import constant
-from boj.core import util
 from boj.core.base import Command
 from boj.core.out import BojConsole
 
@@ -12,17 +11,16 @@ class LoginCommand(Command):
         with console.status("Preparing login browser...") as status:
             browser = LoginBrowser(constant.boj_login_url())
             browser.open()
-            credential = browser.wait_for_login()
+            credential_dict = browser.wait_for_login()
             browser.close()
 
-            status.update("Creating an encryption key...")
-            key = auth.create_key()
-
             status.update("Encrypting the credential...")
-            encrypted = auth.encrypt(key, credential.to_json())
+            credential_io = CredentialIO(dir_=constant.boj_cli_path())
+            credential = Credential(
+                username=credential_dict["username"], token=credential_dict["token"]
+            )
 
             status.update("Writing to file...")
-            util.write_file(constant.key_file_path(), key)
-            util.write_file(constant.credential_file_path(), encrypted)
+            credential_io.save(credential)
 
         console.print("[green]Login succeeded")

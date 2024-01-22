@@ -1,11 +1,12 @@
 import random
 import webbrowser
 
-import boj.core.auth
+import boj.core.crypto
 import boj.core.constant
 from boj.core import constant
 from boj.core.base import Command
-from boj.core.config import Config
+from boj.data.credential import CredentialIO
+
 from boj.core.error import IllegalStatementError
 from boj.core.out import BojConsole
 from boj.api.solved_ac_search_api import SolvedAcSearchApi, SolvedAcSearchApiParam
@@ -15,7 +16,8 @@ class RandomCommand(Command):
     def execute(self, args):
         console = BojConsole()
         with console.status("Reading credential...") as status:
-            credential = boj.core.auth.read_credential()
+            credential_io = CredentialIO(dir_=constant.boj_cli_path())
+            credential = credential_io.read()
             api = SolvedAcSearchApi(
                 url=constant.solved_ac_search_problem_url(),
                 param=SolvedAcSearchApiParam(
