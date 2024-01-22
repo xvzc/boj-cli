@@ -28,31 +28,20 @@ def test_filetype_config(request, conf_name):
 
 
 @pytest.mark.parametrize(
-    ("conf_name"),
+    "filename",
     [
         "test_filetype_no_lang_config.yaml",
         "test_filetype_no_run_config.yaml",
     ],
 )
-def test_filetype_config_throws_error(request, conf_name):
-    rootdir = request.config.rootdir
+def test_filetype_config_throws_error(request, filename):
+    root_dir = request.config.rootdir
     conf = Config.load(
-        suffix=conf_name,
-        cwd=join(rootdir, "tests", "assets", "config"),
+        suffix=filename,
+        cwd=join(root_dir, "tests", "assets", "config"),
     )
 
     with pytest.raises(ParsingConfigError) as e:
         conf.of_filetype("cpp")
 
     assert e.type == ParsingConfigError
-
-
-def test_ini(request):
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    print(request.config.rootdir)
-    assert True

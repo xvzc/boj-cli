@@ -7,12 +7,6 @@ def test_boj_dir_path():
     assert constant.boj_cli_path() == os.path.join(os.path.expanduser("~"), ".boj-cli")
 
 
-def test_config_file_path():
-    assert constant.config_file_path() == os.path.join(
-        constant.boj_cli_path(), "config.yaml"
-    )
-
-
 def test_boj_main_url():
     assert constant.boj_main_url() == "https://www.acmicpc.net"
 
