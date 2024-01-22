@@ -5,10 +5,6 @@ def boj_cli_path():
     return os.path.join(os.path.expanduser("~"), ".boj-cli")
 
 
-def config_file_path():
-    return os.path.join(boj_cli_path(), "config.yaml")
-
-
 def boj_main_url():
     return "https://www.acmicpc.net"
 
