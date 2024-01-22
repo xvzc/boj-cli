@@ -85,15 +85,9 @@ class AddCommand(Command):
                 title=problem_page.extract_title(),
                 filetype=args.filetype,
                 language=filetype_config.language,
-                source_path=os.path.join(source_dir, filetype_config.filename).replace(
-                    problem_dir + os.sep, ""
-                ),
-                testcase_path=os.path.join(source_dir, "testcase.toml").replace(
-                    problem_dir + os.sep, ""
-                ),
-                checksum=util.file_hash(
-                    os.path.join(source_dir, filetype_config.filename)
-                ),
+                source_path=file_path.replace(problem_dir + os.sep, ""),
+                testcase_path="testcase.toml",
+                checksum=util.file_hash(file_path),
                 accepted=False,
             )
             boj_info.save()
