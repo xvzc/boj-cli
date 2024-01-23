@@ -1,15 +1,23 @@
 from bs4 import BeautifulSoup
 
-from boj.core.base import Page
+from boj.core.http import HttpRequest, Page
 from boj.data.testcase import Testcase
 from boj.core import util
+from boj.core import http
+from boj.core import constant
+
+
+class BojProblemPageRequest(HttpRequest):
+    def __init__(self, problem_id: str):
+        super().__init__(
+            url=constant.boj_submit_url(problem_id),
+            headers=constant.default_headers(),
+        )
 
 
 class BojProblemPage(Page):
-    def __init__(self, html):
-        self.html = html
 
-    def extract_testcases(self):
+    def find_testcases(self):
         soup = BeautifulSoup(self.html, "html.parser")
         sample_data = soup.select("pre.sampledata")
 
@@ -27,19 +35,13 @@ class BojProblemPage(Page):
         test_idx = 1
         testcases: list[Testcase] = []
         for data_in, data_out in zip(inputs, outputs):
-            testcases.append(
-                Testcase(
-                    label=test_idx,
-                    input_=data_in,
-                    output=data_out
-                )
-            )
+            testcases.append(Testcase(label=test_idx, input_=data_in, output=data_out))
 
             test_idx += 1
 
         return testcases
 
-    def extract_title(self):
+    def find_title(self):
         soup = BeautifulSoup(self.html, "html.parser")
-        title = soup.find("span", id = "problem_title")
+        title = soup.find("span", id="problem_title")
         return title.text

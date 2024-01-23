@@ -1,17 +1,12 @@
-import boj.core.crypto
-import boj.core.constant
 import boj.core.util as util
 from boj.commands.submit import websocket
 from boj.core.base import Command
 from boj.data.config import Config
 from boj.data.boj_info import BojInfo
 from boj.core.out import BojConsole
-from boj.core import http
 from boj.core import constant
-from boj.data.solution import Solution
-from boj.pages.boj_main_page import BojMainPage
-from boj.pages.boj_status_page import BojStatusPage
-from boj.pages.boj_submit_page import BojSubmitPage
+from boj.pages.boj_main_page import BojMainPage, BojMainPageRequest
+from boj.pages.boj_submit_page import BojSubmitPage, BojSubmitPageRequest
 from boj.data.credential import CredentialIO
 
 
@@ -20,58 +15,42 @@ class SubmitCommand(Command):
         config = Config.load()
 
         console = BojConsole()
-        with console.status("Loading config...") as status:
-            status.update("Looking for problem information...")
-
+        with console.status("Loading config..") as status:
+            status.update("Looking for problem information..")
             boj_info = BojInfo.find_any(
-                ongoing_dir=config.workspace.ongoing_dir, problem_id=args.problem_id
+                ongoing_dir=config.workspace.ongoing_dir,
+                problem_id=args.problem_id,
             )
 
-            status.update("Loading source file...")
-            solution = Solution.read(boj_info)
-
-            status.update("Authenticating...")
+            status.update("Authenticating..")
             credential_io = CredentialIO(dir_=constant.boj_cli_path())
             credential = credential_io.read()
 
-            response = http.get(
-                url=constant.boj_main_url(), headers=constant.default_headers()
+            status.update("Loading source file..")
+
+            status.update("Submitting source code..")
+            main_page = BojMainPage.get(BojMainPageRequest())
+            session = main_page.make_session(credential)
+            submit_page = BojSubmitPage.get(
+                BojSubmitPageRequest(
+                    boj_info=boj_info,
+                    session=session,
+                )
             )
-            main_page = BojMainPage(html=response.text, cookies=response.cookies)
 
-            response = http.get(
-                url=constant.boj_submit_url(solution.id),
-                headers=constant.default_headers(),
-                cookies=credential.make_session_cookies(main_page.online_judge_token()),
+            status_page = submit_page.submit(
+                boj_info=boj_info,
+                session=session,
+                open_=args.open,
             )
-
-            submit_page = BojSubmitPage(html=response.text)
-
-            # Set payload for the submit request
-            payload = {
-                "csrf_key": submit_page.query_csrf_key(),
-                "problem_id": solution.id,
-                "language": util.convert_language_code(boj_info.language),
-                "code_open": args.open,
-                "source": solution.source_code,
-            }
-
-            status.update("Submitting source code...")
-            response = http.post(
-                constant.boj_submit_url(solution.id),
-                headers=boj.core.constant.default_headers(),
-                cookies=credential.make_session_cookies(main_page.online_judge_token()),
-                data=payload,
-            )
-            status_page = BojStatusPage(html=response.text)
 
         console.rule(style="dim white")
         console.print(f"[bold]• [{boj_info.id}] {boj_info.title}")
         message = websocket.subscribe_progress(
-            status_page.solution_id(),
+            status_page.find_solution_id(),
             timeout=args.timeout,
         )
 
-        boj_info.checksum = util.file_hash(solution.path)
+        boj_info.checksum = util.file_hash(boj_info.source_path)
         boj_info.accepted = message.status == "Accepted"
         boj_info.save()

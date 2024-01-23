@@ -16,18 +16,6 @@ class Command(metaclass=ABCMeta):
         """Implement this method"""
 
 
-class Page:
-    html: str
-
-
-class Api:
-    url: str
-
-    @abstractmethod
-    def request(self):
-        """Implement this method"""
-
-
 class Browser:
     driver: ChromiumDriver
     url: str
