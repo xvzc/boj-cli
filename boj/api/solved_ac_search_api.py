@@ -1,7 +1,7 @@
 import requests
 
 from boj.core import constant
-from boj.core.base import Api
+from boj.core.http import Api
 
 
 class SolvedAcSearchApiParam:
@@ -39,6 +39,7 @@ class SolvedAcSearchApi(Api):
     param: SolvedAcSearchApiParam
 
     def __init__(self, url: str, param: SolvedAcSearchApiParam):
+        super().__init__(url)
         self.url = url
         self.param = param
 

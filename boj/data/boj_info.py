@@ -108,7 +108,10 @@ class BojInfo(object):
 
     @classmethod
     def find_any(
-        cls, ongoing_dir: str, problem_id: str, cwd=os.path.expanduser(os.getcwd())
+        cls,
+        ongoing_dir: str,
+        problem_id: str,
+        cwd=os.path.expanduser(os.getcwd()),
     ):
         if problem_id:
             return cls.read(os.path.join(ongoing_dir, problem_id))

@@ -20,16 +20,27 @@ class Credential:
         return self.__token
 
     def __repr__(self):
-        return "Credential {" + str(self.__username) + ", " + self.__token + "}"
+        return "Credential { " + str(self.__username) + ", " + self.__token + " }"
 
     def __eq__(self, other):
         return self.__username == other.__username and self.__token == other.__token
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(
+            {
+                "username": self.__username,
+                "token": self.__token,
+            },
+            indent=4,
+        )
 
-    def make_session_cookies(self, online_judge_token):
-        return {"bojautologin": self.__token, "OnlineJudge": online_judge_token}
+    @classmethod
+    def of_json(cls, json_str: str):
+        obj = json.loads(json_str)
+        return Credential(username=obj["username"], token=obj["token"])
+
+    def make_session_cookies(self, cookies: dict):
+        return {"bojautologin": self.token, "OnlineJudge": cookies["OnlineJudge"]}
 
 
 class CredentialIO:
@@ -50,9 +61,9 @@ class CredentialIO:
         try:
             key = util.read_file(self.__key_path())
             credential = util.read_file(self.__credential_path())
-            decrypted = json.loads(crypto.decrypt(key, credential))
-            return Credential(username=decrypted["username"], token=decrypted["token"])
-        except Exception:
+            return Credential.of_json(json_str=crypto.decrypt(key, credential))
+        except Exception as e:
+            print(e)
             raise AuthenticationError("Failed to read the credential")
 
     def save(self, credential: Credential) -> None:

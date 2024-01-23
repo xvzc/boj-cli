@@ -1,16 +1,11 @@
 from bs4 import BeautifulSoup
 
-from boj.core.base import Page
 from boj.core.error import ParsingHtmlError
+from boj.core.http import Page
 
 
 class BojStatusPage(Page):
-    html: str
-
-    def __init__(self, html):
-        self.html = html
-
-    def solution_id(self):
+    def find_solution_id(self):
         soup = BeautifulSoup(self.html, "html.parser")
         soup.select("table", {"id": "status-table"})
         if soup is None:

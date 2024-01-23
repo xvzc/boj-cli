@@ -20,7 +20,8 @@ class AddCommand(Command):
         console = BojConsole()
         with console.status("Checking for status..") as status:
             problem_dir = os.path.join(
-                config.workspace.ongoing_dir, str(args.problem_id)
+                config.workspace.ongoing_dir,
+                str(args.problem_id),
             )
 
             if not args.force and util.file_exists(
@@ -31,23 +32,17 @@ class AddCommand(Command):
             # Get language config
             filetype_config: FiletypeConfig = config.of_filetype(args.filetype)
             source_dir = config.get_source_dir(
-                problem_id=args.problem_id, filetype=args.filetype
+                problem_id=args.problem_id,
+                filetype=args.filetype,
             )
-            os.makedirs(
-                source_dir,
-                exist_ok=True,
-            )
+            os.makedirs(source_dir, exist_ok=True)
 
             # Get HTML content of given problem id from BOJ
             status.update("Crawling testcases..")
-            response = http.get(
-                url=constant.boj_problem_url(args.problem_id),
-                headers=constant.default_headers(),
-            )
+            problem_page = BojProblemPage.request(args.problem_id)
 
             # Create testcase file
-            problem_page = BojProblemPage(html=response.text)
-            toml_testcase = Testcases(problem_page.extract_testcases())
+            toml_testcase = Testcases(problem_page.find_testcases())
             toml_testcase.save(dir_=source_dir)
 
             # Create manifest files
@@ -65,24 +60,21 @@ class AddCommand(Command):
             # Create template file
             file_path = os.path.join(source_dir, filetype_config.filename)
             try:
-                template = TemplateFile.read_file(
-                    path=os.path.join(
-                        config.workspace.template_dir, f"template.{args.filetype}"
-                    )
+                template_file_path = os.path.join(
+                    config.workspace.template_dir,
+                    f"template.{args.filetype}",
                 )
+                template = TemplateFile.read_file(path=template_file_path)
                 template.save(path=file_path)
             except (FileNotFoundError,) as e:
                 console.log(e)
-                util.write_file(
-                    file_path,
-                    bytes("", "utf-8"),
-                )
+                util.write_file(file_path, bytes("", "utf-8"))
 
             # Create BojInfo
             boj_info = BojInfo(
                 root_dir=problem_dir,
                 id_=args.problem_id,
-                title=problem_page.extract_title(),
+                title=problem_page.find_title(),
                 filetype=args.filetype,
                 language=filetype_config.language,
                 source_path=file_path.replace(problem_dir + os.sep, ""),

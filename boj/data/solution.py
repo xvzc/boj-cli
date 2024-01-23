@@ -3,11 +3,12 @@ from boj.data.boj_info import BojInfo
 
 
 class Solution:
-    def __init__(self, path, id_, language, source_code):
+    def __init__(self, path, id_, language, source_code, open):
         self.__path = path
         self.__id = id_
         self.__language = language
         self.__source_code = source_code
+        self.__open = open
 
     @property
     def path(self):
@@ -24,6 +25,10 @@ class Solution:
     @property
     def source_code(self):
         return self.__source_code
+
+    @property
+    def open(self):
+        return self.__open
 
     def __repr__(self):
         return (
