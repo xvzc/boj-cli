@@ -1,7 +1,7 @@
 class Session:
-    def __init__(self, credential, online_judge):
+    def __init__(self, credential, cookies):
         self.__credential = credential
-        self.__online_judge = online_judge
+        self.__online_judge = cookies["OnlineJudge"]
 
     @property
     def credential(self):
@@ -12,7 +12,7 @@ class Session:
         return self.__online_judge
 
     @property
-    def cookies(self) -> dict:
+    def session_cookies(self) -> dict:
         return {
             "bojautologin": self.credential.token,
             "OnlineJudge": self.online_judge,

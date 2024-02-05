@@ -95,23 +95,23 @@ def test_random_command_parser(test_in, expected):
     [
         (
             ["run", "1234"],
-            Namespace(command="run", problem_id="1234", timeout=15),
+            Namespace(command="run", problem_id=1234, timeout=10),
         ),
         (
             ["run", "1234", "--timeout", "123"],
-            Namespace(command="run", problem_id="1234", timeout=123),
+            Namespace(command="run", problem_id=1234, timeout=123),
         ),
         (
             ["run", "1234", "--timeout", "129"],
-            Namespace(command="run", problem_id="1234", timeout=129),
+            Namespace(command="run", problem_id=1234, timeout=129),
         ),
         (
             ["run", "1234", "-t", "129"],
-            Namespace(command="run", problem_id="1234", timeout=129),
+            Namespace(command="run", problem_id=1234, timeout=129),
         ),
         (
             ["run", "1234", "-t", "9"],
-            Namespace(command="run", problem_id="1234", timeout=9),
+            Namespace(command="run", problem_id=1234, timeout=9),
         ),
     ],
 )
@@ -128,18 +128,18 @@ def test_run_command_parser(test_in, expected):
         (
             ["submit", "1234"],
             Namespace(
-                command="submit", problem_id="1234", open="onlyaccepted", timeout=15
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=10
             ),
         ),
         (
             ["submit", "1234"],
             Namespace(
-                command="submit", problem_id="1234", open="onlyaccepted", timeout=15
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=10
             ),
         ),
         (
             ["submit", "1234", "--open", "open"],
-            Namespace(command="submit", problem_id="1234", open="open", timeout=15),
+            Namespace(command="submit", problem_id="1234", open="open", timeout=10),
         ),
         (
             ["submit", "1234", "--timeout", "123"],

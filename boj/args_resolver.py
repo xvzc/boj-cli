@@ -23,6 +23,7 @@ def create_parser():
     add_run_parser(subparsers)
     add_submit_parser(subparsers)
     add_clean_parser(subparsers)
+    add_case_parser(subparsers)
 
     return parser
 
@@ -46,7 +47,7 @@ def add_add_parser(subparsers):
         "--type",
         dest="filetype",
         metavar="FILETYPE",
-        required=True,
+        default=None,
         help="select the filetype to set up the environment with",
     )
     add_parser.add_argument(
@@ -104,13 +105,14 @@ def add_run_parser(subparsers):
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
+        type=int,
         nargs="?",
         help="problem id",
     )
     run_parser.add_argument(
         "-t",
         "--timeout",
-        default=15,
+        default=10,
         type=int,
         help="timeout for each test",
     )
@@ -140,7 +142,7 @@ def add_submit_parser(subparsers):
     submit_parser.add_argument(
         "-t",
         "--timeout",
-        default=15,
+        default=10,
         type=int,
         help="timeout for websocket",
     )
@@ -158,6 +160,35 @@ def add_clean_parser(subparsers):
         default=False,
         help="use the original filename and overwrite the archived file "
         + "if it is duplicated",
+    )
+
+
+def add_case_parser(subparsers):
+    case_parser = subparsers.add_parser(
+        "case",
+        help="manages testcases",
+    )
+    case_parser.add_argument(
+        "problem_id",
+        metavar="PROBLEM_ID",
+        default=None,
+        nargs="?",
+        help="problem id",
+    )
+    case_parser.add_argument(
+        "-n",
+        "--new",
+        action="store_true",
+        default=False,
+        help="open a new testcase"
+    )
+    case_parser.add_argument(
+        "-e",
+        "--edit",
+        dest="edit",
+        metavar="FILETYPE",
+        default=None,
+        help="open a testcase with the editor command",
     )
 
 

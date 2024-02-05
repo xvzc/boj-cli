@@ -9,7 +9,7 @@ class Detail:
         self.description = description
 
 
-class Message:
+class ProgressMessage:
     def __init__(
         self,
         keep_alive: bool,
@@ -39,7 +39,7 @@ class Message:
 
     @staticmethod
     def unknown_error(progress, e: Exception):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -50,7 +50,7 @@ class Message:
 
     @staticmethod
     def connection_established():
-        return Message(
+        return ProgressMessage(
             keep_alive=True,
             error=False,
             progress=0,
@@ -61,7 +61,7 @@ class Message:
 
     @staticmethod
     def subscription_succeeded():
-        return Message(
+        return ProgressMessage(
             keep_alive=True,
             error=False,
             progress=0,
@@ -72,7 +72,7 @@ class Message:
 
     @staticmethod
     def waiting(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=True,
             error=False,
             progress=progress,
@@ -83,7 +83,7 @@ class Message:
 
     @staticmethod
     def running(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=True,
             error=False,
             progress=progress,
@@ -94,7 +94,7 @@ class Message:
 
     @staticmethod
     def accepted(details: list[Detail]):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=False,
             progress=100,
@@ -105,7 +105,7 @@ class Message:
 
     @staticmethod
     def wrong_format(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -116,7 +116,7 @@ class Message:
 
     @staticmethod
     def wrong_answer(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -127,7 +127,7 @@ class Message:
 
     @staticmethod
     def time_limit_exceeded(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -138,7 +138,7 @@ class Message:
 
     @staticmethod
     def memory_limit_exceeded(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -149,7 +149,7 @@ class Message:
 
     @staticmethod
     def output_limit_exceeded(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -160,7 +160,7 @@ class Message:
 
     @staticmethod
     def runtime_error(progress: int, details: list[Detail]):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -171,7 +171,7 @@ class Message:
 
     @staticmethod
     def compile_error(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -182,7 +182,7 @@ class Message:
 
     @staticmethod
     def partial_points(progress: int, details: list[Detail]):
-        return Message(
+        return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
@@ -193,7 +193,7 @@ class Message:
 
     @staticmethod
     def runtime_error_waiting(progress: int):
-        return Message(
+        return ProgressMessage(
             keep_alive=True,
             error=False,
             progress=progress,

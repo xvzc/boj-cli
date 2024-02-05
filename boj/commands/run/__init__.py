@@ -1,3 +1,3 @@
-from boj.commands.run.run_command import RunCommand
+from boj.commands.run.command import RunCommand
 
 __all__ = ["RunCommand"]

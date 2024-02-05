@@ -1,6 +1,6 @@
 import asyncio
 import json
-from boj.commands.submit.message import Message
+from boj.commands.submit.progress_message import ProgressMessage
 
 from rich.console import Console
 from rich.progress import (
@@ -13,8 +13,7 @@ from rich.progress import (
 from websockets import client
 
 import boj.core.constant
-from boj.core.out import BojConsole
-from boj.data.boj_info import BojInfo
+from boj.core.console import BojConsole
 
 
 def subscribe_progress(solution_id, timeout: int):
@@ -32,7 +31,7 @@ def _make_subscribe_request(solution_id):
 
 
 # Track submit status
-async def connect(solution_id, timeout: int) -> Message:
+async def connect(solution_id, timeout: int) -> ProgressMessage:
     progress = Progress(
         SpinnerColumn(style="white", finished_text="•"),
         BarColumn(complete_style="white"),
@@ -53,10 +52,10 @@ async def connect(solution_id, timeout: int) -> Message:
                 try:
                     data = await asyncio.wait_for(websocket.recv(), timeout=timeout)
                     data_dict = json.loads(data)
-                    message = await Message.of(data_dict)
+                    message = await ProgressMessage.of(data_dict)
                     cur_progress = max(message.progress, cur_progress)
                 except (Exception,) as e:
-                    message = Message.unknown_error(cur_progress, e)
+                    message = ProgressMessage.unknown_error(cur_progress, e)
                     break
 
                 keep_alive = message.keep_alive

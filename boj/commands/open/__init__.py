@@ -1,3 +1,3 @@
-from boj.commands.open.open_command import OpenCommand
+from boj.commands.open.command import OpenCommand
 
 __all__ = ["OpenCommand"]

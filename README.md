@@ -14,14 +14,15 @@
    * [Installation](#installation)
    * [Configuration](#configuration)
    * [Usage](#usage)
-      * [Init](#init)
-      * [Login](#login)
-      * [Add](#add)
-      * [Run](#run)
-      * [Submit](#submit)
-      * [Clean](#clean)
-      * [Open](#open)
-      * [Random](#random)
+      * [init](#init)
+      * [login](#login)
+      * [add](#add)
+      * [run](#run)
+      * [submit](#submit)
+      * [clean](#clean)
+      * [open](#open)
+      * [random](#random)
+      * [case](#case)
 <!--te-->
 # Requirements
 - `Python <= 3.12`
@@ -36,48 +37,57 @@ $ pip install boj-cli
 # Configuration
 ```yaml
 # ~/myproject/.boj/config.yaml
+general:
+  selenium_browser: "firefox"      # required - firefox | chrome | edge
+  default_filetype: "cpp"          # optional - default filetype for 'boj add'
+  editor_command: "nvim -o"        # required - code | nvim | ..
 workspace:
-  ongoing_cir: 'src' # Default: ""
-  archive_dir: 'archives' # Default: "archives"
+  ongoing_cir: "problems"          # optional - ongoing problem directory. default: ""
+  archive_dir: "archives"          # optional - archive directory.         default: "archives"
 filetype:
   py:
-    language: 'python3'
-    filename: main.py # Defailt: main.{filetype}
-    run: 'python3 $file'
+    language: "python3"            # required - language that will be used for your submission
+    filename: "main.py"            # required - the main file name
+    run: "python3 $file"           # required - the run command
   cpp:
-    language: 'c++17'
-    compile: 'g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out'
-    run: './a.out'
-    after: rm -rf a.out
-    manifest_files:
+    language: "c++17"
+    filename: "main.cpp"
+    source_templates:              # optional - template files that will be copied into source dir
+      - main.cpp
+    root_templates:                # optional - template files that will be copied into root dir
       - compile_flags.txt
+    compile: "g++ -std=c++17  $file -o a.out"
+    run: "./a.out"
+    after: "rm -rf a.out"          # optional - command to execute after 'boj run'
   rs:
-    language: 'rust2021'
-    filename: main.rs # Default: main.{filetype}
-    source_dir: src
-    compile: 'rustc $file -o main'
-    run: './main'
+    language: "rust2021"
+    filename: "main.rs"
+    root_templates:
+      - "Cargo.toml"
+    source_dir: "src"              # optional - create source file under this directory
+    compile: "rustc $file -o main" # optional - set this option if you are using compile language
+    run: "./main"
     after: rm -rf ./main
-    manifest_files:
-      - Cargo.toml
+  # other filetypes ..
 ```
 > `filetype.language`에 들어갈 수 있는 값들은 [Supported languages](#supported-languages)를 참고해주세요.
 
 
 # Usage
 ```
-usage: boj [-h] [-v] {init,add,login,open,random,run,submit,clean} ...
+usage: boj [-h] [-v] {init,add,login,open,random,run,submit,clean,case} ...
 
 positional arguments:
-  {init,add,login,open,random,run,submit,clean}
+  {init,add,login,open,random,run,submit,clean,case}
     init                initializes BOJ directory
     add                 sets up an environment of the given problem id
     login               logs in to BOJ
     open                opens a problem of given id in browser
     random              queries and opens a random problem in browser
     run                 runs generated testcases
-    submit              submits your solution and trace the realtime statement
+    submit              submit your solution and trace the realtime statement
     clean               archives accepted source files
+    case                manages testcases
 
 options:
   -h, --help            show this help message and exit
@@ -116,20 +126,34 @@ $ boj add 1234 -f cpp
 Testcases have been created.
 
 $ tree .
-.
-└── 1234
-    ├── .boj-info.json
-    ├── compile_flags.txt
-    ├── main.cpp
-    └── testcase.toml
+├── 1234
+│   ├── compile_flags.txt
+│   ├── main.cpp
+│   └── testcases
+│       ├── 1
+│       │   ├── input.txt
+│       │   └── output.txt
+│       ├── 2
+│       │   ├── input.txt
+│       │   └── output.txt
+│       ├── 3
+│       │   ├── input.txt
+│       │   └── output.txt
+│       ├── 4
+│       │   ├── input.txt
+│       │   └── output.txt
+│       └── 5
+│           ├── input.txt
+└           └── output.txt
 ```
 백준 온라인 저지 문제를 풀기위한 폴더를 생성하고 다음과 같은 작업들을 수행합니다.
 - `./.boj/templates` 폴더에 위치한 템플릿 파일 불러오기.
-- 크롤링을 활용해서 toml 파일로 파싱한 테스트케이스 파일 생성.
-- manifest 파일 생성. (e.g. package.json, Cargo.toml ...)
+- 크롤링을 활용해서 txt 파일로 파싱한 테스트케이스 파일 생성.
 
 ```
---filetype, -f str: 파일 타입을 지정합니다. (e.g. cpp, ts, rs, py ...)
+--type, -t str: 파일 타입을 지정합니다. (e.g. cpp, ts, rs, py ...)
+(이 옵션은 'config.general.default_filetype'을 override 합니다.)
+--force, -f: 이미 문제가 존재하는 경우에도 덮어씁니다.
 ```
 
 ---
@@ -142,28 +166,27 @@ $ boj run 1234
 # Inside of problem dir
 $ cd 1234 && boj run
 ```
-`boj add` 명령어로 생성한 테스트케이스를 활용해 `testcase.toml` 파일에 있는 모든 테스트케이스를 비동기적으로 실행하고
-정답을 비교합니다.
+`testcases` 경로에 있는 모든 테스트케이스를 비동기적으로 실행하고 정답을 비교합니다.
 > 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 ```
---timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (Default: 5초)
+--timeout int(sec): 각 테스트케이스의 타임아웃을 설정합니다 (default: 10초)
 ```
 
 ---
 
 ## submit
 ```sh
-# Outside of problem dir
+# Outside of problem directory
 $ boj submit 1234
 
-# Inside of problem dir
+# Inside of problem directory
 $ cd 1234 && boj run
 ```
-로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 출력합니다.
+로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 구독합니다.
 > 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 ```
---open [ open | close | onlyaccepted ]: 코드 공개 여부를 설정합니다.
---timeout int: 제출 현황 웹소켓의 타임아웃 설정(초) (Default: 15)
+--open [ 'open' | 'close' | 'onlyaccepted' ]: 코드 공개 여부를 설정합니다. default: 'onlyaccepted'
+--timeout int: 제출 현황 웹소켓의 타임아웃 설정(초) (default: 10)
 ```
 
 ---
@@ -173,6 +196,7 @@ $ boj clean
 ```
 `boj submit` 명령어 수행 결과로 accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브힙니다.  
 > 아카이브 되는 파일은 `yyyymmdd_hhmmss_{filename}`의 포멧으로 저장됩니다.
+> 마지막 제출 이후에 변경된 소스 코드에 대해서는 아카이빙을 수행하지 않습니다.
 ```
 --origin, -o: 아카이브 파일 포멧을 무시하고 원본 파일 이름을 사용하며, 파일 이름이 이미 존재하면 덮어씁니다.
 ```
@@ -180,9 +204,14 @@ $ boj clean
 
 ## open
 ```sh
+# Outside of problem directory
 $ boj open 1234
+
+# Inside of problem directory
+$ cd 1234 && boj open
 ```
-기본 브라우저에서 문제 번호에 해당하는 링크로 이동합니다.
+문제 번호에 해당하는 페이지를 기본 브라우저에서 열어줍니다.
+> 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 
 ---
 
@@ -198,6 +227,17 @@ solvedac API를 활용해서 문제를 검색하고, 기본 브라우저에서 �
 --tier, -i: 문제 티어 쿼리
 --tags, -t: 문제 태그 쿼리
 ```
+
+## case
+```sh
+$ boj case -e 1
+$ boj case -n 
+
+```
+`config.general.editor_command` 값을 참조하여 테스트 케이스 파일을 관리합니다.
+```
+--edit $TESTCASE_ID, -e $TESTACSE_ID: 주어진 id에 해당하는 테스트케이스 파일들을 열어줍니다.
+--new, -n: 새로운 테스트케이스를 생성하고 열어줍니다. TESTCASE_ID는 자동부여 됩니다.
 
 # Supported languages
 
