@@ -52,9 +52,9 @@ filetype:
   cpp:
     language: "c++17"
     filename: "main.cpp"
-    source_templates:              # optional - template files that will be copied into source dir
+    source_templates:              # optional - these files will be copied into source dir
       - main.cpp
-    root_templates:                # optional - template files that will be copied into root dir
+    root_templates:                # optional - these files will be copied into root dir
       - compile_flags.txt
     compile: "g++ -std=c++17  $file -o a.out"
     run: "./a.out"
@@ -65,7 +65,7 @@ filetype:
     root_templates:
       - "Cargo.toml"
     source_dir: "src"              # optional - create source file under this directory
-    compile: "rustc $file -o main" # optional - set this option if you are using compile language
+    compile: "rustc $file -o main" # optional - set this option if you use compile language
     run: "./main"
     after: rm -rf ./main
   # other filetypes ..
