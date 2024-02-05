@@ -15,9 +15,9 @@ filetype:
     filename: "main.cpp"
     source_dir: "src"              # optional - create source file under this directory
     source_templates:              # optional - these files will be copied into source dir
-      - main.cpp
+      - "main.cpp"
     root_templates:                # optional - these files will be copied into root dir
-      - compile_flags.txt
+      - "compile_flags.txt"
     compile: "g++ $file -o a.out"  # optional - set this option if you use compile language
     run: "./a.out"
     after: "rm -rf a.out"          # optional - command to execute after 'boj run'
