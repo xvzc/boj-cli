@@ -1,13 +1,18 @@
 import json
 import os
+from typing import Optional
 
-from boj.core.error import AuthenticationError
-from boj.core import util
 from boj.core import crypto
+from boj.core.error import ResourceNotFoundError, AuthenticationError
+
+from boj.core.fs.file_object import FileObject, FileMetadata
+from boj.core.fs.repository import Repository, T
+from boj.core.fs.serializer import Serializer
 
 
-class Credential:
-    def __init__(self, username, token):
+class Credential(FileObject):
+    def __init__(self, metadata: FileMetadata, username: str, token: str):
+        super().__init__(metadata)
         self.__username = username
         self.__token = token
 
@@ -25,50 +30,47 @@ class Credential:
     def __eq__(self, other):
         return self.__username == other.__username and self.__token == other.__token
 
-    def to_json(self):
-        return json.dumps(
-            {
-                "username": self.__username,
-                "token": self.__token,
-            },
-            indent=4,
-        )
-
-    @classmethod
-    def of_json(cls, json_str: str):
-        obj = json.loads(json_str)
-        return Credential(username=obj["username"], token=obj["token"])
-
     def make_session_cookies(self, cookies: dict):
         return {"bojautologin": self.token, "OnlineJudge": cookies["OnlineJudge"]}
 
 
-class CredentialIO:
-    def __init__(self, dir_: str):
-        self.__dir = dir_
-
-    @property
-    def dir(self):
-        return self.__dir
-
-    def __key_path(self) -> str:
-        return os.path.join(self.__dir, "key")
-
-    def __credential_path(self) -> str:
-        return os.path.join(self.__dir, "credential")
-
-    def read(self) -> Credential:
-        try:
-            key = util.read_file(self.__key_path())
-            credential = util.read_file(self.__credential_path())
-            return Credential.of_json(json_str=crypto.decrypt(key, credential))
-        except Exception as e:
-            print(e)
-            raise AuthenticationError("Failed to read the credential")
-
-    def save(self, credential: Credential) -> None:
-        key = crypto.create_key()
-        util.write_file(self.__key_path(), key)
-        util.write_file(
-            self.__credential_path(), crypto.encrypt(key, credential.to_json())
+class CredentialSerializer(Serializer[Credential]):
+    def marshal(self, raw: bytes, metadata: FileMetadata) -> Credential:
+        j = json.loads(raw.decode("utf-8"))
+        return Credential(
+            metadata=metadata,
+            username=j["username"],
+            token=j["token"],
         )
+
+    def unmarshal(self, obj: Credential) -> bytes:
+        j = {
+            "username": obj.username,
+            "token": obj.token,
+        }
+        return bytes(json.dumps(j, sort_keys=True, indent=4), "utf-8")
+
+
+class CredentialRepository(Repository[Credential]):
+    def find(self, cwd: str = os.getcwd(), query: Optional[str] = None) -> T:
+        try:
+            credential_path = self._search_strategy.find(cwd, "credential")
+            key_path = self._search_strategy.find(cwd, "key")
+            key = self._file_io.read(key_path)
+            cipher_text = self._file_io.read(credential_path)
+            plain_text = crypto.decrypt(key, cipher_text)
+            return self._serializer.marshal(
+                raw=plain_text,
+                metadata=FileMetadata.of(credential_path),
+            )
+        except ResourceNotFoundError:
+            raise AuthenticationError(
+                "Failed to load credential. Did you run 'boj login'?"
+            )
+
+    def save(self, obj: Credential) -> None:
+        plain = self._serializer.unmarshal(obj=obj)
+        key = crypto.create_key()
+        cipher = crypto.encrypt(key, plain)
+        self._file_io.write(cipher, obj.metadata.path)
+        self._file_io.write(key, os.path.join(obj.metadata.dir, "key"))

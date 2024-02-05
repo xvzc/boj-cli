@@ -1,3 +1,3 @@
-from boj.commands.clean.clean_command import CleanCommand
+from boj.commands.clean.command import CleanCommand
 
 __all__ = ["CleanCommand"]

@@ -1,24 +1,32 @@
+general:
+  selenium_browser: "firefox" # firefox | chrome | edge
+  default_filetype: "cpp"
+  editor_command: "nvim -o"
 workspace:
-  ongoing_cir: 'src' # Default: ""
-  archive_dir: 'archives' # Default: "archives"
+  ongoing_cir: "problems" # Default: ""
+  archive_dir: "archives" # Default: "archives"
 filetype:
   py:
-    language: 'python3'
-    filename: main.py # Defailt: main.{filetype}
-    run: 'python3 $file'
+    language: "python3"
+    filename: "main.py" # Defailt: main.{filetype}
+    run: "python3 $file"
   cpp:
-    language: 'c++17'
-    compile: 'g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out'
-    run: './a.out'
-    after: rm -rf a.out
-    manifest_files:
+    language: "c++17"
+    filename: "main.cpp"
+    source_templates:
+      - main.cpp
+    root_templates:
       - compile_flags.txt
+    compile: "g++ -std=c++17 -O2 -Wall -Wno-sign-compare $file -o a.out"
+    run: "./a.out"
+    after: "rm -rf a.out"
   rs:
-    language: 'rust2021'
-    filename: main.rs # Default: main.{filetype}
-    source_dir: src
-    compile: 'rustc $file -o main'
-    run: './main'
+    language: "rust2021"
+    filename: "main.rs" # Default: main.{filetype}
+    root_templates:
+      - "Cargo.toml"
+    source_dir: "src"
+    compile: "rustc $file -o main"
+    run: "./main"
     after: rm -rf ./main
-    manifest_files:
-      - Cargo.toml
+  # other filetypes ..

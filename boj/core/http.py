@@ -1,84 +1,56 @@
+from typing import Optional, Type
+
 import requests
 from requests import Response
 
 from boj.core.error import HttpError
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
+
+from boj.core.html import HtmlParser, HtmlParser
 
 
-class HttpRequest:
-    def __init__(
-        self,
-        url: str,
-        headers: dict = None,
-        cookies: dict = None,
-        data: dict = None,
-    ):
-        self.__url = url
-        self.__headers = headers
-        self.__cookies = cookies
-        self.__data = data
-
-    @property
+class HttpRequest(metaclass=ABCMeta):
+    @abstractmethod
     def url(self) -> str:
-        return self.__url
+        pass
 
-    @property
-    def headers(self) -> dict:
-        return self.__headers
+    @abstractmethod
+    def headers(self) -> Optional[dict]:
+        pass
 
-    @property
-    def cookies(self) -> dict:
-        return self.__cookies
-
-    @property
-    def data(self) -> dict:
-        return self.__data
+    @abstractmethod
+    def cookies(self) -> Optional[dict]:
+        pass
 
 
-class HttpEntity(metaclass=ABCMeta):
+class RequestWithParams(HttpRequest, metaclass=ABCMeta):
+
+    @abstractmethod
+    def params(self) -> Optional[dict]:
+        pass
+
+
+class RequestWithBody(HttpRequest, metaclass=ABCMeta):
+    @abstractmethod
+    def data(self) -> Optional[dict]:
+        pass
+
+
+class HttpResponse(metaclass=ABCMeta):
     def __init__(self, response: Response):
-        self.__response = response
+        self.__raw = response
         self.__cookies = response.cookies.get_dict()
 
     @property
-    def response(self):
-        return self.__response
+    def raw(self):
+        return self.__raw
 
     @property
     def cookies(self):
         return self.__cookies
 
-    @classmethod
-    def get(cls, request: HttpRequest):
-        try:
-            res = requests.get(
-                url=request.url,
-                headers=request.headers,
-                cookies=request.cookies,
-            )
-            res.raise_for_status()
-            return cls(res)
-        except requests.exceptions.RequestException as e:
-            print(e)
-            raise HttpError(f"GET {request.url}")
 
-    @classmethod
-    def post(cls, request: HttpRequest):
-        try:
-            res = requests.post(
-                url=request.url,
-                headers=request.headers,
-                cookies=request.cookies,
-                data=request.data,
-            )
-            res.raise_for_status()
-            return cls(res)
-        except requests.exceptions.RequestException as e:
-            print(e)
-            raise HttpError(f"POST {request.url}")
-
-
-class Page(HttpEntity):
+class HtmlResponse(HttpResponse):
     def __init__(self, response: Response):
         super().__init__(response)
         self.__html = response.text
@@ -88,11 +60,41 @@ class Page(HttpEntity):
         return self.__html
 
 
-class Api(HttpEntity):
+class JsonResponse(HttpResponse):
     def __init__(self, response: Response):
         super().__init__(response)
         self.__json = response.json()
 
     @property
-    def json(self) -> str:
+    def json(self) -> dict:
         return self.__json
+
+
+def get(request: RequestWithParams) -> Response:
+    try:
+        res = requests.get(
+            url=request.url(),
+            headers=request.headers(),
+            cookies=request.cookies(),
+            params=request.params(),
+        )
+        res.raise_for_status()
+        return res
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise HttpError(f"GET {request.url}")
+
+
+def post(request: RequestWithBody) -> Response:
+    try:
+        res = requests.post(
+            url=request.url(),
+            headers=request.headers(),
+            cookies=request.cookies(),
+            data=request.data(),
+        )
+        res.raise_for_status()
+        return res
+    except requests.exceptions.RequestException as e:
+        print(e)
+        raise HttpError(f"POST {request.url}")

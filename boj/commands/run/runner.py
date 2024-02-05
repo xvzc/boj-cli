@@ -4,11 +4,11 @@ from subprocess import Popen, PIPE
 
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from boj.data.testcase import Testcase, Testcases
+from boj.data.boj_info import BojInfo
+from boj.data.testcase import Testcase
 from boj.data.config import FiletypeConfig
 from boj.core.error import RunCodeError
-from boj.core.out import BojConsole
-from boj.core import util
+from rich.console import Console
 
 
 def create_case_label(width, label: str):
@@ -34,25 +34,29 @@ class Output:
 
 
 class CodeRunner:
-    console: BojConsole
-    file_path: str
-    language_config: FiletypeConfig
-    toml_testcase: Testcases
-    timeout: int
-
-    def __init__(self, console, file_path, ft_config, testcases, timeout):
-        self.console = console
-        self.file_path = file_path
-        self.language_config = ft_config
-        self.toml_testcase = testcases
-        self.timeout = timeout
+    def __init__(
+        self,
+        console: Console,
+        boj_info: BojInfo,
+        config: FiletypeConfig,
+        testcases: list[Testcase],
+        timeout,
+    ):
+        self.__console = console
+        self.__boj_info = boj_info
+        self.__config = config
+        self.testcases = testcases
+        self.__timeout = timeout
 
     def run_compile(self):
-        if not self.language_config.compile:
+        if not self.__config.compile:
             return
 
         try:
-            command = self.language_config.compile.replace("$file", self.file_path)
+            command = self.__config.compile.replace(
+                "$file",
+                self.__boj_info.source_path(abs_=True),
+            )
             process = Popen(
                 command,
                 stdout=PIPE,
@@ -64,10 +68,10 @@ class CodeRunner:
             output, error = process.communicate()
 
             if output:
-                self.console.log(output)
+                self.__console.log(output)
 
             if error:
-                self.console.log(error)
+                self.__console.log(error)
 
             if process.returncode != 0:
                 raise RunCodeError("Compile error")
@@ -79,21 +83,19 @@ class CodeRunner:
         progress = Progress(
             SpinnerColumn(style="white", finished_text="•"),
             TextColumn("[progress.description]{task.description}"),
-            console=self.console,
+            console=self.__console,
         )
 
-        self.console.rule(style="dim white")
+        self.__console.rule(style="dim white")
         with progress:
-            label_width = max(
-                [len(testcase.label) for testcase in self.toml_testcase.testcases]
-            )
+            label_width = max([len(testcase.label) for testcase in self.testcases])
             task_ids = [
                 progress.add_task(
                     description=create_case_label(label_width, testcase.label)
                     + create_status_label("yellow", "Running.."),
                     total=1,
                 )
-                for testcase in self.toml_testcase.testcases
+                for testcase in self.testcases
             ]
 
             futures = [
@@ -105,7 +107,7 @@ class CodeRunner:
                         progress=progress,
                     )
                 )
-                for task_id, testcase in zip(task_ids, self.toml_testcase.testcases)
+                for task_id, testcase in zip(task_ids, self.testcases)
             ]
 
             # Run all testcases parallel
@@ -118,14 +120,14 @@ class CodeRunner:
             )
 
         for output in outputs:
-            self.console.rule(style="dim white")
-            self.console.log(
+            self.__console.rule(style="dim white")
+            self.__console.log(
                 f"• {create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
             )
-            self.console.log("[magenta]Expected:")
-            self.console.log(f"[white]{output.testcase.output}", end="")
-            self.console.log("[magenta]Yours:")
-            self.console.log(f"[white]{output.text}", end="")
+            self.__console.log("[magenta]Expected:")
+            self.__console.log(f"[white]{output.testcase.output}", end="")
+            self.__console.log("[magenta]Yours:")
+            self.__console.log(f"[white]{output.text}", end="")
 
     async def _run_testcase_async(
         self,
@@ -135,31 +137,32 @@ class CodeRunner:
         progress,
     ):
         process = await asyncio.create_subprocess_shell(
-            self.language_config.run.replace("$file", self.file_path),
+            self.__config.run.replace(
+                "$file",
+                self.__boj_info.source_path(abs_=True),
+            ),
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             shell=True,
         )
 
-        answer = testcase.output
-        test_input = testcase.input.encode("utf-8")
-
         try:
             output, error = await asyncio.wait_for(
-                process.communicate(input=test_input), timeout=self.timeout
+                process.communicate(input=testcase.input.encode("utf-8")),
+                timeout=self.__timeout,
             )
 
-            output = util.normalize(output.decode("utf-8"))
-            error = error.decode("utf-8").rstrip()
+            output = output.decode("utf-8")
+            error = error.decode("utf-8")
 
             await asyncio.sleep(uniform(0.2, 0.7))
 
             if process.returncode != 0:
                 color = "bold magenta"
                 status = "ERROR"
-                text = error
-            elif answer == output:
+                text = error.rstrip()
+            elif testcase.compare(output):
                 color = "bold green"
                 status = "PASSED"
                 text = output
@@ -178,7 +181,7 @@ class CodeRunner:
             return Output(task_id=task_id, testcase=testcase, text=text, color=color)
 
         except asyncio.exceptions.TimeoutError:
-            color = "magenta"
+            color = "bold blue"
             status = "TIMED OUT"
             progress.update(
                 task_id=task_id,
@@ -186,14 +189,15 @@ class CodeRunner:
                 + create_status_label(color, status),
                 completed=1,
             )
-            return Output(task_id=task_id, testcase=testcase, text="", color=status)
+            process.kill()
+            return Output(task_id=task_id, testcase=testcase, text="", color=color)
 
     def post_run(self):
-        if not self.language_config.after:
+        if not self.__config.after:
             return
 
         try:
-            command = self.language_config.after
+            command = self.__config.after
             process = Popen(
                 command,
                 stdout=PIPE,
@@ -205,10 +209,10 @@ class CodeRunner:
             output, error = process.communicate()
 
             if output:
-                self.console.log(output)
+                self.__console.log(output)
 
             if error:
-                self.console.log(error)
+                self.__console.log(error)
 
             if process.returncode != 0:
                 raise RunCodeError("Error while running 'after' command")
