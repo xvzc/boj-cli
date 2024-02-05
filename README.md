@@ -230,6 +230,7 @@ $ boj case -n
 ```
 --edit $TESTCASE_ID, -e $TESTACSE_ID: 주어진 id에 해당하는 테스트케이스 파일들을 열어줍니다.
 --new, -n: 새로운 테스트케이스를 생성하고 열어줍니다. TESTCASE_ID는 자동부여 됩니다.
+```
 
 # Supported languages
 
