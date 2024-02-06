@@ -1,24 +1,23 @@
 general:
-  selenium_browser: "firefox"      # required - firefox | chrome | edge
-  default_filetype: "cpp"          # optional - default filetype for 'boj add'
-  editor_command: "nvim -o"        # required - code | nvim | ..
+  selenium_browser: "chrome"        # required - firefox | chrome | edge
+  default_filetype: "cpp"           # optional - default filetype for 'boj add'
+  editor_command: "nvim -o"         # required - code | nvim | ..
 workspace:
-  ongoing_cir: "problems"          # optional - ongoing problem directory. default: ""
-  archive_dir: "archives"          # optional - archive directory.         default: "archives"
+  ongoing_dir: "problems"           # optional - ongoing problem directory. default: ""
+  archive_dir: "archives"           # optional - archive directory.         default: "archives"
 filetype:
   py:
-    language: "python3"            # required - language that will be used for your submission
-    filename: "main.py"            # required - the main file name
-    run: "python3 $file"           # required - the run command
+    language: "python3"             # required - language  for your submission
+    filename: "main.py"             # required - the main file name
+    run: "python3 $file"            # required - the run command
   cpp:
     language: "c++17"
     filename: "main.cpp"
-    source_dir: "src"              # optional - create source file under this directory
-    source_templates:              # optional - these files will be copied into source dir
+    source_templates:               # optional - these files will be copied into source dir
       - "main.cpp"
-    root_templates:                # optional - these files will be copied into root dir
+    root_templates:                 # optional - these files will be copied into root dir
       - "compile_flags.txt"
-    compile: "g++ $file -o a.out"  # optional - set this option if you use compile language
+    compile: "g++ -std=c++17 $file" # optional - set this option if you use compile language
     run: "./a.out"
-    after: "rm -rf a.out"          # optional - command to execute after 'boj run'
+    after: "rm -rf a.out"           # optional - command to execute after 'boj run'
     # other filetypes ..

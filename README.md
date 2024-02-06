@@ -38,28 +38,27 @@ $ pip install boj-cli
 ```yaml
 # ~/myproject/.boj/config.yaml
 general:
-  selenium_browser: "firefox"      # required - firefox | chrome | edge
-  default_filetype: "cpp"          # optional - default filetype for 'boj add'
-  editor_command: "nvim -o"        # required - code | nvim | ..
+  selenium_browser: "chrome"        # required - firefox | chrome | edge
+  default_filetype: "cpp"           # optional - default filetype for 'boj add'
+  editor_command: "nvim -o"         # required - code | nvim | ..
 workspace:
-  ongoing_cir: "problems"          # optional - ongoing problem directory. default: ""
-  archive_dir: "archives"          # optional - archive directory.         default: "archives"
+  ongoing_dir: "problems"           # optional - ongoing problem directory. default: ""
+  archive_dir: "archives"           # optional - archive directory.         default: "archives"
 filetype:
   py:
-    language: "python3"            # required - language that will be used for your submission
-    filename: "main.py"            # required - the main file name
-    run: "python3 $file"           # required - the run command
+    language: "python3"             # required - language  for your submission
+    filename: "main.py"             # required - the main file name
+    run: "python3 $file"            # required - the run command
   cpp:
     language: "c++17"
     filename: "main.cpp"
-    source_dir: "src"              # optional - create source file under this directory
-    source_templates:              # optional - these files will be copied into source dir
+    source_templates:               # optional - these files will be copied into source dir
       - "main.cpp"
-    root_templates:                # optional - these files will be copied into root dir
+    root_templates:                 # optional - these files will be copied into root dir
       - "compile_flags.txt"
-    compile: "g++ $file -o a.out"  # optional - set this option if you use compile language
+    compile: "g++ -std=c++17 $file" # optional - set this option if you use compile language
     run: "./a.out"
-    after: "rm -rf a.out"          # optional - command to execute after 'boj run'
+    after: "rm -rf a.out"           # optional - command to execute after 'boj run'
     # other filetypes ..
 ```
 > `filetype.language`에 들어갈 수 있는 값들은 [Supported languages](#supported-languages)를 참고해주세요.
@@ -202,7 +201,7 @@ $ boj open 1234
 # Inside of problem directory
 $ cd 1234 && boj open
 ```
-문제 번호에 해당하는 페이지를 기본 브라우저에서 열어줍니다.
+기본 브라우저에서 문제 번호에 해당하는 페이지의 링크로 이동합니다.
 > 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 
 ---
@@ -228,8 +227,8 @@ $ boj case -n
 ```
 `config.general.editor_command` 값을 참조하여 테스트 케이스 파일을 관리합니다.
 ```
---edit $TESTCASE_ID, -e $TESTACSE_ID: 주어진 id에 해당하는 테스트케이스 파일들을 열어줍니다.
---new, -n: 새로운 테스트케이스를 생성하고 열어줍니다. TESTCASE_ID는 자동부여 됩니다.
+--edit $TESTCASE_ID, -e $TESTACSE_ID: 주어진 id에 해당하는 테스트케이스 파일들을 편집합니다.
+--new, -n: 새로운 테스트케이스를 생성하고 편집합니다. TESTCASE_ID는 자동부여 됩니다.
 ```
 
 # Supported languages

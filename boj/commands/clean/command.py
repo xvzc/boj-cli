@@ -80,7 +80,9 @@ class CleanCommand(Command):
                     time_format = datetime.now().strftime("%Y%m%d_%H%M%S")
                     archive_name = f"{time_format}_{source_code.metadata.name}"
 
-                archive_dir = os.path.join(config.workspace.archive_dir(problem_id))
+                archive_dir = os.path.join(
+                    config.workspace.archive_dir(problem_id, abs_=True)
+                )
                 self.text_file_repository.copy(
                     obj=source_code,
                     dest=os.path.join(archive_dir, archive_name),
