@@ -57,7 +57,7 @@ class RandomCommand(Command):
 
             for item in items:
                 for tag in item["tags"]:
-                    if not selected_tag or (tag["key"] == tag):
+                    if not selected_tag or (tag["key"] == selected_tag):
                         selected_item = item
                         break
 
