@@ -1,5 +1,6 @@
 import dataclasses
 import os
+from pathlib import Path
 
 from rich.console import Console
 
@@ -77,6 +78,7 @@ class AddCommand(Command):
                 dest_dir=boj_info.source_dir,
             )
 
+            Path(boj_info.source_path(abs_=True)).touch()
             source_code = self.text_file_repository.find(
                 query=boj_info.source_path(abs_=False),
                 cwd=config.workspace.problem_dir(args.problem_id),
