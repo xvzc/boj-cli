@@ -122,7 +122,7 @@ class BojInfo(FileObject):
             title=title,
             filetype=config.filetype,
             language=_convert_language_code(config.language),
-            source_path=os.path.join(config.source_dir, config.filename),
+            source_path=os.path.join(config.source_dir, config.main),
             testcase_dir="testcases",
         )
 
