@@ -8,11 +8,11 @@ workspace:
 filetype:
   py:
     language: "python3"             # required - language  for your submission
-    filename: "main.py"             # required - the main file name
+    main: "main.py"             # required - the main file name
     run: "python3 $file"            # required - the run command
   cpp:
     language: "c++17"
-    filename: "main.cpp"
+    main: "main.cpp"
     source_templates:               # optional - these files will be copied into source dir
       - "main.cpp"
     root_templates:                 # optional - these files will be copied into root dir

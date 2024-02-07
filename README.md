@@ -47,11 +47,11 @@ workspace:
 filetype:
   py:
     language: "python3"             # required - language  for your submission
-    filename: "main.py"             # required - the main file name
+    main: "main.py"                 # required - the main file name
     run: "python3 $file"            # required - the run command
   cpp:
     language: "c++17"
-    filename: "main.cpp"
+    main: "main.cpp"
     source_templates:               # optional - these files will be copied into source dir
       - "main.cpp"
     root_templates:                 # optional - these files will be copied into root dir
@@ -135,7 +135,13 @@ $ tree .
 │       │   └── output.txt
 │       └── 5
 │           ├── input.txt
-└           └── output.txt
+│           └── output.txt
+└── .boj 
+    ├── config.yaml
+    └── templates
+        ├── compile_flags.txt
+        └── main.cpp
+
 ```
 백준 온라인 저지 문제를 풀기위한 폴더를 생성하고 다음과 같은 작업들을 수행합니다.
 - `./.boj/templates` 폴더에 위치한 템플릿 파일 불러오기.

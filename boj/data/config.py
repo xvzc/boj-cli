@@ -53,7 +53,7 @@ class FiletypeConfig:
         ongoing_dir: str,
         filetype: str,
         language: str,
-        filename: str,
+        main: str,
         source_dir: str,
         compile_: str,
         run: str,
@@ -65,7 +65,7 @@ class FiletypeConfig:
         self.__ongoing_dir = ongoing_dir
         self.__filetype = filetype
         self.__language = language
-        self.__filename = filename
+        self.__main = main
         self.__source_dir = source_dir
         self.__compile = compile_
         self.__run = run
@@ -82,8 +82,8 @@ class FiletypeConfig:
         return self.__language
 
     @property
-    def filename(self) -> str:
-        return self.__filename
+    def main(self) -> str:
+        return self.__main
 
     @property
     def compile(self) -> str:
@@ -126,7 +126,7 @@ class FiletypeConfig:
                 ongoing_dir=ongoing_dir,
                 filetype=ft,
                 language=v.get("language", None),
-                filename=v.get("filename", f"main.{ft}"),
+                main=v.get("filename", f"main.{ft}"),
                 source_dir=v.get("source_dir", ""),
                 compile_=v.get("compile", None),
                 run=v.get("run", None),
@@ -140,7 +140,7 @@ class FiletypeConfig:
                     f"missing 'language' option for the filetype {ft}"
                 )
 
-            if not config.filename:
+            if not config.main:
                 raise ParsingConfigError(
                     f"missing 'filename' option for the filetype {ft}"
                 )
