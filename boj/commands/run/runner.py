@@ -124,8 +124,12 @@ class CodeRunner:
             self.__console.log(
                 f"• {create_case_label(label_width, output.testcase.label)}[{output.color}]OUTPUT"
             )
+            self.__console.log("[magenta]Input:")
+            self.__console.log(f"[white]{output.testcase.input}", end="")
+
             self.__console.log("[magenta]Expected:")
             self.__console.log(f"[white]{output.testcase.output}", end="")
+
             self.__console.log("[magenta]Yours:")
             self.__console.log(f"[white]{output.text}", end="")
 

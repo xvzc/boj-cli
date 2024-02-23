@@ -80,8 +80,8 @@ class AddCommand(Command):
 
             Path(boj_info.source_path(abs_=True)).touch()
             source_code = self.text_file_repository.find(
-                query=boj_info.source_path(abs_=False),
                 cwd=config.workspace.problem_dir(args.problem_id),
+                query=boj_info.source_path(abs_=False),
             )
             boj_info.checksum = self.text_file_repository.hash(source_code)
 
@@ -101,5 +101,5 @@ class AddCommand(Command):
                     obj=file,
                     dest=os.path.join(dest_dir, filename),
                 )
-            except ResourceNotFoundError as e:
+            except ResourceNotFoundError:
                 self.console.log(f"Skipped '{filename}' since it doesn't exist.")
