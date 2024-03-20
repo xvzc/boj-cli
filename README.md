@@ -238,76 +238,14 @@ $ boj case -n
 
 # Supported languages
 
-- `c++17`
-- `python3`
-- `pypy3`
-- `c11`
-- `text`
-- `golfscript`
-- `java8`
-- `c++98`
-- `ruby`
-- `c99`
-- `c++11`
-- `java11`
-- `kotlin(jvm)`
-- `c++14`
-- `swift`
-- `java8(openjdk)`
-- `c++20`
-- `c#`
-- `node.js`
-- `go`
-- `d`
-- `rust2018`
-- `go(gccgo)`
-- `c++17(clang)`
-- `java15`
-- `d(ldc)`
-- `php`
-- `rust2015`
-- `pascal`
-- `lua`
-- `perl`
-- `f#`
-- `visual-basic`
-- `objective-c`
-- `objective-c++`
-- `c99(clang)`
-- `c++98(clang)`
-- `c++11(clang)`
-- `c++14(clang)`
-- `c11(clang)`
-- `c++20(clang)`
-- `c90`
-- `c2x`
-- `c90(clang)`
-- `c2x(clang)`
-- `typescript`
-- `assembly(32bit)`
-- `assembly(64bit)`
-- `bash`
-- `fortran`
-- `scheme`
-- `ada`
-- `awk`
-- `o-caml`
-- `brainf**k`
-- `whitespace`
-- `tcl`
-- `rhino`
-- `cobol`
-- `pike`
-- `sed`
-- `intercal`
-- `bc`
-- `algol68`
-- `befunge`
-- `free-basic`
-- `haxe`
-- `lolcode`
-- `아희`
-- `system-verilog`
-- `rust2021`
-- `scala`
+`c++17` `python3` `pypy3` `c99` `c11` `text` `golfscript` `java8` `c++98` `ruby`  
+`c++11`  `java11` `kotlin(jvm)` `c++14` `swift` `java8(openjdk)` `c++20`  `c#`  
+`node.js` `go` `d` `rust2018` `go(gccgo)` `c++17(clang)` `java15` `d(ldc)` `php`  
+`rust2015` `pascal` `lua`  `perl` `f#` `visual-basic` `objective-c` `c99(clang)`  
+`c++98(clang)` `c++11(clang)` `c++14(clang)` `objective-c++` `c11(clang)` `c90`  
+`c90(clang)` `c2x(clang)` `typescript` `c++20(clang)` `bash` `fortran` `scheme`  
+`awk` `c2x` `assembly(32bit)` `assembly(64bit)` `o-caml` `whitespace` `lolcode`  
+`intercal` `rhino` `cobol` `pike` `sed` `tcl` `brainf**k` `ada` `system-verilog`  
+`algol68` `befunge` `haxe` `아희`  `bc` `free-basic` `rust2021` `scala`  
+
 
