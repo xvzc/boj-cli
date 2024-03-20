@@ -23,6 +23,8 @@
       * [open](#open)
       * [random](#random)
       * [case](#case)
+   * [Supported languages](#supported-languages)
+
 <!--te-->
 # Requirements
 - `Python <= 3.12`
