@@ -4,7 +4,7 @@ import os
 from rich.console import Console
 
 from boj.core.command import Command
-from boj.core.error import IllegalStatementError, ParsingConfigError
+from boj.core.error import IllegalStatementError, FatalError
 from boj.core.fs.file_object import FileMetadata, TextFile
 from boj.core.fs.repository import ReadOnlyRepository, Repository
 from boj.data.boj_info import BojInfo
@@ -36,7 +36,7 @@ class CaseCommand(Command):
             args.problem_id,
         )
         if not config.general.editor_command:
-            raise ParsingConfigError("'config.general.editor_command' is not specified")
+            raise FatalError("'config.general.editor_command' is not specified")
 
         self.boj_info_repository.search_strategy = search_strategy
         boj_info = self.boj_info_repository.find(cwd, query)

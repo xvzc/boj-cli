@@ -6,7 +6,7 @@ from rich.console import Console
 
 from boj.core import http
 from boj.core.command import Command
-from boj.core.error import IllegalStatementError, ResourceNotFoundError
+from boj.core.error import IllegalStatementError, ResourceNotFoundError, FatalError
 from boj.core.fs.repository import Repository, ReadOnlyRepository
 from boj.core.fs.file_object import TextFile
 from boj.core.html import HtmlParser
@@ -36,7 +36,7 @@ class AddCommand(Command):
             filetype = args.filetype or config.general.default_filetype
             if not filetype:
                 message = "missing required argument '--type' or 'config.general.default_filetype'"
-                raise IllegalStatementError(message)
+                raise FatalError(message)
 
             # Get HTML content of given problem id from BOJ
             status.update("Crawling testcases..")

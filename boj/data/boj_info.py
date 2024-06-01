@@ -2,7 +2,7 @@ import os
 from typing import Optional, Type, Self
 
 from boj.core import constant
-from boj.core.error import IllegalStatementError, ResourceNotFoundError
+from boj.core.error import IllegalStatementError, ResourceNotFoundError, FatalError
 import json
 
 from boj.core.fs.file_search_strategy import (
@@ -176,8 +176,8 @@ class BojInfoRepository(Repository[BojInfo]):
             metadata = FileMetadata.of(path)
             return self._serializer.marshal(self._file_io.read(path), metadata)
         except ResourceNotFoundError:
-            raise ResourceNotFoundError(
-                "Can not find '.boj-info.json'. did you run 'boj add $problem_id'?"
+            raise FatalError(
+                "can not find '.boj-info.json'. did you run 'boj add $problem_id'?"
             )
 
     def save(self, obj: T) -> None:

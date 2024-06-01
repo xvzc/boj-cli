@@ -10,7 +10,7 @@ from boj.core import constant
 from boj.core.command import Command
 
 from boj.core import http
-from boj.core.error import IllegalStatementError
+from boj.core.error import IllegalStatementError, FatalError
 from boj.web.solved_ac_search_api import (
     SolvedAcSearchApiRequest,
     make_solved_ac_search_api_params,
@@ -45,10 +45,10 @@ class RandomCommand(Command):
 
             json = response.json
             if not json or ("items" not in json):
-                raise IllegalStatementError("Error while calling solve.ac API.")
+                raise FatalError("error while calling solve.ac API.")
 
             if len(json["items"]) == 0:
-                raise IllegalStatementError("No matching problem found.")
+                raise FatalError("no matching problem found.")
 
             items = json["items"]
             selected_tag = None

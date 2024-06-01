@@ -4,7 +4,7 @@ import os
 from rich.console import Console
 
 from boj.browsers.login_browser import LoginBrowser
-from boj.core.error import ParsingConfigError
+from boj.core.error import FatalError
 from boj.core.fs.file_object import FileMetadata
 from boj.core.fs.repository import Repository, ReadOnlyRepository
 from boj.data.config import Config
@@ -22,7 +22,7 @@ class LoginCommand(Command):
     def execute(self, args):
         config = self.config_repository.find()
         if not config.general.selenium_browser:
-            raise ParsingConfigError("Please specify 'config.general.login_browser'")
+            raise FatalError("invalid value for 'config.general.login_browser'")
 
         with self.console.status("Preparing login browser...") as status:
             browser = LoginBrowser(

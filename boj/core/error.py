@@ -3,6 +3,11 @@ class BojError(BaseException):
         super().__init__(msg)
 
 
+class FatalError(BojError):
+    def __init__(self, msg):
+        super().__init__("fatal: " + msg)
+
+
 class AuthenticationError(BojError):
     def __init__(self, msg):
         super().__init__(msg)

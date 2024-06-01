@@ -10,6 +10,8 @@ from boj.core.fs.file_object import FileMetadata, FileObject
 from boj.core.error import (
     ParsingConfigError,
     IllegalStatementError,
+    ResourceNotFoundError,
+    FatalError,
 )
 
 
@@ -294,9 +296,15 @@ class ConfigRepository(ReadOnlyRepository[Config]):
         cwd: str = os.getcwd(),
         query: Optional[str] = None,
     ) -> Config:
-        path = self._search_strategy.find(
-            cwd=cwd,
-            query=os.path.join(".boj", "config.yaml"),
-        )
+        try:
+            path = self._search_strategy.find(
+                cwd=cwd,
+                query=os.path.join(".boj", "config.yaml"),
+            )
+        except ResourceNotFoundError:
+            raise FatalError(
+                "not a boj directory (or any of the parent directories): .boj/config.yaml"
+            )
+
         file = self._file_io.read(path)
         return self._serializer.marshal(file, FileMetadata.of(path))
