@@ -1,6 +1,6 @@
 import json
 
-from boj.core.error import WebSocketError
+from boj.core.error import WebSocketError, FatalError
 
 
 class Detail:
@@ -11,13 +11,13 @@ class Detail:
 
 class ProgressMessage:
     def __init__(
-        self,
-        keep_alive: bool,
-        status: str,
-        progress: int,
-        color: str,
-        error: bool,
-        details: list[Detail],
+            self,
+            keep_alive: bool,
+            status: str,
+            progress: int,
+            color: str,
+            error: bool,
+            details: list[Detail],
     ):
         self.keep_alive = keep_alive
         self.status = status
@@ -28,13 +28,13 @@ class ProgressMessage:
 
     def __repr__(self):
         return (
-            "Problem {"
-            + str(self.keep_alive)
-            + ", "
-            + self.color
-            + ", "
-            + self.status
-            + "}"
+                "Problem {"
+                + str(self.keep_alive)
+                + ", "
+                + self.color
+                + ", "
+                + self.status
+                + "}"
         )
 
     @staticmethod
@@ -66,7 +66,7 @@ class ProgressMessage:
             error=False,
             progress=0,
             color="white",
-            status="Subscription Succeeded",
+            status="Subscription started",
             details=[],
         )
 
@@ -211,10 +211,10 @@ class ProgressMessage:
             return cls.subscription_succeeded()
 
         if message["event"] == "pusher:error":
-            raise WebSocketError("Websocket error")
+            raise FatalError("websocket error")
 
         if message["event"] != "update":
-            raise WebSocketError("Unknown websocket event")
+            raise FatalError("unknown websocket event")
 
         data = json.loads(message["data"])
         progress = data["progress"] if "progress" in data else 0
@@ -276,4 +276,4 @@ class ProgressMessage:
         if data["result"] == 16:
             return cls.runtime_error_waiting(progress)
 
-        raise WebSocketError("Unknown websocket status")
+        raise FatalError(f"unknown websocket status {data['result']}")

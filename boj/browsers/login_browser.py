@@ -24,12 +24,12 @@ class LoginBrowser(Browser):
             except NoSuchElementException:
                 break
             except Exception:
-                raise IllegalStatementError("Failed to login to BOJ")
+                raise FatalError("failed to login to BOJ")
 
         wait = WebDriverWait(self.driver, 10)
         element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "username")))
         token = self.driver.get_cookie("bojautologin")
         if "value" not in token:
-            raise AuthenticationError("Failed to read session token")
+            raise FatalError("failed to read session token")
 
         return {"username": element.text, "token": token["value"]}

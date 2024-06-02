@@ -186,9 +186,9 @@ def add_case_parser(subparsers):
         "-e",
         "--edit",
         dest="edit",
-        metavar="FILETYPE",
+        metavar="CASE_ID",
         default=None,
-        help="open a testcase with the editor command",
+        help="edit the testcase of given id with editor command",
     )
 
 

@@ -7,7 +7,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from boj.data.boj_info import BojInfo
 from boj.data.testcase import Testcase
 from boj.data.config import FiletypeConfig
-from boj.core.error import RunCodeError
+from boj.core.error import RunCodeError, FatalError
 from rich.console import Console
 
 
@@ -74,7 +74,7 @@ class CodeRunner:
                 self.__console.log(error)
 
             if process.returncode != 0:
-                raise RunCodeError("Compile error")
+                raise FatalError("compile error")
 
         except Exception as e:
             raise e
@@ -219,7 +219,7 @@ class CodeRunner:
                 self.__console.log(error)
 
             if process.returncode != 0:
-                raise RunCodeError("Error while running 'after' command")
+                raise FatalError("error while running 'after' command")
 
         except Exception as e:
             raise e

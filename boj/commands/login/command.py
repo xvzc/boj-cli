@@ -46,4 +46,5 @@ class LoginCommand(Command):
             status.update("Writing to file...")
             self.credential_repository.save(credential)
 
-        self.console.print("[green]Login succeeded")
+        self.console.print("[green]Successfully logged in")
+

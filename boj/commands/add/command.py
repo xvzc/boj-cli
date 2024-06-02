@@ -53,7 +53,7 @@ class AddCommand(Command):
             )
 
             if not args.force and file_exists(boj_info.metadata.path):
-                raise IllegalStatementError(f"Problem {args.problem_id} already exists")
+                raise FatalError(f"problem {args.problem_id} already exists")
 
             # Create testcases
             # os.makedirs(boj_info.source_dir, exist_ok=True)

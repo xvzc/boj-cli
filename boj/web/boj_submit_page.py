@@ -74,8 +74,8 @@ class CsrfKeyParser(HtmlParser):
         input_tags = soup.select("input")
         for tag in input_tags:
             if tag["name"] == "login_user_id":
-                raise AuthenticationError(
-                    "Authentication failed. Did you run 'boj login'?"
+                raise FatalError(
+                    "authentication failed. did you run 'boj login'?"
                 )
 
         # Get the csrf_key
@@ -83,4 +83,4 @@ class CsrfKeyParser(HtmlParser):
             if tag["name"] == "csrf_key":
                 return tag["value"]
 
-        raise AuthenticationError("Failed to query csrf token.")
+        raise FatalError("failed to query csrf token.")

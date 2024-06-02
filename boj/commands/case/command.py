@@ -65,4 +65,4 @@ class CaseCommand(Command):
             )
             _open_files(config.general.editor_command, input_, output)
         else:
-            raise IllegalStatementError("operation is not specified")
+            raise FatalError("operation is not specified: --new || -edit $id")

@@ -19,7 +19,7 @@ from boj.data.config import FiletypeConfig
 def _convert_language_code(lang):
     lang_dict = constant.lang_dict()
     if lang not in lang_dict:
-        raise IllegalStatementError(lang + " is not a supported language")
+        raise FatalError(f"{lang} is not a supported language")
 
     return lang_dict[lang]
 

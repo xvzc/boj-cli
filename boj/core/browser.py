@@ -30,7 +30,7 @@ def initialize_driver(
             service=Service(ChromeDriverManager(cache_manager=cache_manager).install()),
         )
     else:
-        raise IllegalStatementError(f"{browser} is not a valid browser")
+        raise FatalError(f"{browser} is not a valid browser")
 
 
 class Browser:

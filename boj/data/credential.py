@@ -3,7 +3,7 @@ import os
 from typing import Optional
 
 from boj.core import crypto
-from boj.core.error import ResourceNotFoundError, AuthenticationError
+from boj.core.error import ResourceNotFoundError, AuthenticationError, FatalError
 
 from boj.core.fs.file_object import FileObject, FileMetadata
 from boj.core.fs.repository import Repository, T
@@ -64,8 +64,8 @@ class CredentialRepository(Repository[Credential]):
                 metadata=FileMetadata.of(credential_path),
             )
         except ResourceNotFoundError:
-            raise AuthenticationError(
-                "Failed to load credential. Did you run 'boj login'?"
+            raise FatalError(
+                "failed to load credential. Did you run 'boj login'?"
             )
 
     def save(self, obj: Credential) -> None:

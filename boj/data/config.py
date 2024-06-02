@@ -138,17 +138,17 @@ class FiletypeConfig:
             )
 
             if not config.language:
-                raise ParsingConfigError(
+                raise FatalError(
                     f"missing 'language' option for the filetype {ft}"
                 )
 
             if not config.main:
-                raise ParsingConfigError(
+                raise FatalError(
                     f"missing 'filename' option for the filetype {ft}"
                 )
 
             if not config.run:
-                raise ParsingConfigError(f"missing 'run' option for the filetype {ft}")
+                raise FatalError(f"missing 'run' option for the filetype {ft}")
 
             filetype_config[ft] = config
 
@@ -210,7 +210,7 @@ class WorkspaceConfig:
         )
 
         if workspace_config.ongoing_dir(True) == workspace_config.archive_dir(True):
-            raise ParsingConfigError(
+            raise FatalError(
                 "'workspace.ongoing_dir' and 'workspace.archive_dir' can not be the same"
             )
 
@@ -251,18 +251,18 @@ class Config(FileObject):
 
     def filetype(self, ft) -> FiletypeConfig:
         if ft not in self.__filetype:
-            raise ParsingConfigError(
+            raise FatalError(
                 f"filetype config for '{ft}' is not defined in 'config.yaml'"
             )
 
         filetype_config = self.__filetype[ft]
         if not filetype_config.language:
-            raise ParsingConfigError(
+            raise FatalError(
                 f"'language' option for filetype '{ft}' is not found."
             )
 
         if not filetype_config.run:
-            raise ParsingConfigError(f"'run' option for filetype '{ft}' is not found.")
+            raise FatalError(f"'run' option for filetype '{ft}' is not found.")
 
         return filetype_config
 
@@ -287,7 +287,7 @@ class ConfigFileSerializer(Serializer):
         )
 
     def unmarshal(self, obj: Config) -> bytes:
-        raise IllegalStatementError("Config file object should not be unmarshalled")
+        raise FatalError("config file object should not be unmarshalled")
 
 
 class ConfigRepository(ReadOnlyRepository[Config]):

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from boj.core.error import ParsingHtmlError
+from boj.core.error import ParsingHtmlError, FatalError
 from boj.core.html import HtmlParser
 
 
@@ -9,7 +9,7 @@ class SolutionIdParser(HtmlParser[str]):
         soup = BeautifulSoup(html, "html.parser")
         soup.select("table", {"id": "status-table"})
         if soup is None:
-            raise ParsingHtmlError("Failed to query solution id.")
+            raise FatalError("failed to query solution id.")
 
         soup = soup.select("tr")
 
