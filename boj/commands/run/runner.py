@@ -162,11 +162,7 @@ class CodeRunner:
 
             await asyncio.sleep(uniform(0.2, 0.7))
 
-            if process.returncode != 0:
-                color = "bold magenta"
-                status = "ERROR"
-                text = error.rstrip()
-            elif testcase.compare(output):
+            if testcase.compare(output):
                 color = "bold green"
                 status = "PASSED"
                 text = output
@@ -174,6 +170,11 @@ class CodeRunner:
                 color = "bold red"
                 status = "FAILED"
                 text = output
+
+            if process.returncode != 0:
+                color = "bold magenta"
+                status = "ERROR"
+                text += '\n' + error.rstrip()
 
             progress.update(
                 task_id=task_id,
