@@ -5,7 +5,7 @@ from boj.core.fs.file_object import TextFile, FileMetadata
 
 def normalize(s: str):
     s = s.rstrip()
-    normalized_text = "\n".join([line.rstrip() for line in s.splitlines()])
+    normalized_text = "\n".join([line.rstrip() for line in s.splitlines()]).rstrip()
     return normalized_text
 
 
@@ -19,11 +19,11 @@ class Testcase:
 
     @property
     def input(self):
-        return self.__input
+        return normalize(self.__input)
 
     @property
     def output(self):
-        return self.__output
+        return normalize(self.__output)
 
     @property
     def label(self):
@@ -33,7 +33,7 @@ class Testcase:
         return "Testcase {" + self.input + ", " + self.output + "}"
 
     def compare(self, stdout: str):
-        return normalize(self.output) == normalize(stdout)
+        return self.output == normalize(stdout)
 
     def to_text_files(self, dir_: str) -> (TextFile, TextFile):
         input_ = TextFile(
