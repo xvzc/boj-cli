@@ -3,6 +3,10 @@ import os
 from boj.core.fs.file_object import TextFile, FileMetadata
 
 
+def replace_crlf(s: str):
+    return s.replace('\r\n', '\n')
+
+
 def normalize(s: str):
     s = s.rstrip()
     normalized_text = "\n".join([line.rstrip() for line in s.splitlines()]).rstrip()
@@ -19,7 +23,7 @@ class Testcase:
 
     @property
     def input(self):
-        return normalize(self.__input)
+        return replace_crlf(self.__input)
 
     @property
     def output(self):
