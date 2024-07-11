@@ -6,7 +6,7 @@ from webdriver_manager.core.driver_cache import DriverCacheManager
 from webdriver_manager.firefox import GeckoDriverManager
 
 from boj.core import constant
-from boj.core.error import IllegalStatementError
+from boj.core.error import IllegalStatementError, FatalError
 
 
 class RemoteWebDriver:
