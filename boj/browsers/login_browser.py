@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from boj.core.browser import Browser
-from boj.core.error import AuthenticationError, IllegalStatementError
+from boj.core.error import AuthenticationError, IllegalStatementError, FatalError
 
 
 class LoginBrowser(Browser):
@@ -24,12 +24,18 @@ class LoginBrowser(Browser):
             except NoSuchElementException:
                 break
             except Exception:
-                raise FatalError("failed to login to BOJ")
+                raise FatalError("login failed")
 
-        wait = WebDriverWait(self.driver, 10)
-        element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "username")))
+        try:
+            wait = WebDriverWait(self.driver, 10)
+            element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "username")))
+        except FatalError as e:
+            raise e
+        except Exception:
+            raise FatalError("failed to identify user")
+
         token = self.driver.get_cookie("bojautologin")
         if "value" not in token:
-            raise FatalError("failed to read session token")
+            raise FatalError("could not find session token")
 
         return {"username": element.text, "token": token["value"]}
