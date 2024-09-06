@@ -38,14 +38,14 @@ class ProgressMessage:
         )
 
     @staticmethod
-    def unknown_error(progress, e: Exception):
+    def client_error(progress, description: str):
         return ProgressMessage(
             keep_alive=False,
             error=True,
             progress=progress,
             color="blue",
-            status="Unknown Error",
-            details=[Detail(name="Reason", description=str(e))],
+            status="Client Error",
+            details=[Detail(name="Reason", description=description)],
         )
 
     @staticmethod

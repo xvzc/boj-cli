@@ -142,7 +142,7 @@ def add_submit_parser(subparsers):
     submit_parser.add_argument(
         "-t",
         "--timeout",
-        default=10,
+        default=30,
         type=int,
         help="timeout for websocket",
     )

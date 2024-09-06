@@ -54,8 +54,11 @@ async def connect(solution_id, timeout: int) -> ProgressMessage:
                     data_dict = json.loads(data)
                     message = await ProgressMessage.of(data_dict)
                     cur_progress = max(message.progress, cur_progress)
+
+                except asyncio.TimeoutError:
+                    message = ProgressMessage.client_error(cur_progress, "websocket timed out")
                 except (Exception,) as e:
-                    message = ProgressMessage.unknown_error(cur_progress, e)
+                    message = ProgressMessage.client_error(cur_progress, "unknown")
                     break
 
                 keep_alive = message.keep_alive
