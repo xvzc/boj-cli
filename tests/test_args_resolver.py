@@ -128,18 +128,18 @@ def test_run_command_parser(test_in, expected):
         (
             ["submit", "1234"],
             Namespace(
-                command="submit", problem_id="1234", open="onlyaccepted", timeout=10
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=30
             ),
         ),
         (
             ["submit", "1234"],
             Namespace(
-                command="submit", problem_id="1234", open="onlyaccepted", timeout=10
+                command="submit", problem_id="1234", open="onlyaccepted", timeout=30
             ),
         ),
         (
             ["submit", "1234", "--open", "open"],
-            Namespace(command="submit", problem_id="1234", open="open", timeout=10),
+            Namespace(command="submit", problem_id="1234", open="open", timeout=30),
         ),
         (
             ["submit", "1234", "--timeout", "123"],
