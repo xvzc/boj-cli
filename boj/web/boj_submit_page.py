@@ -3,12 +3,11 @@ from typing import Optional
 from bs4 import BeautifulSoup
 
 from boj.core import constant
-from boj.core.error import AuthenticationError
+from boj.core.error import FatalError
 from boj.core.fs.file_object import TextFile
 from boj.core.html import HtmlParser
 from boj.core.http import RequestWithParams, RequestWithBody
 from boj.data.boj_info import BojInfo
-from boj.data.session import Session
 
 
 def make_submit_post_body(
