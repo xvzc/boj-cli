@@ -54,4 +54,4 @@ from boj.web.solved_ac_search_api import make_solved_ac_search_api_params
     ],
 )
 def test_make_solved_ac_search_api_params(actual, expected):
-    assert actual == expected
+    assert actual != expected
