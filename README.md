@@ -48,7 +48,7 @@ workspace:
   archive_dir: "archives"           # optional - archive directory.         default: "archives"
 filetype:
   py:
-    language: "python3"             # required - language  for your submission
+    language: "python3"             # required - language for your submission
     main: "main.py"                 # required - the main file name
     run: "python3 $file"            # required - the run command
   cpp:
@@ -192,7 +192,7 @@ $ cd 1234 && boj run
 ```sh
 $ boj clean
 ```
-`boj submit` 명령어 수행 결과로 accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브힙니다.  
+`boj submit` 명령어 수행 결과로 accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브합니다.  
 > 아카이브 되는 파일은 `yyyymmdd_hhmmss_{filename}`의 포멧으로 저장됩니다.
 > 마지막 제출 이후에 변경된 소스 코드에 대해서는 아카이빙을 수행하지 않습니다.
 ```
