@@ -7,7 +7,7 @@ workspace:
   archive_dir: "archives"           # optional - archive directory.         default: "archives"
 filetype:
   py:
-    language: "python3"             # required - language  for your submission
+    language: "python3"             # required - language for your submission
     main: "main.py"                 # required - the main file name
     run: "python3 $file"            # required - the run command
   cpp:
