@@ -70,6 +70,7 @@ class Container(containers.DeclarativeContainer):
                 InitCommand,
                 console=console,
                 config_repository=config_repository,
+                file_io=GeneralFileIO(),
             ),
             add=providers.Factory(
                 AddCommand,

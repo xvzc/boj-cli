@@ -20,7 +20,7 @@ class DeprecatedError(BojError):
 
 class HttpError(BojError):
     def __init__(self, url):
-        super().__init__(f"Error while calling remote service: {url}")
+        super().__init__(f"Error while calling http request: {url}")
 
 
 class ParsingHtmlError(BojError):
@@ -38,9 +38,14 @@ class ResourceNotFoundError(BojError):
         super().__init__(msg)
 
 
-class ParsingConfigError(BojError):
+class FileSearchError(BojError):
     def __init__(self, msg):
         super().__init__(msg)
+
+
+class ParsingConfigError(BojError):
+    def __init__(self, query):
+        super().__init__(query)
 
 
 class FileIOError(BojError):

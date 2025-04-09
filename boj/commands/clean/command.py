@@ -9,6 +9,7 @@ from rich.console import Console
 from boj.core.command import Command
 from boj.core.error import ResourceNotFoundError
 from boj.core.fs.file_object import TextFile
+from boj.core.fs.file_search_strategy import StaticSearchStrategy, UpwardSearchStrategy
 from boj.core.fs.repository import ReadOnlyRepository, Repository
 from boj.data.config import Config
 from boj.data.boj_info import BojInfo
@@ -38,15 +39,11 @@ class CleanCommand(Command):
             ongoing_dir = config.workspace.ongoing_dir(abs_=True)
             for problem_id in os.listdir(ongoing_dir):
                 problem_root = config.workspace.problem_dir(problem_id)
-                cwd, query, search_strategy = BojInfo.query_factory(
-                    config.workspace.ongoing_dir(abs_=True),
-                    problem_id,
-                )
-
-                self.boj_info_repository.strategy = search_strategy
+                self.boj_info_repository.search_strategy = StaticSearchStrategy()
 
                 try:
-                    boj_info = self.boj_info_repository.find(cwd, query)
+                    cwd = os.path.join(ongoing_dir, problem_id)
+                    boj_info = self.boj_info_repository.find(cwd, ".boj-info.json")
                 except ResourceNotFoundError as e:
                     message = (
                         f"'{problem_id}' is not a directory "

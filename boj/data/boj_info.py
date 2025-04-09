@@ -2,14 +2,13 @@ import os
 from typing import Optional, Type, Self
 
 from boj.core import constant
-from boj.core.error import IllegalStatementError, ResourceNotFoundError, FatalError
+from boj.core.error import (
+    ResourceNotFoundError,
+    FatalError,
+    FileSearchError,
+)
 import json
 
-from boj.core.fs.file_search_strategy import (
-    FileSearchStrategy,
-    StaticSearchStrategy,
-    UpwardSearchStrategy,
-)
 from boj.core.fs.repository import Repository, T
 from boj.core.fs.serializer import Serializer
 from boj.core.fs.file_object import FileMetadata, FileObject
@@ -126,19 +125,6 @@ class BojInfo(FileObject):
             testcase_dir="testcases",
         )
 
-    @classmethod
-    def query_factory(
-        cls, ongoing_dir: str, problem_id: str
-    ) -> (str, FileSearchStrategy):
-        if problem_id:
-            return (
-                ongoing_dir,
-                os.path.join(str(problem_id), ".boj-info.json"),
-                StaticSearchStrategy(),
-            )
-        else:
-            return os.getcwd(), ".boj-info.json", UpwardSearchStrategy()
-
 
 class BojInfoSerializer(Serializer):
     def marshal(self, raw: bytes, metadata: FileMetadata) -> BojInfo:
@@ -175,10 +161,10 @@ class BojInfoRepository(Repository[BojInfo]):
             path = self._search_strategy.find(query=query, cwd=cwd)
             metadata = FileMetadata.of(path)
             return self._serializer.marshal(self._file_io.read(path), metadata)
-        except ResourceNotFoundError:
-            raise FatalError(
+        except FileSearchError as e:
+            raise ResourceNotFoundError(
                 "can not find '.boj-info.json'. did you run 'boj add $problem_id'?"
             )
 
-    def save(self, obj: T) -> None:
+    def save(self, obj: BojInfo) -> None:
         self._file_io.write(self._serializer.unmarshal(obj), obj.metadata.path)

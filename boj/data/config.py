@@ -11,7 +11,7 @@ from boj.core.error import (
     ParsingConfigError,
     IllegalStatementError,
     ResourceNotFoundError,
-    FatalError,
+    FatalError, FileSearchError,
 )
 
 
@@ -196,6 +196,12 @@ class WorkspaceConfig:
     def template_file_path(self, filename: str) -> str:
         return os.path.join(self.template_dir(abs_=True), filename)
 
+    def search_dir(self, id_: Union[str, int]):
+        if id_:
+            return os.path.join(self.__workspace_root, self.__ongoing_dir, str(id_))
+        else:
+            return os.getcwd()
+
     @classmethod
     def of(cls, data: any, workspace_root: str) -> Type[Self]:
         if "workspace" not in data:
@@ -301,8 +307,8 @@ class ConfigRepository(ReadOnlyRepository[Config]):
                 cwd=cwd,
                 query=os.path.join(".boj", "config.yaml"),
             )
-        except ResourceNotFoundError:
-            raise FatalError(
+        except FileSearchError as e:
+            raise ResourceNotFoundError(
                 "not a boj directory (or any of the parent directories): .boj/config.yaml"
             )
 

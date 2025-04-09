@@ -23,7 +23,7 @@ def cli():
         dispatcher.modules[args.command].execute(args)
     except BojError as e:
         SystemExit(e)
-        console.log(str(e))
+        console.log("error:" + str(e))
         # print(str(e))
         exit(1)
     except BaseException as e:

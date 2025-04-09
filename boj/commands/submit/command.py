@@ -1,10 +1,12 @@
 import dataclasses
+import os
 
 from rich.console import Console
 
 from boj.core.command import Command
 from boj.core import http
 from boj.core.fs.file_object import TextFile
+from boj.core.fs.file_search_strategy import StaticSearchStrategy, UpwardSearchStrategy
 from boj.core.fs.repository import Repository
 from boj.core.html import HtmlParser
 from boj.core.http import HtmlResponse
@@ -37,12 +39,11 @@ class SubmitCommand(Command):
 
         with self.console.status("Loading config..") as status:
             status.update("Looking for problem information..")
-            cwd, query, search_strategy = BojInfo.query_factory(
-                config.workspace.ongoing_dir(abs_=True),
-                args.problem_id,
+            self.boj_info_repository.search_strategy = (
+                StaticSearchStrategy() if args.problem_id else UpwardSearchStrategy()
             )
-            self.boj_info_repository.search_strategy = search_strategy
-            boj_info = self.boj_info_repository.find(cwd, query)
+            cwd = config.workspace.search_dir(args.problem_id)
+            boj_info = self.boj_info_repository.find(cwd, ".boj-info.json")
 
             status.update("Authenticating..")
             credential = self.credential_repository.find(cwd=constant.boj_cli_path())

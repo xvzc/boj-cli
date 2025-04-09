@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from pathlib import Path
 from typing import Optional
 
-from boj.core.error import ResourceNotFoundError
+from boj.core.error import FileSearchError
 from boj.core.fs.util import file_exists
 
 
@@ -27,7 +27,7 @@ class UpwardSearchStrategy(FileSearchStrategy):
                 return str(cur_path)
 
             if str(home) == str(path):
-                raise ResourceNotFoundError(f"File Not Found: {query}")
+                raise FileSearchError(query)
 
             path = path.parent
 
@@ -38,4 +38,4 @@ class StaticSearchStrategy(FileSearchStrategy):
         if file_exists(path):
             return path
         else:
-            raise ResourceNotFoundError(f"File Not Found: {query}")
+            raise FileSearchError(query)

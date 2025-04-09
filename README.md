@@ -36,6 +36,11 @@
 $ pip install boj-cli
 ```
 
+```sh
+# install from the source including dev dependencies.
+$ pip install -e '.[dev]'
+```
+
 # Configuration
 ```yaml
 # ~/myproject/.boj/config.yaml

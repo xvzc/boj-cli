@@ -6,6 +6,7 @@ from rich.console import Console
 from boj.commands.run.runner import CodeRunner
 from boj.core.command import Command
 from boj.core.fs.file_object import TextFile
+from boj.core.fs.file_search_strategy import StaticSearchStrategy, UpwardSearchStrategy
 from boj.core.fs.repository import ReadOnlyRepository, Repository
 from boj.data.config import Config
 from boj.data.boj_info import BojInfo
@@ -36,12 +37,11 @@ class RunCommand(Command):
         config = self.config_repository.find()
         with self.console.status("Loading config...") as status:
             status.update("Looking for problem information...")
-            cwd, query, search_strategy = BojInfo.query_factory(
-                config.workspace.ongoing_dir(abs_=True),
-                args.problem_id,
+            self.boj_info_repository.search_strategy = (
+                StaticSearchStrategy() if args.problem_id else UpwardSearchStrategy()
             )
-            self.boj_info_repository.search_strategy = search_strategy
-            boj_info = self.boj_info_repository.find(cwd, query)
+            cwd = config.workspace.search_dir(args.problem_id)
+            boj_info = self.boj_info_repository.find(cwd, ".boj-info.json")
 
             status.update("Loading testcases...")
             testcases: list[Testcase] = []
