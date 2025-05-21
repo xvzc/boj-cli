@@ -27,7 +27,7 @@
 
 <!--te-->
 # Requirements
-- `3.9 <= Python < 3.14`
+- `3.11 <= Python < 3.14`
 - `MacOS`, `Linux`, `Windows`
 
 # Installation
