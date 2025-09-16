@@ -21,7 +21,7 @@ from boj.core.fs.serializer import TextFileSerializer
 from boj.data.boj_info import BojInfoSerializer, BojInfoRepository
 from boj.data.config import ConfigFileSerializer, ConfigRepository
 from boj.data.credential import CredentialRepository, CredentialSerializer
-from boj.web.boj_problem_page import TitleParser, TestcaseParser
+from boj.web.boj_problem_page import TitleParser, TestcaseParser, ProblemInfoParser
 from boj.web.boj_status_page import SolutionIdParser
 from boj.web.boj_submit_page import CsrfKeyParser
 
@@ -80,6 +80,7 @@ class Container(containers.DeclarativeContainer):
                 text_file_repository=text_file_repository,
                 title_parser=TitleParser(),
                 testcase_parser=TestcaseParser(),
+                problem_info_parser=ProblemInfoParser(),
             ),
             login=providers.Factory(
                 LoginCommand,
