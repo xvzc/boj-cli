@@ -45,21 +45,27 @@ class SubmitCommand(Command):
             cwd = config.workspace.search_dir(args.problem_id)
             boj_info = self.boj_info_repository.find(cwd, ".boj-info.json")
 
+            status.update("Reading source code..")
+            source_code = self.text_file_repository.find(
+                cwd=boj_info.metadata.dir,
+                query=boj_info.source_path(abs_=False),
+            )
+
+            if args.force:
+                boj_info.accepted = True
+                boj_info.checksum = self.text_file_repository.hash(source_code)
+                self.boj_info_repository.save(boj_info)
+                return
+
             status.update("Authenticating..")
             credential = self.credential_repository.find(cwd=constant.boj_cli_path())
             main_page = HtmlResponse(http.get(BojMainPageRequest()))
             session = Session(credential, main_page.cookies)
 
-            status.update("Reading source code..")
             submit_page = HtmlResponse(
                 http.get(BojSubmitPageRequest(boj_info.id, session.session_cookies))
             )
             csrf_key = self.csrf_key_parser.find(submit_page.html)
-
-            source_code = self.text_file_repository.find(
-                cwd=boj_info.metadata.dir,
-                query=boj_info.source_path(abs_=False),
-            )
 
             status.update("Submitting source code..")
             session_cookies = session.session_cookies

@@ -146,6 +146,13 @@ def add_submit_parser(subparsers):
         type=int,
         help="timeout for websocket",
     )
+    submit_parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        default=False,
+        help="mark as accepted forcefully",
+    )
 
 
 def add_clean_parser(subparsers):
@@ -176,11 +183,7 @@ def add_case_parser(subparsers):
         help="problem id",
     )
     case_parser.add_argument(
-        "-n",
-        "--new",
-        action="store_true",
-        default=False,
-        help="open a new testcase"
+        "-n", "--new", action="store_true", default=False, help="open a new testcase"
     )
     case_parser.add_argument(
         "-e",
