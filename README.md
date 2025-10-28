@@ -73,19 +73,19 @@ filetype:
 
 # Usage
 ```
-usage: boj [-h] [-v] {init,add,login,open,random,run,submit,clean,case} ...
+usage: boj [-h] [-v] {accept,ac,add,case,clean,init,open,random,run,submit} ...
 
 positional arguments:
-  {init,add,login,open,random,run,submit,clean,case}
-    init                initializes BOJ directory
+  {accept,ac,add,case,clean,init,open,random,run,submit}
+    accept (ac)         marks the given problem as accepted
     add                 sets up an environment of the given problem id
-    login               logs in to BOJ
+    case                manages testcases
+    clean               archives accepted source files
+    init                initializes BOJ directory
     open                opens a problem of given id in browser
     random              queries and opens a random problem in browser
     run                 runs generated testcases
     submit              submit your solution and trace the realtime statement
-    clean               archives accepted source files
-    case                manages testcases
 
 options:
   -h, --help            show this help message and exit
@@ -183,16 +183,25 @@ $ cd 1234 && boj run
 $ boj submit 1234
 
 # Inside of problem directory
-$ cd 1234 && boj run
+$ cd 1234 && boj submit
 ```
-로컬 소스 파일을 백준 온라인 저지에 제출하고 채점 현황을 실시간으로 구독합니다.
-> 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
-```
---open [ 'open' | 'close' | 'onlyaccepted' ]: 코드 공개 여부를 설정합니다. default: 'onlyaccepted'
---timeout int: 제출 현황 웹소켓의 타임아웃 설정(초) (default: 10)
-```
+로컬 소스 파일을 클립보드에 복사하고 기본 브라우저에서 제출 화면으로 이동합니다. #39
+> 해당 명령어를 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 
 ---
+
+# accept (ac)
+```sh
+# Outside of problem directory
+$ boj accept 1234
+
+# Inside of problem directory
+$ cd 1234 && boj ac
+```
+로컬 소스 파일을 클립보드에 복사하고 기본 브라우저에서 제출 화면으로 이동합니다. #39
+> 해당 명령어를 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
+
+
 ## clean
 ```sh
 $ boj clean

@@ -1,4 +1,5 @@
 import json
+import warnings
 
 from boj.core.error import WebSocketError, FatalError
 
@@ -11,13 +12,13 @@ class Detail:
 
 class ProgressMessage:
     def __init__(
-            self,
-            keep_alive: bool,
-            status: str,
-            progress: int,
-            color: str,
-            error: bool,
-            details: list[Detail],
+        self,
+        keep_alive: bool,
+        status: str,
+        progress: int,
+        color: str,
+        error: bool,
+        details: list[Detail],
     ):
         self.keep_alive = keep_alive
         self.status = status
@@ -28,13 +29,13 @@ class ProgressMessage:
 
     def __repr__(self):
         return (
-                "Problem {"
-                + str(self.keep_alive)
-                + ", "
-                + self.color
-                + ", "
-                + self.status
-                + "}"
+            "Problem {"
+            + str(self.keep_alive)
+            + ", "
+            + self.color
+            + ", "
+            + self.status
+            + "}"
         )
 
     @staticmethod
@@ -257,7 +258,9 @@ class ProgressMessage:
         if data["result"] == 10:
             details = []
             if "rte_reason" in data:
-                details.append(Detail(name="Reason", description=str(data["rte_reason"])))
+                details.append(
+                    Detail(name="Reason", description=str(data["rte_reason"]))
+                )
 
             return cls.runtime_error(progress, details)
 
@@ -268,7 +271,9 @@ class ProgressMessage:
         if data["result"] == 15:
             details = []
             if "subtask_score" in data:
-                details.append(Detail(name="Score", description=str(data["subtask_score"])))
+                details.append(
+                    Detail(name="Score", description=str(data["subtask_score"]))
+                )
 
             return cls.partial_points(progress, details)
 

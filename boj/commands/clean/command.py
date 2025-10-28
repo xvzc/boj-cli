@@ -25,7 +25,7 @@ class Items:
 @dataclasses.dataclass
 class CleanCommand(Command):
     console: Console
-    config_repository: ReadOnlyRepository[Config]
+    config_repository: Repository[Config]
     boj_info_repository: Repository[BojInfo]
     text_file_repository: Repository[TextFile]
 

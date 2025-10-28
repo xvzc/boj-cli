@@ -15,15 +15,16 @@ def create_parser():
     )
 
     subparsers = parser.add_subparsers(dest="command")
-    add_init_parser(subparsers)
+    add_accept_parser(subparsers)
     add_add_parser(subparsers)
-    add_login_parser(subparsers)
+    add_case_parser(subparsers)
+    add_clean_parser(subparsers)
+    add_init_parser(subparsers)
+    # add_login_parser(subparsers)
     add_open_parser(subparsers)
     add_random_parser(subparsers)
     add_run_parser(subparsers)
     add_submit_parser(subparsers)
-    add_clean_parser(subparsers)
-    add_case_parser(subparsers)
 
     return parser
 
@@ -33,16 +34,16 @@ def add_init_parser(subparsers):
 
 
 def add_add_parser(subparsers):
-    add_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "add", help="sets up an environment of the given problem id"
     )
-    add_parser.add_argument(
+    parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         type=int,
         help="problem id",
     )
-    add_parser.add_argument(
+    parser.add_argument(
         "-t",
         "--type",
         dest="filetype",
@@ -50,12 +51,35 @@ def add_add_parser(subparsers):
         default=None,
         help="select the filetype to set up the environment with",
     )
-    add_parser.add_argument(
+    parser.add_argument(
         "-f",
         "--force",
         action="store_true",
         default=False,
         help="select the filetype to set up the environment with",
+    )
+
+
+def add_accept_parser(subparsers):
+    parser = subparsers.add_parser(
+        "accept", help="marks the given problem as accepted", aliases=["ac"]
+    )
+
+    parser.add_argument(
+        "problem_id",
+        metavar="PROBLEM_ID",
+        default=None,
+        type=int,
+        nargs="?",
+        help="problem id",
+    )
+
+    parser.add_argument(
+        "-r",
+        "--revert",
+        action="store_true",
+        default=False,
+        help="when given, marks the problem as unaccepted",
     )
 
 
@@ -67,10 +91,10 @@ def add_login_parser(subparsers):
 
 
 def add_open_parser(subparsers):
-    problem_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "open", help="opens a problem of given id in browser"
     )
-    problem_parser.add_argument(
+    parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
@@ -81,17 +105,17 @@ def add_open_parser(subparsers):
 
 
 def add_random_parser(subparsers):
-    random_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "random", help="queries and opens a random problem in browser"
     )
-    random_parser.add_argument(
+    parser.add_argument(
         "-t",
         "--tags",
         nargs="*",
         default=[],
         help="tags",
     )
-    random_parser.add_argument(
+    parser.add_argument(
         "-i",
         "--tier",
         default=None,
@@ -100,8 +124,8 @@ def add_random_parser(subparsers):
 
 
 def add_run_parser(subparsers):
-    run_parser = subparsers.add_parser("run", help="runs generated testcases")
-    run_parser.add_argument(
+    parser = subparsers.add_parser("run", help="runs generated testcases")
+    parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
@@ -109,7 +133,7 @@ def add_run_parser(subparsers):
         nargs="?",
         help="problem id",
     )
-    run_parser.add_argument(
+    parser.add_argument(
         "-t",
         "--timeout",
         default=10,
@@ -120,18 +144,18 @@ def add_run_parser(subparsers):
 
 def add_submit_parser(subparsers):
     # Submit command parser
-    submit_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "submit",
         help="submit your solution and trace the realtime statement",
     )
-    submit_parser.add_argument(
+    parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
         nargs="?",
         help="problem id",
     )
-    submit_parser.add_argument(
+    parser.add_argument(
         "-o",
         "--open",
         default="onlyaccepted",
@@ -139,7 +163,7 @@ def add_submit_parser(subparsers):
         help="whether to publicly open the submitted code "
         + "('open' | 'close' | 'onlyaccepted')",
     )
-    submit_parser.add_argument(
+    parser.add_argument(
         "-t",
         "--timeout",
         default=30,
@@ -149,11 +173,11 @@ def add_submit_parser(subparsers):
 
 
 def add_clean_parser(subparsers):
-    submit_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "clean",
         help="archives accepted source files",
     )
-    submit_parser.add_argument(
+    parser.add_argument(
         "-o",
         "--origin",
         action="store_true",
@@ -164,25 +188,21 @@ def add_clean_parser(subparsers):
 
 
 def add_case_parser(subparsers):
-    case_parser = subparsers.add_parser(
+    parser = subparsers.add_parser(
         "case",
         help="manages testcases",
     )
-    case_parser.add_argument(
+    parser.add_argument(
         "problem_id",
         metavar="PROBLEM_ID",
         default=None,
         nargs="?",
         help="problem id",
     )
-    case_parser.add_argument(
-        "-n",
-        "--new",
-        action="store_true",
-        default=False,
-        help="open a new testcase"
+    parser.add_argument(
+        "-n", "--new", action="store_true", default=False, help="open a new testcase"
     )
-    case_parser.add_argument(
+    parser.add_argument(
         "-e",
         "--edit",
         dest="edit",
