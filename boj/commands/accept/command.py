@@ -1,19 +1,15 @@
 import dataclasses
-import pyperclip
-import subprocess
-import webbrowser
 
 from rich.console import Console
-from boj.core import constant
 
 from boj.core.command import Command
-from boj.core.fs.file_object import TextFile
-from boj.core.fs.file_search_strategy import StaticSearchStrategy, UpwardSearchStrategy
+
 from boj.core.fs.repository import Repository
-from boj.core.html import HtmlParser
 from boj.data.config import Config
 from boj.data.boj_info import BojInfo
-from boj.data.credential import Credential
+from boj.core.fs.file_object import TextFile
+
+from boj.core.fs.file_search_strategy import StaticSearchStrategy, UpwardSearchStrategy
 from boj.web.boj_submit_page import (
     BojSubmitPageRequest,
     BojSubmitPostRequest,
@@ -22,7 +18,7 @@ from boj.web.boj_submit_page import (
 
 
 @dataclasses.dataclass
-class SubmitCommand(Command):
+class AcceptCommand(Command):
     console: Console
     config_repository: Repository[Config]
     boj_info_repository: Repository[BojInfo]
@@ -43,14 +39,16 @@ class SubmitCommand(Command):
                 cwd=boj_info.metadata.dir,
                 query=boj_info.source_path(abs_=False),
             )
-            pyperclip.copy(source_code.content)
-            # submit_command = config.general.submit_command.replace(
-            #     "$url",
-            #     constant.boj_submit_url(boj_info.id),
-            # )
-            webbrowser.open(constant.boj_submit_url(boj_info.id))
 
-            # _ = subprocess.run(submit_command.split())
+        if args.revert:
+            boj_info.accepted = False
+        else:
+            boj_info.accepted = True
+            boj_info.checksum = self.text_file_repository.hash(source_code)
 
-        self.console.rule(style="dim white")
-        self.console.print(f"• [{boj_info.id}] {boj_info.title}")
+        status = "[green]'Accepted'" if boj_info.accepted else "[red]'Not Accepted'"
+
+        self.boj_info_repository.save(boj_info)
+        self.console.print(
+            f"[white]Successfully updated the problem status to {status}"
+        )

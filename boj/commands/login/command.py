@@ -11,6 +11,7 @@ from boj.data.config import Config
 from boj.data.credential import Credential
 from boj.core import constant
 from boj.core.command import Command
+import warnings
 
 
 @dataclasses.dataclass
@@ -47,4 +48,3 @@ class LoginCommand(Command):
             self.credential_repository.save(credential)
 
         self.console.print("[green]Successfully logged in")
-

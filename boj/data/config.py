@@ -1,41 +1,43 @@
 import os.path
+import platform
 from pathlib import Path
 from typing import Type, Self, Dict, Optional, Union
 
 import yaml
 
-from boj.core.fs.repository import ReadOnlyRepository, T
 from boj.core.fs.serializer import Serializer
 from boj.core.fs.file_object import FileMetadata, FileObject
+from boj.core.fs.repository import ReadOnlyRepository
 from boj.core.error import (
     ParsingConfigError,
     IllegalStatementError,
     ResourceNotFoundError,
-    FatalError, FileSearchError,
+    FatalError,
+    FileSearchError,
 )
 
 
 class GeneralConfig:
     def __init__(
         self,
+        selenium_browser: Optional[str],
         default_filetype: Optional[str],
         editor_command: Optional[str],
-        selenium_browser: Optional[str],
     ):
         self.__default_filetype = default_filetype
         self.__editor_command = editor_command
         self.__selenium_browser = selenium_browser
 
     @property
-    def editor_command(self):
+    def editor_command(self) -> str:
         return self.__editor_command
 
     @property
-    def default_filetype(self):
+    def default_filetype(self) -> str:
         return self.__default_filetype
 
     @property
-    def selenium_browser(self):
+    def selenium_browser(self) -> str:
         return self.__selenium_browser
 
     @classmethod
@@ -114,45 +116,35 @@ class FiletypeConfig:
     @classmethod
     def of(
         cls,
+        filetype: str,
         data: any,
         workspace_root: str,
         ongoing_dir: str,
     ) -> Dict[str, Type[Self]]:
-        if "filetype" not in data:
-            data["filetype"] = {}
+        config = FiletypeConfig(
+            workspace_root=workspace_root,
+            ongoing_dir=ongoing_dir,
+            filetype=filetype,
+            language=data.get("language", None),
+            main=data.get("filename", f"main.{filetype}"),
+            source_dir=data.get("source_dir", ""),
+            compile_=data.get("compile", None),
+            run=data.get("run", None),
+            after=data.get("after", None),
+            source_templates=data.get("source_templates", []),
+            root_templates=data.get("root_templates", []),
+        )
 
-        filetype_config = {}
-        for ft, v in data["filetype"].items():
-            config = FiletypeConfig(
-                workspace_root=workspace_root,
-                ongoing_dir=ongoing_dir,
-                filetype=ft,
-                language=v.get("language", None),
-                main=v.get("filename", f"main.{ft}"),
-                source_dir=v.get("source_dir", ""),
-                compile_=v.get("compile", None),
-                run=v.get("run", None),
-                after=v.get("after", None),
-                source_templates=v.get("source_templates", []),
-                root_templates=v.get("root_templates", []),
-            )
+        if not config.language:
+            raise FatalError(f"missing 'language' option for the filetype {filetype}")
 
-            if not config.language:
-                raise FatalError(
-                    f"missing 'language' option for the filetype {ft}"
-                )
+        if not config.main:
+            raise FatalError(f"missing 'filename' option for the filetype {filetype}")
 
-            if not config.main:
-                raise FatalError(
-                    f"missing 'filename' option for the filetype {ft}"
-                )
+        if not config.run:
+            raise FatalError(f"missing 'run' option for the filetype {filetype}")
 
-            if not config.run:
-                raise FatalError(f"missing 'run' option for the filetype {ft}")
-
-            filetype_config[ft] = config
-
-        return filetype_config
+        return config
 
 
 class WorkspaceConfig:
@@ -263,9 +255,7 @@ class Config(FileObject):
 
         filetype_config = self.__filetype[ft]
         if not filetype_config.language:
-            raise FatalError(
-                f"'language' option for filetype '{ft}' is not found."
-            )
+            raise FatalError(f"'language' option for filetype '{ft}' is not found.")
 
         if not filetype_config.run:
             raise FatalError(f"'run' option for filetype '{ft}' is not found.")
@@ -278,12 +268,20 @@ class ConfigFileSerializer(Serializer):
         data = yaml.safe_load(raw.decode("utf-8")) or {}
         workspace_root = str(Path(metadata.dir).parent.absolute())
         workspace_config = WorkspaceConfig.of(data, workspace_root)
-        filetype_config = FiletypeConfig.of(
-            data,
-            workspace_root,
-            workspace_config.ongoing_dir(False),
-        )
         general_config = GeneralConfig.of(data)
+
+        if "filetype" not in data:
+            data["filetype"] = {}
+
+        filetype_config = {}
+        for ft, v in data["filetype"].items():
+            filetype_config[ft] = FiletypeConfig.of(
+                ft,
+                v,
+                workspace_root,
+                workspace_config.ongoing_dir(False),
+            )
+
         return Config(
             metadata=metadata,
             workspace_root=workspace_root,
@@ -307,7 +305,7 @@ class ConfigRepository(ReadOnlyRepository[Config]):
                 cwd=cwd,
                 query=os.path.join(".boj", "config.yaml"),
             )
-        except FileSearchError as e:
+        except FileSearchError:
             raise ResourceNotFoundError(
                 "not a boj directory (or any of the parent directories): .boj/config.yaml"
             )

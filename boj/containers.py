@@ -11,6 +11,7 @@ from boj.commands.open import OpenCommand
 from boj.commands.random import RandomCommand
 from boj.commands.run import RunCommand
 from boj.commands.submit import SubmitCommand
+from boj.commands.accept import AcceptCommand
 from boj.core.fs.file_io import GeneralFileIO
 from boj.core.fs.repository import TextFileRepository
 from boj.core.fs.file_search_strategy import UpwardSearchStrategy, StaticSearchStrategy
@@ -63,6 +64,14 @@ class Container(containers.DeclarativeContainer):
         search_strategy=StaticSearchStrategy(),
     )
 
+    accept_command = providers.Factory(
+        AcceptCommand,
+        console=console,
+        config_repository=config_repository,
+        boj_info_repository=boj_info_repository,
+        text_file_repository=text_file_repository,
+    )
+
     dispatcher_factory = providers.Factory(
         Dispatcher,
         modules=providers.Dict(
@@ -72,6 +81,8 @@ class Container(containers.DeclarativeContainer):
                 config_repository=config_repository,
                 file_io=GeneralFileIO(),
             ),
+            accept=accept_command,
+            ac=accept_command,
             add=providers.Factory(
                 AddCommand,
                 console=console,
@@ -111,22 +122,20 @@ class Container(containers.DeclarativeContainer):
                 console=console,
                 config_repository=config_repository,
                 boj_info_repository=boj_info_repository,
-                credential_repository=credential_repository,
+                # credential_repository=credential_repository,
                 text_file_repository=text_file_repository,
-                csrf_key_parser=CsrfKeyParser(),
-                solution_id_parser=SolutionIdParser(),
+                # csrf_key_parser=CsrfKeyParser(),
+                # solution_id_parser=SolutionIdParser(),
             ),
             open=providers.Factory(
-                OpenCommand,
-                console=console,
-                boj_info_repository=boj_info_repository
+                OpenCommand, console=console, boj_info_repository=boj_info_repository
             ),
             case=providers.Factory(
                 CaseCommand,
                 console=console,
                 boj_info_repository=boj_info_repository,
                 config_repository=config_repository,
-                text_file_repository=text_file_repository
-            )
+                text_file_repository=text_file_repository,
+            ),
         ),
     )
