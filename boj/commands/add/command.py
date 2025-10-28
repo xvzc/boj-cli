@@ -8,7 +8,7 @@ from boj.core import http
 from boj.core.command import Command
 from boj.core.error import IllegalStatementError, ResourceNotFoundError, FatalError
 from boj.core.fs.repository import Repository, ReadOnlyRepository
-from boj.core.fs.file_object import TextFile
+from boj.core.fs.file_object import TextFile, FileMetadata
 from boj.core.html import HtmlParser
 from boj.core.http import HtmlResponse
 from boj.core.fs.util import file_exists
@@ -16,6 +16,8 @@ from boj.data.config import Config
 from boj.data.testcase import Testcase
 from boj.web.boj_problem_page import (
     BojProblemPageRequest,
+    ProblemInfoParser,
+    generate_readme,
 )
 from boj.data.boj_info import BojInfo
 
@@ -28,6 +30,7 @@ class AddCommand(Command):
     text_file_repository: Repository[TextFile]
     title_parser: HtmlParser[str]
     testcase_parser: HtmlParser[list[Testcase]]
+    problem_info_parser: ProblemInfoParser
 
     def execute(self, args):
         config = self.config_repository.find()
@@ -62,6 +65,17 @@ class AddCommand(Command):
                 input_, output = testcase.to_text_files(boj_info.testcase_dir(True))
                 self.text_file_repository.save(input_)
                 self.text_file_repository.save(output)
+
+            # Create README.md with problem information
+            status.update("Creating README.md..")
+            problem_info = self.problem_info_parser.find(problem_page.html)
+
+            readme_content = generate_readme(problem_info)
+            readme_metadata = FileMetadata.of(
+                os.path.join(boj_info.metadata.dir, "README.md")
+            )
+            readme_file = TextFile(metadata=readme_metadata, content=readme_content)
+            self.text_file_repository.save(readme_file)
 
             # Create manifest files
             status.update("Creating root templates..")
