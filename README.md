@@ -1,5 +1,6 @@
 # boj-cli
-
+백준 온라인 저지 커맨드라인 인터페이스.
+현재 #39 로 인해 커맨드라인 제출 기능은 동작하지않습니다.
 # Table of contents
 <!--ts-->
    * [Installation](#installation)
