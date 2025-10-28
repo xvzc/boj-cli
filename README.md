@@ -191,15 +191,19 @@ $ boj accept 1234
 # Inside of problem directory
 $ cd 1234 && boj ac
 ```
-로컬 소스 파일을 클립보드에 복사하고 기본 브라우저에서 제출 화면으로 이동합니다.
+인자로 받은 문제를 accepted 상태로 변경합니다.  
+accepted 처리된 문제는 `boj clean` 명령어로 아카이브 할 수 있습니다.
 > 해당 명령어를 문제 폴더 안에서 실행하면 문제 번호 인자를 생략할 수 있습니다.
 
+```
+  -r, --revert  when given, marks the problem as unaccepted
+```
 
 ## clean
 ```sh
 $ boj clean
 ```
-`boj submit` 명령어 수행 결과로 accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브합니다.  
+accepted를 받은 모든 문제들을 `config.workspace.archive_dir`로 아카이브합니다.  
 > 아카이브 되는 파일은 `yyyymmdd_hhmmss_{filename}`의 포멧으로 저장됩니다.
 > 마지막 제출 이후에 변경된 소스 코드에 대해서는 아카이빙을 수행하지 않습니다.
 ```
