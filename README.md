@@ -1,14 +1,5 @@
 # boj-cli
 
-<div align="center">
-  <h1 align="center">BOJ-CLI</h2>
-</div>
-<br>
-<div align="center">
-  <p>Command line interface for Baekjoon Online Judge.  </p>
-  <img src="https://github.com/xvzc/boj-cli/assets/45588457/7e38f42b-be0c-4e56-a4f5-ba5960634a00" alt="boj-cli demo">
-</div>
-
 # Table of contents
 <!--ts-->
    * [Installation](#installation)
@@ -19,6 +10,7 @@
       * [add](#add)
       * [run](#run)
       * [submit](#submit)
+      * [accept](#accept)
       * [clean](#clean)
       * [open](#open)
       * [random](#random)
@@ -190,7 +182,7 @@ $ cd 1234 && boj submit
 
 ---
 
-# accept (ac)
+## accept
 ```sh
 # Outside of problem directory
 $ boj accept 1234
